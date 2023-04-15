@@ -1,0 +1,20 @@
+# Map file for tile-based game
+# (Lines that start with '#' are comments)
+# The tiles are:
+#   (Space) Empty tile
+#   A..Z    Tiles [ground or spikes]
+#   1-9     Environment
+#   !       Timer icon
+#   *       Door
+#   ~       Fire
+#   ^       Player initial position
+
+                        !
+                      DBBBH
+                              DBBBH
+        DBBBH
+                                                DBBBH           *
+                      !             DBBBH                  DBBBBH
+                    DBBBH                                  IFFFFF
+^                                                          IFFFFF
+BBBBBH000DBBBHOOOOOOOOOOOONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNIFFFFF
