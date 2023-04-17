@@ -344,12 +344,12 @@ public class GameWindow extends JFrame implements
 
 	private void startGame() { 
 		if (gameThread == null) {
-			soundManager.playSound ("background2", true);
+//			soundManager.playSound ("background2", true); TODO
 
 			tileManager = new TileMapManager (this,this);
 
 			try {
-				tileMap = tileManager.loadMap("maps/map3.txt");
+				tileMap = tileManager.loadMap("maps/map1.txt");
 			}
 			catch (Exception e) {
 				System.out.println(e);

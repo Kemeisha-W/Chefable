@@ -95,7 +95,7 @@ public class TileMap {
      * no tile is at the location or if the location is out of
      * bounds.
      */
-    public Object getTile(int x, int y) {
+    public Tile getTile(int x, int y) {
         if (x < 0 || x >= mapWidth ||
             y < 0 || y >= mapHeight)
         {
@@ -121,6 +121,7 @@ public class TileMap {
      */
     public void setPlayer(int x, int y) {
         int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-100;
+        player.setPlayOffsetY(offsetY);
         System.out.println("offsetY = " + offsetY);
         player.setX(tilesToPixels(x));
         player.setY(tilesToPixels(y)+offsetY);
@@ -292,9 +293,9 @@ public class TileMap {
 
     public void moveRight() {
         System.out.println("\n_______________________________");
-        System.out.println("MoveRight B4 x = " + player.getX());
+        System.out.println("MoveRight B4 x = " + player.getX()+" Y= " + player.getY());
         player.move(2);
-        System.out.println("MoveRight x = " + player.getX());
+        System.out.println("MoveRight x = " + player.getX()+" y= " + player.getY());
         System.out.println("_______________________________\n");
     }
 
