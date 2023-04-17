@@ -17,19 +17,21 @@ public class SoundManager {				// a Singleton class
 	private SoundManager () {
 		clips = new HashMap<String, Clip>();
 
-		Clip clip = loadClip("sounds/background.wav");
-		clips.put("background", clip);		// background theme sound
+		Clip clip = loadClip("sounds/background1.wav");
+		clips.put("background1", clip);		// background theme sound option1
 
-		clip = loadClip("sounds/HitSound.wav");
-		clips.put("hit", clip);			// played when player's sprite collides 
-							//   with another sprice
+		clip = loadClip("sounds/background2.wav");
+		clips.put("background2", clip);		// background theme sound option 2
+
+		clip = loadClip("sounds/background3.wav");
+		clips.put("background3", clip);		// background theme sound option 2
 
 		clip = loadClip("sounds/AppearSound.wav");
-		clips.put("appear", clip);		// played when a special sprite 
-							//   makes an appearance
+		clips.put("appear", clip);		// played when a special sprite makes an appearance
 
-		clip = loadClip("sounds/BirdSound.wav");
-		clips.put("birdSound", clip);		// played for bird-flying animation
+		clip = loadClip("sounds/door.wav");
+		clips.put("door", clip);		// door means moving unto a new level
+
 	}
 
 

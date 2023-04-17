@@ -20,9 +20,6 @@ public class GameWindow extends JFrame implements
 	private Thread gameThread = null;            	// the thread that controls the game
 	private volatile boolean isRunning = false;    	// used to stop the game thread
 
-	private BirdAnimation animation = null;		// animation sprite
-	private ImageEffect imageEffect;		// sprite demonstrating an image effect
-
 	private BufferedImage image;			// drawing area for each frame
 
 	private Image quit1Image;			// first image for quit button
@@ -167,9 +164,9 @@ public class GameWindow extends JFrame implements
 			createGameEntities();
 			return;
 		}
-		if (!isPaused && isAnimShown && !isAnimPaused)
-			animation.update();
-		imageEffect.update();
+//		if (!isPaused && isAnimShown && !isAnimPaused)
+//			animation.update();
+//		imageEffect.update();
 
 	}
 
@@ -202,11 +199,6 @@ public class GameWindow extends JFrame implements
 
 		tileMap.draw(imageContext);
 
-		if (isAnimShown)
-			animation.draw(imageContext);		// draw the animation
-
-		imageEffect.draw(imageContext);			// draw the image effect
-
 		//Graphics2D g2 = (Graphics2D) getGraphics();	// get the graphics context for window
 		drawButtons(imageContext);			// draw the buttons
 
@@ -225,7 +217,7 @@ public class GameWindow extends JFrame implements
 
 		setUndecorated(false);	// no menu bar, borders, etc.
 		setIgnoreRepaint(true);	// turn off all paint events since doing active rendering
-		setResizable(false);	// screen cannot be resized
+		setResizable(true);	// screen cannot be resized
 
 		if (!device.isFullScreenSupported()) {
 			System.out.println("Full-screen exclusive mode not supported");
@@ -241,8 +233,8 @@ public class GameWindow extends JFrame implements
 		pWidth = getBounds().width;
 		pHeight = getBounds().height;
 		
-		System.out.println("Width of window is " + pWidth);
-		System.out.println("Height of window is " + pHeight);
+//		System.out.println("Width of window is " + pWidth);
+//		System.out.println("Height of window is " + pHeight);
 
 		try {
 			createBufferStrategy(NUM_BUFFERS);
@@ -259,18 +251,6 @@ public class GameWindow extends JFrame implements
 	// This method provides details about the current display mode.
 
 	private void showCurrentMode() {
-
-//		DisplayMode dm[] = device.getDisplayModes();
-//
-//		for (int i=0; i<dm.length; i++) {
-//			System.out.println("Current Display Mode: (" +
-//                           dm[i].getWidth() + "," + dm[i].getHeight() + "," +
-//                           dm[i].getBitDepth() + "," + dm[i].getRefreshRate() + ")  " );
-//		}
-
-//		DisplayMode d = new DisplayMode (800, 600, 32, 60);
-//		device.setDisplayMode(d);
-
 
 		DisplayMode dm = device.getDisplayMode();
 
@@ -294,15 +274,12 @@ public class GameWindow extends JFrame implements
 		stopButtonArea = new Rectangle(leftOffset, 60, 150, 40);
 
 		leftOffset = leftOffset + 170;
-		showAnimButtonArea = new Rectangle(leftOffset, 60, 150, 40);
-
-		leftOffset = leftOffset + 170;
 		pauseAnimButtonArea = new Rectangle(leftOffset, 60, 150, 40);
 
 		leftOffset = leftOffset + 170;
-		int quitLength = quit1Image.getWidth(null);
-		int quitHeight = quit1Image.getHeight(null);
-		quitButtonArea = new Rectangle(leftOffset, 55, 180, 50);
+//		int quitLength = quit1Image.getWidth(null);
+//		int quitHeight = quit1Image.getHeight(null);
+		quitButtonArea = new Rectangle(leftOffset, 60, 180, 50);
 	}
 
 
@@ -346,33 +323,6 @@ public class GameWindow extends JFrame implements
 		else
 			g.drawString("Stop", stopButtonArea.x+60, stopButtonArea.y+25);
 
-		// draw the show animation 'button'
-
-		g.setColor(Color.BLACK);
-		g.drawOval(showAnimButtonArea.x, showAnimButtonArea.y, 
-			   showAnimButtonArea.width, showAnimButtonArea.height);
-
-		if (isOverShowAnimButton && !isPaused && !isStopped)
-			g.setColor(Color.WHITE);
-		else
-			g.setColor(Color.RED);
-      		g.drawString("Start Anim", showAnimButtonArea.x+35, showAnimButtonArea.y+25);
-
-		// draw the pause anim 'button'
-
-		g.setColor(Color.BLACK);
-		g.drawOval(pauseAnimButtonArea.x, pauseAnimButtonArea.y, 
-			   pauseAnimButtonArea.width, pauseAnimButtonArea.height);
-
-		if (isOverPauseAnimButton && isAnimShown && !isPaused && !isStopped)
-			g.setColor(Color.WHITE);
-		else
-			g.setColor(Color.RED);
-
-		if (isAnimShown && isAnimPaused && !isStopped)
-			g.drawString("Anim Paused", pauseAnimButtonArea.x+30, pauseAnimButtonArea.y+25);
-		else
-			g.drawString("Pause Anim", pauseAnimButtonArea.x+35, pauseAnimButtonArea.y+25);
 
 		// draw the quit button (an actual image that changes when the mouse moves over it)
 
@@ -383,17 +333,6 @@ public class GameWindow extends JFrame implements
 		else
 		   g.drawImage(quit2Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
 		    	       //quitButtonArea.width, quitButtonArea.height, null);
-/*
-		g.setColor(Color.BLACK);
-		g.drawOval(quitButtonArea.x, quitButtonArea.y, 
-			   quitButtonArea.width, quitButtonArea.height);
-		if (isOverQuitButton)
-			g.setColor(Color.WHITE);
-		else
-			g.setColor(Color.RED);
-
-		g.drawString("Quit", quitButtonArea.x+60, quitButtonArea.y+25);
-*/
 		g.setFont(oldFont);		// reset font
 
 	}
@@ -405,22 +344,18 @@ public class GameWindow extends JFrame implements
 
 	private void startGame() { 
 		if (gameThread == null) {
-//			soundManager.playSound ("background", true);
+			soundManager.playSound ("background2", true);
 
 			tileManager = new TileMapManager (this,this);
 
 			try {
-				tileMap = tileManager.loadMap("maps/map1.txt");
-//				int w, h;
-//				w = tileMap.getWidth();
-//				h = tileMap.getHeight();
+				tileMap = tileManager.loadMap("maps/map3.txt");
 			}
 			catch (Exception e) {
 				System.out.println(e);
 				System.exit(0);
 			}
 
-			imageEffect = new ImageEffect (this);
 			gameThread = new Thread(this);
 			gameThread.start();			
 
@@ -546,23 +481,23 @@ public class GameWindow extends JFrame implements
 		if (isOverPauseButton) {		// mouse click on Pause button
 			isPaused = !isPaused;     	// toggle pausing
 		}
-		else 
-		if (isOverShowAnimButton && !isPaused) {// mouse click on Start Anim button
-			isAnimShown = true;
-		 	isAnimPaused = false;
-			animation.start();
-		}
-		else
-		if (isOverPauseAnimButton) {		// mouse click on Pause Anim button
-			if (isAnimPaused) {
-				isAnimPaused = false;
-				animation.playSound();
-			}
-			else {
-				isAnimPaused = true;	// toggle pausing
-				animation.stopSound();
-			}
-		}
+//		else
+//		if (isOverShowAnimButton && !isPaused) {// mouse click on Start Anim button
+//			isAnimShown = true;
+//		 	isAnimPaused = false;
+//			animation.start();
+//		}
+//		else
+//		if (isOverPauseAnimButton) {		// mouse click on Pause Anim button
+//			if (isAnimPaused) {
+//				isAnimPaused = false;
+//				animation.playSound();
+//			}
+//			else {
+//				isAnimPaused = true;	// toggle pausing
+//				animation.stopSound();
+//			}
+//		}
 		else if (isOverQuitButton) {		// mouse click on Quit button
 			isRunning = false;		// set running to false to terminate
 		}
@@ -578,8 +513,8 @@ public class GameWindow extends JFrame implements
 		if (isRunning) {
 			isOverPauseButton = pauseButtonArea.contains(x,y) ? true : false;
 			isOverStopButton = stopButtonArea.contains(x,y) ? true : false;
-			isOverShowAnimButton = showAnimButtonArea.contains(x,y) ? true : false;
-			isOverPauseAnimButton = pauseAnimButtonArea.contains(x,y) ? true : false;
+//			isOverShowAnimButton = showAnimButtonArea.contains(x,y) ? true : false;
+//			isOverPauseAnimButton = pauseAnimButtonArea.contains(x,y) ? true : false;
 			isOverQuitButton = quitButtonArea.contains(x,y) ? true : false;
 		}
 	}

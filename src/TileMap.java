@@ -1,9 +1,6 @@
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Iterator;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JFrame;
 
 /**
@@ -15,19 +12,18 @@ import javax.swing.JFrame;
 
 public class TileMap {
 
-    private static int TILE_SIZE = 70;
+    private static int TILE_SIZE = 64;
     private static final int TILE_SIZE_BITS = 6;
     private PlayerAnimation pAni;
 
-    private Image[][] tiles;
+    private Tile[][] tiles;
     private int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
     private int offsetY;
-//    private Door door;
 
     private LinkedList sprites;
     private Player player;
-    private ArrayList<Point> fireP;
+
     private FireAnimation fire;
 
     BackgroundManager bgManager;
@@ -41,6 +37,7 @@ public class TileMap {
     */
     public TileMap(JFrame window, int width, int height, GameWindow gWindow) {
         this.window = window;
+        this.gWindow = gWindow;
         dimension = window.getSize();
 
         screenWidth = dimension.width;
@@ -50,19 +47,18 @@ public class TileMap {
         mapHeight = height;
         // get the y offset to draw all sprites and tiles
         offsetY = screenHeight - tilesToPixels(mapHeight);
-        System.out.println("offsetY: " + offsetY);
 
         bgManager = new BackgroundManager (window, 12);
+        tiles = new Tile[mapWidth][mapHeight];
 
-        tiles = new Image[mapWidth][mapHeight];
         player = new Player (window, this, bgManager);
         sprites = new LinkedList<>();
         fire = FireAnimation.getInstance();
-        fire.start();
-        this.fireP = new ArrayList<>();
+        if(gWindow.getLevel()==1)
+            fire.start();
 
         this.pAni = player.getPlayerAnimation();
-        this.gWindow = gWindow;
+
     }
 
 
@@ -109,45 +105,36 @@ public class TileMap {
             return  tiles[x][y];
         }
     }
-    /**
-     Checks if there is fire at the specified location. Returns false if
-     no fire is at the location or if the location is out of
-     bounds.
-     */
-    public  boolean isFireAt(int x, int y) {
-        AtomicBoolean isAt = new AtomicBoolean(false);
-        fireP.forEach((f->{
-            if (f.equals(new Point(x, y))) {
-                isAt.set(true);
-            }
-        }));
-        return isAt.get();
-    }
 
     public void setTileSize(int size){TILE_SIZE = size;}
 
     /**
         Sets the tile at the specified location.
     */
-    public void setTile(int x, int y, Image tile) {
-        tiles[x][y] = tile;
+    public void setTile(int x, int y, Image tile, String key) {
+        Tile t = new Tile(tile, x, y, key);
+        tiles[x][y] = t;
     }
-
 
     /**
      * Sets the Player at the specified location
      */
     public void setPlayer(int x, int y) {
+        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-100;
+        System.out.println("offsetY = " + offsetY);
         player.setX(tilesToPixels(x));
-        player.setY(tilesToPixels(y));
+        player.setY(tilesToPixels(y)+offsetY);
     }
 
     /**
      * Sets the FireAnimation at the specified locations
      */
     public void setFire(int x, int y) {
-        this.fireP.add(new Point(x,y));
+        Tile fireT = new Tile(x, y);
+        tiles[x][y] = fireT;
     }
+
+
 
     /**
         Gets an Iterator of all the Sprites in this map,
@@ -187,6 +174,8 @@ public class TileMap {
         return numTiles * TILE_SIZE;
     }
 
+
+
     /**
         Draws the specified TileMap.
     */
@@ -199,14 +188,6 @@ public class TileMap {
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX, screenWidth - mapWidthPixels);
 
-        // draw black background, if needed
-//        if (background == null ||
-//            screenHeight > background.getHeight(null))
-//        {
-//            g.setColor(Color.black);
-//            g.fillRect(0, 0, screenWidth, screenHeight);
-//        }
-
         // draw the background first
         bgManager.draw (g2);
 
@@ -215,23 +196,29 @@ public class TileMap {
         int lastTileX = firstTileX + pixelsToTiles(screenWidth) + 1;
         for (int y=0; y<mapHeight; y++) {
             for (int x=firstTileX; x <= lastTileX; x++) {
-                Image image = (Image) getTile(x, y);
-                if (image != null) {
-                    g2.drawImage(image, tilesToPixels(x) + offsetX, tilesToPixels(y) + offsetY, null);
+                if(tiles[x][y] != null && x!=81){
+                    Tile tile = tiles[x][y];
+                    switch (tile.getDisplay()){
+                        case "IMAGE":
+                            g2.drawImage(tile.getImage(), tilesToPixels(x) + offsetX, tilesToPixels(y) + offsetY, null);
+                            break;
+                        case "ANIMATION":
+                            fire.setX(tilesToPixels(x)+ offsetX);
+                            fire.setY(tilesToPixels(y)+offsetY);
+                            fire.draw(g2);
+                            fire.update();
+                            break;
+                    }
                 }
-                if(fireP.contains(new Point(x,y))){
-                    fire.setX(tilesToPixels(x)+ offsetX);
-                    fire.setY(tilesToPixels(y)+offsetY);
-                    fire.draw(g2);
-                    fire.update();
-                }
+
             }
         }
-
 
         //draw player animation
         int x = player.getX();
         int y = player.getY();
+
+//        System.out.println("GET  PLAYER x="+x+"\n y="+y);
         String key ="";
         switch (player.getState()) {
             case "LEFT" -> {

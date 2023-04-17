@@ -1,9 +1,8 @@
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
 public class Player {			
@@ -19,6 +18,7 @@ public class Player {
 		DIE,
 		IDLE
 	}
+	private State pState;
    	private static final int TILE_SIZE = TileMap.getTileSize();
 	private JFrame window;		// reference to the JFrame on which player is drawn
    	private TileMap tileMap;
@@ -37,7 +37,7 @@ public class Player {
    private Animation currentAnimation;
 	private boolean goingUp;
    private boolean goingDown;
-   private State pState;
+
    private boolean jumping = false;
    private boolean inAir;
    private int initialVelocity;
@@ -59,7 +59,7 @@ public class Player {
    }
 
 
-   public Point collidesWithTile(int newX, int newY) {
+   public Point isCollision(int newX, int newY) {
 	   int offsetY = tileMap.getOffsetY();
 	   int xTile = TileMap.pixelsToTiles(newX);
 	   int yTile = TileMap.pixelsToTiles(newY - offsetY);
@@ -67,18 +67,18 @@ public class Player {
 		   return new Point (xTile, yTile);
 	   }
 	   else {
-		   if(tileMap.isFireAt(newX,newY)){
-			   System.out.println("FIRE COLLIDES with Tile");
-			   pState = State.DIE;
-			   die();
-			   return new Point (xTile, yTile);
-		   }
+//		   if(tileMap.isFireAt(newX,newY)){
+//			   System.out.println("FIRE COLLIDES with Tile");
+//			   pState = State.DIE;
+//			   die();
+//			   return new Point (xTile, yTile);
+//		   }
 		   return null;
 	   }
    }
 
 
-   public Point collidesWithTileDown (int newX, int newY) {
+   public Point isTileBelow(int newX, int newY) {
 	   int playerWidth = playerAnimation.getWidth();
 	   int playerHeight =playerAnimation.getHeight();
 	   int offsetY = tileMap.getOffsetY();
@@ -87,8 +87,9 @@ public class Player {
 	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY + playerHeight);
 
 	  for (int yTile=yTileFrom; yTile<=yTileTo; yTile++) {
-		if (tileMap.getTile(xTile, yTile) != null||tileMap.isFireAt(newX,newY)) {
-			System.out.println("Collides with tile going down");
+//		if (tileMap.getTile(xTile, yTile) != null||tileMap.isFireAt(newX,newY)) {
+			if (tileMap.getTile(xTile, yTile) != null) {
+				System.out.println("Collides with tile going down");
 			return new Point (xTile, yTile);
 	  	}
 		else {
@@ -104,7 +105,7 @@ public class Player {
    }
 
 	//TODO
-   public Point collidesWithTileUp (int newX, int newY) {
+   public Point isTileAbove(int newX, int newY) {
 
 	   int playerWidth = playerImage.getWidth(null);
 	   int offsetY = tileMap.getOffsetY();
@@ -132,34 +133,6 @@ public class Player {
    }
 
 
-//   public Point collidesWithTile(int newX, int newY) {
-//
-//	 int playerWidth = playerImage.getWidth(null);
-//	 int playerHeight = playerImage.getHeight(null);
-//
-//      	 int fromX = Math.min (x, newX);
-//	 int fromY = Math.min (y, newY);
-//	 int toX = Math.max (x, newX);
-//	 int toY = Math.max (y, newY);
-//
-//	 int fromTileX = tileMap.pixelsToTiles (fromX);
-//	 int fromTileY = tileMap.pixelsToTiles (fromY);
-//	 int toTileX = tileMap.pixelsToTiles (toX + playerWidth - 1);
-//	 int toTileY = tileMap.pixelsToTiles (toY + playerHeight - 1);
-//
-//	 for (int x=fromTileX; x<=toTileX; x++) {
-//		for (int y=fromTileY; y<=toTileY; y++) {
-//			if (tileMap.getTile(x, y) != null) {
-//				Point tilePos = new Point (x, y);
-//				return tilePos;
-//			}
-//		}
-//	 }
-//
-//	 return null;
-//   }
-
-
    public synchronized void move (int direction) {
       int newX = x;
       Point tilePos = null;
@@ -177,7 +150,7 @@ public class Player {
 			x = 0;
 			return;
 		  }
-		  tilePos = collidesWithTile(newX, y);
+		  tilePos = isCollision(newX, y);
 
       } else if (direction == 2 ) {		// move right
 		  this.pState = State.RIGHT;
@@ -193,7 +166,7 @@ public class Player {
 			  x = tileMapWidth - pWidth;
 			  return;
 		  }
-		  tilePos = collidesWithTile(newX+pWidth, y);
+		  tilePos = isCollision(newX+pWidth, y);
 
       }else	if (direction == 3 && !jumping) {
 		  newAnimation("jumping");
@@ -204,7 +177,7 @@ public class Player {
       if (tilePos != null) {  //If player collides with wall (tile to the right or left)
 //		  System.out.println("tile position is " + tilePos.x+"\t"+tilePos.y);
 		  if(pState == State.DIE){
-			  System.out.println("Dieing???");
+			  System.out.println("Dying???");
 			  die();
 			  return;
 		  }
@@ -245,7 +218,7 @@ public class Player {
       Point tilePos;
       if (!jumping && !inAir) {
 		  playerHeight = playerAnimation.getHeight();
-		  tilePos = collidesWithTile(x, y + playerHeight + 1); 	// check below player to see if there is a tile
+		  tilePos = isCollision(x, y + playerHeight + 1); 	// check below player to see if there is a tile
 
 		  if (tilePos == null)	{			   	// there is no tile below player, so player is in the air
 			  System.out.println("inAIR");
@@ -317,7 +290,7 @@ public class Player {
 		  }
 
 		  if (goingUp) {
-			  Point tilePos = collidesWithTileUp (x, newY);
+			  Point tilePos = isTileAbove(x, newY);
 			  if (tilePos != null) {				// hits a tile going up
 				   System.out.println ("Jumping: Collision Going Up!");
 				   int offsetY = tileMap.getOffsetY();
@@ -330,7 +303,7 @@ public class Player {
 				  System.out.println ("Jumping: No collision. Going up");
 			  }
 		  } else if (goingDown) {
-			  Point tilePos = collidesWithTileDown (x, newY);
+			  Point tilePos = isTileBelow(x, newY);
 			  if(pState == State.DIE||y>800){
 				  die();
 				  return;

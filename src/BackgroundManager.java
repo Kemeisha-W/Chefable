@@ -16,15 +16,17 @@ import javax.swing.JFrame;
 public class BackgroundManager {
 
 	private String bgImages[] = {
-			"Assets/art-streets/PNG/City2/Bright/Sky.png",
-			"Assets/art-streets/PNG/City2/Bright/back.png",
-			"Assets/art-streets/PNG/City2/Bright/houses3.png",
-			"Assets/art-streets/PNG/City2/Bright/houses1.png",
-			"Assets/art-streets/PNG/City2/Bright/minishop&callbox.png",
-			"Assets/art-streets/PNG/City2/Bright/road&lamps.png"
+			"Assets/game-backgrounds/PNG/game_background_1/layers/sky.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_1.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_2.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_3.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_4.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/rocks_1.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/rocks_2.png",
+			"Assets/art-streets/PNG/City4/Bright/road.png"
 	};
 
-  	private int moveAmount[] = {3,3,2,1,1,1};
+  	private int moveAmount[] = {1,2,2,2,3,3,3,4};
 						// pixel amounts to move each background left or right
      						// a move amount of 0 makes a background stationary
 

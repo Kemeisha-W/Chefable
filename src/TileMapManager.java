@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 
@@ -13,7 +14,7 @@ import javax.swing.ImageIcon;
 public class TileMapManager {
 
     private ArrayList<Image> tiles;
-    private int currentMap = 0;
+    private HashMap<Integer,Image> decor;
     private JFrame window;
     private GameWindow gWindow;
 
@@ -34,6 +35,7 @@ public class TileMapManager {
         this.gWindow = gWindow;
         loadTileImages();
         loadCreatureSprites();
+        loadDecor();
 //        loadPowerUpSprites();
     }
 
@@ -73,17 +75,16 @@ public class TileMapManager {
                 // check if the char represents tile A, B, C etc.
                 int tile = ch - 'A';
                 if (tile >= 0 && tile < tiles.size()) {
-                    newMap.setTile(x, y, tiles.get(tile));
+                    newMap.setTile(x, y, tiles.get(tile),"foundation");
                 } else if (ch == '^') {
                     newMap.setPlayer(x,y);
                 }else if(ch == '~'){
                     newMap.setFire(x,y);
                 }
-                // check if the char represents a sprite
-//                else if (isNumeric(ch)) {
-//                    newMap.setTile(x,y,tiles.get(tile));
-//                    addSprite(newMap, coinSprite, x, y);
-//                }
+                else if (isNumeric(ch)) {
+                    int key = Character.getNumericValue(ch);
+                    newMap.setTile(x,y,decor.get(key),"use");
+                }
 //                else if (ch == '!') {
 //                    newMap.setTile(x,y,tiles.get(tile));
 //                    addSprite(newMap, musicSprite, x, y);
@@ -152,30 +153,36 @@ public class TileMapManager {
             }
 
             Image tileImage = new ImageIcon(filename).getImage();
-            tileImage = tileImage.getScaledInstance(100, 100,Image.SCALE_DEFAULT);
+            tileImage = tileImage.getScaledInstance(64, 64,Image.SCALE_DEFAULT);
             tiles.add(tileImage);
             ch++;
         }
 
-//        while(true) {
-//
-//            filename = "Assets/cartoon game tileset/PNG/Environment/Decor_"+num+".png";
-//            file = new File(filename);
-//            if (!file.exists()) {
-//                System.out.println("Image file could not be opened: " + filename);
-//                break;
-//            } else
-//                System.out.println("Image file opened: " + filename);
-//
-//            Image tileImage = new ImageIcon(filename).getImage();
-//            int width = Math.floorDiv(window.getWidth(), 20);
-//            int height = Math.floorDiv(window.getHeight(), 15);
-//            System.out.println("Tile Width: " + width +" \tTile Height: " + height);
-//            tileImage = tileImage.getScaledInstance(width, height,Image.SCALE_DEFAULT);
-//
-//            tiles.add(tileImage);
-//            num++;
-//        }
+    }
+
+
+    public void loadDecor(){
+        File file;
+
+        String filename ="";
+        int num = 1;
+        decor = new HashMap<>();
+        while(true) {
+            filename = "Assets/cartoon game tileset/PNG/Environment/Decor_"+num+".png";
+            file = new File(filename);
+            if (!file.exists()) {
+                System.out.println("Image file could not be opened: " + filename);
+                break;
+            }
+
+            Image decorImage = new ImageIcon(filename).getImage();
+            decorImage = decorImage.getScaledInstance(64, 64,Image.SCALE_DEFAULT);
+            decor.put(num,decorImage);
+            num++;
+        }
+    }
+
+    public void loadCreatureSprites() {
 //        num =1;
 //        while(true) {
 //            filename="Assets/cartoon game tileset/PNG/Building/Door_0"+num+".png";
@@ -195,10 +202,6 @@ public class TileMapManager {
 //            tiles.add(tileImage);
 //            num++;
 //        }
-    }
-
-    public void loadCreatureSprites() {
-
         Image[][] images = new Image[4][];
 
         // load left-facing images

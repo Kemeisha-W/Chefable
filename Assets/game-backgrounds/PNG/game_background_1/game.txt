@@ -1,0 +1,10 @@
+private String bgImages[] = {
+			"Assets/game-backgrounds/PNG/game_background_1/layers/sky.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_1.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_2.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_3.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/clouds_4.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/rocks_1.png",
+			"Assets/game-backgrounds/PNG/game_background_1/layers/rocks_2.png",
+			"Assets/art-streets/PNG/City4/Bright/road.png"
+	};

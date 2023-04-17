@@ -1,0 +1,29 @@
+Index: src/TileMap.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/TileMap.java b/src/TileMap.java
+--- a/src/TileMap.java	
++++ b/src/TileMap.java	(date 1681573271888)
+@@ -268,9 +268,7 @@
+             }
+         }
+         this.pAni.update("",key);
+-        if(player.getState() =="DIE"){
+-            restartLevel();
+-        }
++
+ 
+ 
+         // draw sprites
+@@ -288,6 +286,9 @@
+ //                ((Creature)sprite).wakeUp();
+ //            }
+ //        }
++        if(player.getState() =="DIE"){
++            restartLevel();
++        }
+     }
+ 
+     public void moveLeft() {
