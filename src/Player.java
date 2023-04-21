@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Player {
 
-	private static final int DX = 8;    // amount of X pixels to move in one keystroke
+	private static final int DX = 16;    // amount of X pixels to move in one keystroke
 	private static final int DY = 32;    // amount of Y pixels to move in one keystroke
 
 	private enum State{
@@ -65,7 +65,7 @@ public class Player {
 	   int yTile = TileMap.pixelsToTiles(newY- offsetY);
 //	   System.out.println("XTile: "+xTile+" YTile: "+yTile);
 	   Tile tile = tileMap.getTile(xTile, yTile);
-	   System.out.println("TILE: " + tile);
+	   System.out.println("is collision TILE: " + tile);
 	   if (tile!= null && Objects.equals(tile.getState(), "FOUNDATION")) {
 		   if(isFire(tile)){
 			   return null;
@@ -78,11 +78,12 @@ public class Player {
 
 
    public Tile isTileBelow(int newX, int newY) {
-	   int xTile = TileMap.pixelsToTiles(newX);
+	   int xTile = TileMap.pixelsToTiles(newX-tileMap.offsetX+150);
 	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY + 300);
-
-	   for (int yTile=yTileFrom; yTile<=yTileTo; yTile++) {
+	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
+	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
+//		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX+150));
+		   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTile+"\t XTile: "+xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
 		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")){
 			   System.out.println("Collides with tile going down");
@@ -97,7 +98,7 @@ public class Player {
 					   return null;
 				   }
 				   int leftSide = (xTile + 1) * TILE_SIZE;
-				   if (newX + 300 > leftSide) {
+				   if (newX + tileMap.offsetX > leftSide) {
 					   return tile;
 				   }
 			   }
@@ -141,7 +142,7 @@ public class Player {
 
    public synchronized void move (int direction) {
       int newX = x;
-	  Tile tile = null;
+	   Tile tile = null;
       Point tilePos = null;
 
       if (!window.isVisible ()) return;
@@ -325,6 +326,7 @@ public class Player {
       timeElapsed++;
 
       if (jumping || inAir) {
+		  System.out.println("Jumping: "+jumping+" \n inAir: "+inAir);
 		  distance = (int) (initialVelocity * timeElapsed - 4.9 * timeElapsed * timeElapsed);
 		  newY = startY - distance;
 

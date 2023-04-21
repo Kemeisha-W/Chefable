@@ -1,61 +1,61 @@
-import javax.swing.*;			// need this for GUI objects
-import java.awt.*;			// need this for certain AWT classes
+import javax.swing.*;            // need this for GUI objects
+import java.awt.*;            // need this for certain AWT classes
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
-import java.awt.image.BufferStrategy;	// need this to implement page flipping
+import java.awt.image.BufferStrategy;    // need this to implement page flipping
 
 public class GameWindow extends JFrame implements
-				Runnable,
-				KeyListener,
-				MouseListener,
-				MouseMotionListener
+		Runnable,
+		KeyListener,
+		MouseListener,
+		MouseMotionListener
 {
-  	private static final int NUM_BUFFERS = 2;	// used for page flipping
+	private static final int NUM_BUFFERS = 2;    // used for page flipping
 	private int level;
 
 	private boolean gameOver;
 	private boolean levelChange;
-	private int pWidth, pHeight;     		// width and height of screen
+	private int pWidth, pHeight;             // width and height of screen
 
-	private Thread gameThread = null;            	// the thread that controls the game
-	private volatile boolean isRunning = false;    	// used to stop the game thread
+	private Thread gameThread = null;                // the thread that controls the game
+	private volatile boolean isRunning = false;        // used to stop the game thread
 
-	private BufferedImage image;			// drawing area for each frame
+	private BufferedImage image;            // drawing area for each frame
 
-	private Image quit1Image;			// first image for quit button
-	private Image quit2Image;			// second image for quit button
+	private Image quit1Image;            // first image for quit button
+	private Image quit2Image;            // second image for quit button
 
-	private boolean finishedOff = false;		// used when the game terminates
+	private boolean finishedOff = false;        // used when the game terminates
 
 	private volatile boolean isOverQuitButton = false;
-	private Rectangle quitButtonArea;		// used by the quit button
+	private Rectangle quitButtonArea;        // used by the quit button
 
 	private volatile boolean isOverPauseButton = false;
-	private Rectangle pauseButtonArea;		// used by the pause 'button'
+	private Rectangle pauseButtonArea;        // used by the pause 'button'
 	private volatile boolean isPaused = false;
 
 	private volatile boolean isOverStopButton = false;
-	private Rectangle stopButtonArea;		// used by the stop 'button'
+	private Rectangle stopButtonArea;        // used by the stop 'button'
 	private volatile boolean isStopped = false;
 
 	private volatile boolean isOverShowAnimButton = false;
-	private Rectangle showAnimButtonArea;		// used by the show animation 'button'
+	private Rectangle showAnimButtonArea;        // used by the show animation 'button'
 	private volatile boolean isAnimShown = false;
 
 	private volatile boolean isOverPauseAnimButton = false;
-	private Rectangle pauseAnimButtonArea;		// used by the pause animation 'button'
+	private Rectangle pauseAnimButtonArea;        // used by the pause animation 'button'
 	private volatile boolean isAnimPaused = false;
-   
-	private GraphicsDevice device;			// used for full-screen exclusive mode 
+
+	private GraphicsDevice device;            // used for full-screen exclusive mode
 	private Graphics gScr;
 	private BufferStrategy bufferStrategy;
 
 	private SoundManager soundManager;
 	TileMapManager tileManager;
-	TileMap	tileMap;
+	TileMap tileMap;
 
 	public GameWindow() {
- 
+
 		super("Tiled Bat and Ball Game: Full Screen Exclusive Mode");
 
 		initScreen();
@@ -91,19 +91,18 @@ public class GameWindow extends JFrame implements
 				screenUpdate();
 				Thread.sleep (50);
 			}
-		}
-		catch(InterruptedException e) {}
+		} catch(InterruptedException e) {}
 
 		finishOff();
 	}
 
 
-	/* This method performs some tasks before closing the game.
+    /* This method performs some tasks before closing the game.
 	   The call to System.exit() should not be necessary; however,
 	   it prevents hanging when the game terminates.
 	*/
 
-	private void finishOff() { 
+	private void finishOff() {
 		if (!finishedOff) {
 			finishedOff = true;
 			restoreScreen();
@@ -113,16 +112,16 @@ public class GameWindow extends JFrame implements
 
 
 	/**
-	   This method switches off full screen mode. The display
-	   mode is also reset if it has been changed.
-	*/
+	 This method switches off full screen mode. The display
+	 mode is also reset if it has been changed.
+	 */
 
 	private void restoreScreen() {
 		Window w = device.getFullScreenWindow();
-		
+
 		if (w != null)
 			w.dispose();
-		
+
 		device.setFullScreenWindow(null);
 	}
 
@@ -138,6 +137,7 @@ public class GameWindow extends JFrame implements
 		this.level = level;
 		levelChange = true;
 	}
+
 	public void gameUpdate () {
 		tileMap.update();
 		if(levelChange){
@@ -153,8 +153,7 @@ public class GameWindow extends JFrame implements
 				System.out.println ("Changing level to Level " + level);
 				System.out.println ("Width of tilemap " + w);
 				System.out.println ("Height of tilemap " + h);
-			}
-			catch (Exception e) {		// no more maps: terminate game
+			} catch (Exception e) {        // no more maps: terminate game
 				gameOver = true;
 				System.out.println(e);
 				System.out.println("Game Over");
@@ -185,22 +184,21 @@ public class GameWindow extends JFrame implements
 			// (on Linux, this fixes event queue problems)
 
 			Toolkit.getDefaultToolkit().sync();
+		} catch (Exception e) {
+			e.printStackTrace();
+			isRunning = false;
 		}
-		catch (Exception e) { 
-			e.printStackTrace();  
-			isRunning = false; 
-		} 
 	}
 
 
-	public void gameRender (Graphics gScr)  {		// draw the game objects
+	public void gameRender (Graphics gScr)  {        // draw the game objects
 
 		Graphics2D imageContext = (Graphics2D) image.getGraphics();
 
 		tileMap.draw(imageContext);
 
 		//Graphics2D g2 = (Graphics2D) getGraphics();	// get the graphics context for window
-		drawButtons(imageContext);			// draw the buttons
+		drawButtons(imageContext);            // draw the buttons
 
 		Graphics2D g2 = (Graphics2D) gScr;
 		g2.drawImage(image, 0, 0, pWidth, pHeight, null);
@@ -210,14 +208,14 @@ public class GameWindow extends JFrame implements
 	}
 
 
-	private void initScreen() {				// standard procedure to get into FSEM
+	private void initScreen() {                // standard procedure to get into FSEM
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		device = ge.getDefaultScreenDevice();
 
-		setUndecorated(false);	// no menu bar, borders, etc.
-		setIgnoreRepaint(true);	// turn off all paint events since doing active rendering
-		setResizable(true);	// screen cannot be resized
+		setUndecorated(false);    // no menu bar, borders, etc.
+		setIgnoreRepaint(true);    // turn off all paint events since doing active rendering
+		setResizable(true);    // screen cannot be resized
 
 		if (!device.isFullScreenSupported()) {
 			System.out.println("Full-screen exclusive mode not supported");
@@ -232,15 +230,14 @@ public class GameWindow extends JFrame implements
 
 		pWidth = getBounds().width;
 		pHeight = getBounds().height;
-		
+
 //		System.out.println("Width of window is " + pWidth);
 //		System.out.println("Height of window is " + pHeight);
 
 		try {
 			createBufferStrategy(NUM_BUFFERS);
-		}
-		catch (Exception e) {
-			System.out.println("Error while creating buffer strategy " + e); 
+		} catch (Exception e) {
+			System.out.println("Error while creating buffer strategy " + e);
 			System.exit(0);
 		}
 
@@ -257,13 +254,13 @@ public class GameWindow extends JFrame implements
 		System.out.println("Current Display Mode: (" +
                            dm.getWidth() + "," + dm.getHeight() + "," +
                            dm.getBitDepth() + "," + dm.getRefreshRate() + ")  " );
-  	}
+	}
 
 
 	// Specify screen areas for the buttons and create bounding rectangles
 
 	private void setButtonAreas() {
-		
+
 		//  leftOffset is the distance of a button from the left side of the window.
 		//  Buttons are placed at the top of the window.
 
@@ -286,21 +283,21 @@ public class GameWindow extends JFrame implements
 	private void drawButtons (Graphics g) {
 		Font oldFont, newFont;
 
-		oldFont = g.getFont();		// save current font to restore when finished
-	
+		oldFont = g.getFont();        // save current font to restore when finished
+
 		newFont = new Font ("TimesRoman", Font.ITALIC + Font.BOLD, 18);
-		g.setFont(newFont);		// set this as font for text on buttons
-    		g.setColor(Color.black);	// set outline colour of button
+		g.setFont(newFont);        // set this as font for text on buttons
+		g.setColor(Color.black);    // set outline colour of button
 
 		// draw the pause 'button'
 		g.setColor(Color.BLACK);
-		g.drawOval(pauseButtonArea.x, pauseButtonArea.y, 
-			   pauseButtonArea.width, pauseButtonArea.height);
+		g.drawOval(pauseButtonArea.x, pauseButtonArea.y,
+				pauseButtonArea.width, pauseButtonArea.height);
 
 		if (isOverPauseButton && !isStopped)
 			g.setColor(Color.WHITE);
 		else
-			g.setColor(Color.RED);	
+			g.setColor(Color.RED);
 
 		if (isPaused && !isStopped)
 			g.drawString("Paused", pauseButtonArea.x+45, pauseButtonArea.y+25);
@@ -310,8 +307,8 @@ public class GameWindow extends JFrame implements
 		// draw the stop 'button'
 
 		g.setColor(Color.BLACK);
-		g.drawOval(stopButtonArea.x, stopButtonArea.y, 
-			   stopButtonArea.width, stopButtonArea.height);
+		g.drawOval(stopButtonArea.x, stopButtonArea.y,
+				stopButtonArea.width, stopButtonArea.height);
 
 		if (isOverStopButton && !isStopped)
 			g.setColor(Color.WHITE);
@@ -327,13 +324,13 @@ public class GameWindow extends JFrame implements
 		// draw the quit button (an actual image that changes when the mouse moves over it)
 
 		if (isOverQuitButton)
-		   g.drawImage(quit1Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
-		    	       //quitButtonArea.width, quitButtonArea.height, null);
-				
+			g.drawImage(quit1Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
+			//quitButtonArea.width, quitButtonArea.height, null);
+
 		else
-		   g.drawImage(quit2Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
-		    	       //quitButtonArea.width, quitButtonArea.height, null);
-		g.setFont(oldFont);		// reset font
+			g.drawImage(quit2Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
+		//quitButtonArea.width, quitButtonArea.height, null);
+		g.setFont(oldFont);        // reset font
 
 	}
 
@@ -342,7 +339,7 @@ public class GameWindow extends JFrame implements
 		levelChange = true;
 	}
 
-	private void startGame() { 
+	private void startGame() {
 		if (gameThread == null) {
 //			soundManager.playSound ("background2", true); TODO
 
@@ -357,7 +354,7 @@ public class GameWindow extends JFrame implements
 			}
 
 			gameThread = new Thread(this);
-			gameThread.start();			
+			gameThread.start();
 
 		}
 	}
@@ -366,13 +363,13 @@ public class GameWindow extends JFrame implements
 	// displays a message to the screen when the user stops the game
 
 	private void gameOverMessage(Graphics g) {
-		
+
 		Font font = new Font("SansSerif", Font.BOLD, 24);
 		FontMetrics metrics = this.getFontMetrics(font);
 
 		String msg = "Game Over. Thanks for playing!";
 
-		int x = (pWidth - metrics.stringWidth(msg)) / 2; 
+		int x = (pWidth - metrics.stringWidth(msg)) / 2;
 		int y = (pHeight - metrics.getHeight()) / 2;
 
 		g.setColor(Color.BLUE);
@@ -390,8 +387,8 @@ public class GameWindow extends JFrame implements
 
 		int keyCode = e.getKeyCode();
 		if ((keyCode == KeyEvent.VK_ESCAPE) || (keyCode == KeyEvent.VK_Q) || (keyCode == KeyEvent.VK_END)) {
-			isRunning = false;		// user can quit anytime by pressing
-			return;				//  one of these keys (ESC, Q, END)
+			isRunning = false;        // user can quit anytime by pressing
+			return;                //  one of these keys (ESC, Q, END)
 		}
 		switch (keyCode){
 			case KeyEvent.VK_LEFT:
@@ -456,30 +453,28 @@ public class GameWindow extends JFrame implements
 
 	public void mouseDragged(MouseEvent e) {
 
-	}	
-
-
-	public void mouseMoved(MouseEvent e) {
-		testMouseMove(e.getX(), e.getY()); 
 	}
 
 
-	/* This method handles mouse clicks on one of the buttons
+	public void mouseMoved(MouseEvent e) {
+		testMouseMove(e.getX(), e.getY());
+	}
+
+
+    /* This method handles mouse clicks on one of the buttons
 	   (Pause, Stop, Start Anim, Pause Anim, and Quit).
 	*/
 
 	private void testMousePress(int x, int y) {
 
-		if (isStopped && !isOverQuitButton) 	// don't do anything if game stopped
+		if (isStopped && !isOverQuitButton)     // don't do anything if game stopped
 			return;
 
-		if (isOverStopButton) {			// mouse click on Stop button
+		if (isOverStopButton) {            // mouse click on Stop button
 			isStopped = true;
 			isPaused = false;
-		}
-		else
-		if (isOverPauseButton) {		// mouse click on Pause button
-			isPaused = !isPaused;     	// toggle pausing
+		} else if (isOverPauseButton) {        // mouse click on Pause button
+			isPaused = !isPaused;         // toggle pausing
 		}
 //		else
 //		if (isOverShowAnimButton && !isPaused) {// mouse click on Start Anim button
@@ -498,18 +493,18 @@ public class GameWindow extends JFrame implements
 //				animation.stopSound();
 //			}
 //		}
-		else if (isOverQuitButton) {		// mouse click on Quit button
-			isRunning = false;		// set running to false to terminate
+		else if (isOverQuitButton) {        // mouse click on Quit button
+			isRunning = false;        // set running to false to terminate
 		}
-  	}
+	}
 
 
-	/* This method checks to see if the mouse is currently moving over one of
+    /* This method checks to see if the mouse is currently moving over one of
 	   the buttons (Pause, Stop, Show Anim, Pause Anim, and Quit). It sets a
 	   boolean value which will cause the button to be displayed accordingly.
 	*/
 
-	private void testMouseMove(int x, int y) { 
+	private void testMouseMove(int x, int y) {
 		if (isRunning) {
 			isOverPauseButton = pauseButtonArea.contains(x,y) ? true : false;
 			isOverStopButton = stopButtonArea.contains(x,y) ? true : false;
