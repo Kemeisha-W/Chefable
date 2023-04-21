@@ -11,8 +11,8 @@ public class FireAnimation {
 	private int x;		// x position of animation
 	private int y;		// y position of animation
 
-	private int width = 100;
-	private int height = 80;
+	private final int width = 64;
+	private final int height = 64;
 
 
 	private static FireAnimation single_instance = null;

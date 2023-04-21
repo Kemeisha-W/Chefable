@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.Objects;
 import javax.swing.JFrame;
 
 /**
@@ -184,8 +185,9 @@ public class TileMap {
         int mapWidthPixels = tilesToPixels(mapWidth);
 
         // get the scrolling position of the map based on player's position
+//        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-100;
 
-        int offsetX = screenWidth / 2 - Math.round(player.getX()) - TILE_SIZE;
+        int offsetX = screenWidth/3-player.getX() - TILE_SIZE;
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX, screenWidth - mapWidthPixels);
 
@@ -211,7 +213,6 @@ public class TileMap {
                             break;
                     }
                 }
-
             }
         }
 
@@ -274,29 +275,28 @@ public class TileMap {
 //                ((Creature)sprite).wakeUp();
 //            }
 //        }
-        if(player.getState() =="DIE"){
+        if(Objects.equals(player.getState(), "DIE")){
             restartLevel();
         }
     }
 
     public void moveLeft() {
-        System.out.println("\n_______________________________");
-
-        System.out.println("MoveLeft B4 x = " + player.getX());
+//        System.out.println("\n_______________________________");
+//        System.out.println("MoveLeft B4 x = " + player.getX());
 
         player.move(1);
-        System.out.println("MoveLeft x = " + player.getX());
-        System.out.println("_______________________________\n");
+//        System.out.println("MoveLeft x = " + player.getX());
+//        System.out.println("_______________________________\n");
 
     }
 
 
     public void moveRight() {
-        System.out.println("\n_______________________________");
-        System.out.println("MoveRight B4 x = " + player.getX()+" Y= " + player.getY());
+//        System.out.println("\n_______________________________");
+//        System.out.println("MoveRight B4 x = " + player.getX()+" Y= " + player.getY());
         player.move(2);
-        System.out.println("MoveRight x = " + player.getX()+" y= " + player.getY());
-        System.out.println("_______________________________\n");
+//        System.out.println("MoveRight x = " + player.getX()+" y= " + player.getY());
+//        System.out.println("_______________________________\n");
     }
 
 

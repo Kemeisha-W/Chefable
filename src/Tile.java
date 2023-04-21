@@ -13,9 +13,10 @@ public class Tile {
 
     private State tState;
     private Display tDisplay;
-    private Image tImage;
+    private Image tImage = null;
+
+    /** Set Image Tile position*/
     public Tile(Image i, int x, int y,String key){
-        /** Set Image Tile position*/
         tDisplay = Display.IMAGE;
         switch (key){
             case "foundation":
@@ -29,8 +30,8 @@ public class Tile {
         tImage = i;
     }
 
+    /** Set Animation Tile position*/
     public Tile(int x, int y){
-        /** Set Animation Tile position*/
         tDisplay = Display.ANIMATION;
         tState = State.FOUNDATION;
         position = new Point(x,y);

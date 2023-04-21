@@ -32,6 +32,7 @@ public class PlayerAnimation {
             loadJump();
             loadFall();
             loadLand();
+            loadUse();
 
         }
 
@@ -183,6 +184,21 @@ public class PlayerAnimation {
             animation.addFrame(animImages.get("land"+num), 300);
         }
         animations.put("land",animation);
+
+        soundManager = SoundManager.getInstance();
+    }
+    private void loadUse(){
+        for(int num=0;num<13;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/characters/player/Character3F_1_use_"+num+".png");
+            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("use"+num,i);
+        }
+        animation = new Animation(false);	// play once only
+
+        for(int num=0;num<2;num++){
+            animation.addFrame(animImages.get("use"+num), 200);
+        }
+        animations.put("use",animation);
 
         soundManager = SoundManager.getInstance();
     }
