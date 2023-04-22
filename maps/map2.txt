@@ -13,8 +13,8 @@
                       DBBBH
                               DBBBH
         DBBBH
-                                                DBBBH           *
-                      !             DBBBH                  DBBBBH
-                    DBBBH                                  IFFFFF
-^                                                          IFFFFF
-BBBBBH000DBBBHOOOOOOOOOOOONNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNIFFFFF
+                                                DBBBH          *
+                      !             DBBBH                 DBBBBH
+^                   DBBBH                                 IFFFFF
+BBBBBH   DBBH                                             IFFFFF
+FFFFFF000IFFMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOIFFFFF

@@ -78,11 +78,11 @@ public class Player {
 
 
    public Tile isTileBelow(int newX, int newY) {
-	   int xTile = TileMap.pixelsToTiles(newX-tileMap.offsetX+150);
-	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
+	   int xTile = TileMap.pixelsToTiles(newX+150);
+	    int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
 	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
 	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
-//		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX+150));
+//		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX));
 		   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTile+"\t XTile: "+xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
 		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")){
@@ -98,7 +98,7 @@ public class Player {
 					   return null;
 				   }
 				   int leftSide = (xTile + 1) * TILE_SIZE;
-				   if (newX + tileMap.offsetX > leftSide) {
+				   if (newX + playerAnimation.getWidth() > leftSide) {
 					   return tile;
 				   }
 			   }

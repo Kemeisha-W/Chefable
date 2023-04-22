@@ -21,6 +21,7 @@ public class TileMap {
     private int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
     private int offsetY;
+    public int offsetX;
 
     private LinkedList sprites;
     private Player player;
@@ -63,11 +64,17 @@ public class TileMap {
     }
 
 
+    int getMapHeight() {
+        return mapHeight;
+    }
+    int getMapWidth() {
+        return mapWidth;
+    }
     /**
         Gets the width of this TileMap (number of pixels across).
     */
     public int getWidthPixels() {
-	    return tilesToPixels(mapWidth);
+        return tilesToPixels(mapWidth);
     }
 
 
@@ -86,10 +93,6 @@ public class TileMap {
         return mapHeight;
     }
 
-
-    public int getOffsetY() {
-	    return offsetY;
-    }
 
     /**
      * Gets the tile at the specified location. Returns null if
@@ -185,75 +188,79 @@ public class TileMap {
         int mapWidthPixels = tilesToPixels(mapWidth);
 
         // get the scrolling position of the map based on player's position
-//        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-100;
+        int playerX = player.getX();
+        offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
+        System.out.println("\n_______________________________");
+        System.out.println("\n Player x: "+player.getX()+"\noffsetX: "+offsetX);
 
-        int offsetX = screenWidth/3-player.getX() - TILE_SIZE;
         offsetX = Math.min(offsetX, 0);
-        offsetX = Math.max(offsetX, screenWidth - mapWidthPixels);
+        offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
+
 
         // draw the background first
         bgManager.draw (g2);
 
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
-        int lastTileX = firstTileX + pixelsToTiles(screenWidth) + 1;
+        int lastTileX = firstTileX + pixelsToTiles(screenWidth)+1;
+        System.out.println("First: " + firstTileX+"\t Last:"  + lastTileX);
+        System.out.println("_______________________________\n");
         for (int y=0; y<mapHeight; y++) {
             for (int x=firstTileX; x <= lastTileX; x++) {
-                if(tiles[x][y] != null && x!=81){
-                    Tile tile = tiles[x][y];
-                    switch (tile.getDisplay()){
-                        case "IMAGE":
-                            g2.drawImage(tile.getImage(), tilesToPixels(x) + offsetX, tilesToPixels(y) + offsetY, null);
-                            break;
-                        case "ANIMATION":
-                            fire.setX(tilesToPixels(x)+ offsetX);
-                            fire.setY(tilesToPixels(y)+offsetY);
-                            fire.draw(g2);
-                            fire.update();
-                            break;
+                if(x<mapWidth){
+                    if(tiles[x][y] != null){
+                        Tile tile = tiles[x][y];
+                        switch (tile.getDisplay()) {
+                            case "IMAGE" ->
+                                    g2.drawImage(tile.getImage(), tilesToPixels(x) + offsetX, tilesToPixels(y) + offsetY, null);
+                            case "ANIMATION" -> {
+                                fire.setX(tilesToPixels(x) + offsetX);
+                                fire.setY(tilesToPixels(y) + offsetY);
+                                fire.draw(g2);
+                                fire.update();
+                            }
+                        }
                     }
                 }
             }
         }
 
         //draw player animation
-        int x = player.getX();
         int y = player.getY();
-
-//        System.out.println("GET  PLAYER x="+x+"\n y="+y);
+        playerX = Math.round((float)playerX)+offsetX;
         String key ="";
         switch (player.getState()) {
             case "LEFT" -> {
                 key = "walk_left";
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "RIGHT" -> {
                 key = "walk_right";
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "JUMP" -> {
                 key = "jumping";
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "FALL" -> {
                 key = "falling";
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "LAND" -> {
                 key = "land";
-                this.pAni.draw(g2, key, x, y);
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
+                this.pAni.draw(g2, key, playerX, y);
                 player.setState("IDLE");
             }
             case "DIE" -> {
                 key = "death";
                 System.out.println("DIE: ");
-                this.pAni.draw(g2, key, x, y);
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "IDLE" -> {
                 key = "idle";
-                this.pAni.draw(g2, key, x, y);
+                this.pAni.draw(g2, key, playerX, y);
             }
         }
         this.pAni.update("",key);
@@ -281,22 +288,12 @@ public class TileMap {
     }
 
     public void moveLeft() {
-//        System.out.println("\n_______________________________");
-//        System.out.println("MoveLeft B4 x = " + player.getX());
-
         player.move(1);
-//        System.out.println("MoveLeft x = " + player.getX());
-//        System.out.println("_______________________________\n");
-
     }
 
 
     public void moveRight() {
-//        System.out.println("\n_______________________________");
-//        System.out.println("MoveRight B4 x = " + player.getX()+" Y= " + player.getY());
         player.move(2);
-//        System.out.println("MoveRight x = " + player.getX()+" y= " + player.getY());
-//        System.out.println("_______________________________\n");
     }
 
 
@@ -309,7 +306,7 @@ public class TileMap {
     }
 
     public void update() {
-	    player.update();
+        player.update();
 
 //        TODO Update level when player collides with door
 //        if (door.collidesWithPlayer()) {
