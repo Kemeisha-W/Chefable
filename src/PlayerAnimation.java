@@ -11,8 +11,8 @@ public class PlayerAnimation {
      */
 
         public Animation animation;
-        private static final int pWidth=300;
-        private static final int pHeight=300;
+        private static final int pWidth=200;
+        private static final int pHeight=200;
 
 
         public HashMap<String,Animation> animations = new HashMap<>();

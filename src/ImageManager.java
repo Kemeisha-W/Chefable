@@ -1,6 +1,5 @@
-import javax.swing.ImageIcon;
-import java.awt.Image;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +17,10 @@ public class ImageManager {
 
 	public static Image loadImage (String fileName) {
 		return new ImageIcon(fileName).getImage();
+	}
+
+	public static Icon loadIcon (String fileName){
+		   return new ImageIcon(fileName);
 	}
 
 	public static BufferedImage loadBufferedImage(String filename) {

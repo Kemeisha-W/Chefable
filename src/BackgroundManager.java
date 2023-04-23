@@ -11,7 +11,7 @@
 */
 
 import java.awt.Graphics2D;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 public class BackgroundManager {
 
@@ -33,10 +33,9 @@ public class BackgroundManager {
   	private Background[] backgrounds;
   	private int numBackgrounds;
 
-  	private JFrame window;			// JFrame on which backgrounds are drawn
+  	private JPanel window;			// JFrame on which backgrounds are drawn
 
-  	public BackgroundManager(JFrame window, int moveSize) {
-						// ignore moveSize
+  	public BackgroundManager(JPanel window, int moveSize) {
     		this.window = window;
 
     		numBackgrounds = bgImages.length;

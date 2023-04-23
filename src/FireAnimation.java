@@ -6,13 +6,13 @@ import java.awt.geom.Rectangle2D;
 */
 public class FireAnimation {
 
-	Animation animation;
+	private final Animation animation;
 
 	private int x;		// x position of animation
 	private int y;		// y position of animation
 
-	private final int width = 64;
-	private final int height = 64;
+	private final int width = 32;
+	private final int height = 32;
 
 
 	private static FireAnimation single_instance = null;
@@ -86,6 +86,5 @@ public class FireAnimation {
 	public void setY(int y) {
 		this.y = y;
 	}
-
 
 }

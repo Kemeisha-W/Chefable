@@ -1,8 +1,7 @@
 import java.awt.Graphics2D;
 import java.awt.Dimension;
 import java.awt.Image;
-import javax.swing.JFrame;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class Background {
   	private Image bgImage;
@@ -16,16 +15,13 @@ public class Background {
 	private int bgDX;			// size of the background move (in pixels)
 
 
-	public Background(JFrame window, String imageFile, int bgDX) {
+	public Background(JPanel window, String imageFile, int bgDX) {
 
 		this.bgImage = loadImage(imageFile);
 		bgImageWidth = bgImage.getWidth(null);	// get width of the background
 
 		dimension = window.getSize();
-		if (bgImageWidth < dimension.width){
-			this.bgImage = this.bgImage.getScaledInstance(dimension.width-10,dimension.height,Image.SCALE_DEFAULT);
-		}
-
+			this.bgImage = this.bgImage.getScaledInstance(dimension.width,dimension.height,Image.SCALE_DEFAULT);
 		this.bgDX = bgDX;
 
   	}

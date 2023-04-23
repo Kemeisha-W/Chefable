@@ -3,7 +3,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.Image;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -18,7 +18,7 @@ public class ImageEffect {
 	private static final int XSTEP = 7;		// amount of pixels to move in one keystroke
 	private static final int YPOS = 150;		// vertical position of the image
 
-	private JFrame window;				// JFrame on which image will be drawn
+	private JPanel window;				// JFrame on which image will be drawn
 	private Dimension dimension;
 	private int x;
 	private int y;
@@ -32,7 +32,7 @@ public class ImageEffect {
 	boolean originalImage, grayImage;
 
 
-	public ImageEffect (JFrame window) {
+	public ImageEffect (JPanel window) {
 		this.window = window;
 		Graphics g = window.getGraphics ();
 		g2 = (Graphics2D) g;
@@ -47,8 +47,8 @@ public class ImageEffect {
 		originalImage = true;
 		grayImage = false;
 
-		spriteImage = loadImage("images/Butterfly.png");
-		copy = copyImage(spriteImage);		//  copy original image
+//		spriteImage = loadImage("images/Butterfly.png");
+//		copy = copyImage(spriteImage);		//  copy original image
 
 	}
 

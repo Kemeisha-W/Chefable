@@ -26,19 +26,32 @@ public class AnimationManager {
     public AnimationManager() {
 
         dx = 10;	// increment to move along x-axis
-        dy = -3;	// increment to move along y-axis
+        dy = 0;	// increment to move along y-axis
 
         loadChefWalking();
         loadFire();
         loadFireworks();
-
+        loadHeart();
+        loadGameOverAni();
+        loadStartGameAni();
     }
 
 
+    public void setX(int x) {
+        this.x = x;
+    }
+    public void setY(int y) {
+        this.y = y;
+    }
+    public void setDx(int dx) {
+        this.dx = dx;
+    }
+    public void setDy(int dy) {
+        this.dy = dy;
+    }
 
     public void start(String sound) {
-        x = 100;
-        y = 300;
+
         animation.start();
         playSound(sound);
     }
@@ -66,7 +79,7 @@ public class AnimationManager {
         if (!animation.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x, y, 150, 125, null);
+        g2.drawImage(animation.getImage(), x, y, 150, 150, null);
     }
 
     public void playSound(String title) {
@@ -99,58 +112,85 @@ public class AnimationManager {
     }
 
     private void loadFireworks(){
-        animImages.put("fireworks1",ImageManager.loadImage("Assets/blue fireworks/Explosion_1.png"));
-        animImages.put("fireworks2",ImageManager.loadImage("Assets/blue fireworks/Explosion_2.png"));
-        animImages.put("fireworks3",ImageManager.loadImage("Assets/blue fireworks/Explosion_3.png"));
-        animImages.put("fireworks4",ImageManager.loadImage("Assets/blue fireworks/Explosion_4.png"));
-        animImages.put("fireworks5",ImageManager.loadImage("Assets/blue fireworks/Explosion_5.png"));
-        animImages.put("fireworks6",ImageManager.loadImage("Assets/blue fireworks/Explosion_6.png"));
-        animImages.put("fireworks7",ImageManager.loadImage("Assets/blue fireworks/Explosion_7.png"));
-        animImages.put("fireworks8",ImageManager.loadImage("Assets/blue fireworks/Explosion_8.png"));
-        animImages.put("fireworks9",ImageManager.loadImage("Assets/blue fireworks/Explosion_9.png"));
-        animImages.put("fireworks10",ImageManager.loadImage("Assets/blue fireworks/Explosion_10.png"));
+        for(int num=1;num<11;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/blue fireworks/Explosion_"+num+".png");
+//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("fireworks"+num,i);
+        }
 
-        animation = new Animation(false);	// play once only
+        animation = new Animation(false);	// play once continuously
 
-        animation.addFrame(animImages.get("fireworks1"), 200);
-        animation.addFrame(animImages.get("fireworks2"), 200);
-        animation.addFrame(animImages.get("fireworks3"), 200);
-        animation.addFrame(animImages.get("fireworks4"), 200);
-        animation.addFrame(animImages.get("fireworks5"), 200);
-        animation.addFrame(animImages.get("fireworks6"), 200);
-        animation.addFrame(animImages.get("fireworks7"), 200);
-        animation.addFrame(animImages.get("fireworks8"), 200);
-        animation.addFrame(animImages.get("fireworks9"), 200);
-        animation.addFrame(animImages.get("fireworks10"), 200);
-
+        for(int num=1;num<11;num++){
+            animation.addFrame(animImages.get("fireworks"+num), 150);
+        }
         animations.put("fireworks",animation);
-
         soundManager = SoundManager.getInstance();
+
     }
 
     private void loadChefWalking(){
-        animImages.put("walk1",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(1).png"));
-        animImages.put("walk2",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(2).png"));
-        animImages.put("walk3",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(3).png"));
-        animImages.put("walk4",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(4).png"));
-        animImages.put("walk5",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(5).png"));
-        animImages.put("walk6",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(6).png"));
-        animImages.put("walk7",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(7).png"));
-        animImages.put("walk8",ImageManager.loadImage("Assets/characters/chef/walk_left/walk_left(8).png"));
+        for(int num=1;num<9;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/characters/chef/walk_left/walk_left("+num+").png");
+//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("walk"+num,i);
+        }
 
-        animation = new Animation(false);	// play once only
+        animation = new Animation(false);	// play once continuously
 
-        animation.addFrame(animImages.get("walk1"), 200);
-        animation.addFrame(animImages.get("walk2"), 200);
-        animation.addFrame(animImages.get("walk3"), 200);
-        animation.addFrame(animImages.get("walk4"), 200);
-        animation.addFrame(animImages.get("walk5"), 200);
-        animation.addFrame(animImages.get("walk6"), 200);
-        animation.addFrame(animImages.get("walk7"), 200);
-        animation.addFrame(animImages.get("walk8"), 200);
+        for(int num=0;num<9;num++){
+            animation.addFrame(animImages.get("walk"+num), 150);
+        }
         animations.put("chef_walk",animation);
-
         soundManager = SoundManager.getInstance();
     }
+
+    private void loadGameOverAni(){
+        for(int num=0;num<60;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/Free pack 6/5/1_"+num+".png");
+//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("game_over"+num,i);
+        }
+
+        animation = new Animation(true);	// play continuously
+
+        for(int num=0;num<60;num++){
+            animation.addFrame(animImages.get("game_over"+num), 150);
+        }
+        animations.put("game_over",animation);
+        soundManager = SoundManager.getInstance();
+    }
+
+    private void loadStartGameAni(){
+        for(int num=0;num<60;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/Free pack 6/1/1_"+num+".png");
+//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("start"+num,i);
+        }
+
+        animation = new Animation(true);	// play continuously
+
+        for(int num=0;num<60;num++){
+            animation.addFrame(animImages.get("start"+num), 150);
+        }
+        animations.put("start",animation);
+        soundManager = SoundManager.getInstance();
+    }
+
+    private void loadHeart(){
+        for(int num=11;num<21;num++){
+            Image i = ImageManager.loadBufferedImage("Assets/Free-Game-Coins-Sprite/PNG/Gold/Gold_"+num+".png");
+//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+            animImages.put("heart"+num,i);
+        }
+
+        animation = new Animation(false);	// play once continuously
+
+        for(int num=11;num<21;num++){
+            animation.addFrame(animImages.get("heart"+num), 150);
+        }
+        animations.put("heart",animation);
+        soundManager = SoundManager.getInstance();
+    }
+
 
 }

@@ -15,7 +15,7 @@ public class TileMapManager {
 
     private ArrayList<Image> tiles;
     private HashMap<Integer,Image> decor;
-    private JFrame window;
+    private GamePanel window;
     private GameWindow gWindow;
 
 
@@ -30,9 +30,8 @@ public class TileMapManager {
 //    private Sprite flySprite;
 //
 
-    public TileMapManager(JFrame window, GameWindow gWindow) {
+    public TileMapManager(GamePanel window) {
         this.window = window;
-        this.gWindow = gWindow;
         loadTileImages();
         loadCreatureSprites();
         loadDecor();
@@ -67,7 +66,7 @@ public class TileMapManager {
         // parse the lines to create a TileMap
         mapHeight = lines.size();
 
-        TileMap newMap = new TileMap(window, mapWidth, mapHeight, gWindow);
+        TileMap newMap = new TileMap(window, mapWidth, mapHeight);
         for (int y=0; y<mapHeight; y++) {
             String line = lines.get(y);
             for (int x=0; x<line.length(); x++) {
@@ -75,7 +74,7 @@ public class TileMapManager {
                 // check if the char represents tile A, B, C etc.
                 int tile = ch - 'A';
                 if (tile >= 0 && tile < tiles.size()) {
-                    newMap.setTile(x, y, tiles.get(tile),"foundation");
+                    newMap.setTile(x, y, tiles.get(tile),"FOUNDATION");
                 } else if (ch == '^') {
                     newMap.setPlayer(x,y);
                 }else if(ch == '~'){
@@ -83,16 +82,17 @@ public class TileMapManager {
                 }
                 else if (isNumeric(ch)) {
                     int key = Character.getNumericValue(ch);
-                    newMap.setTile(x,y,decor.get(key),"use");
+                    newMap.setTile(x,y,decor.get(key),"USE");
                 }
 //                else if (ch == '!') {
 //                    newMap.setTile(x,y,tiles.get(tile));
 //                    addSprite(newMap, musicSprite, x, y);
 //                }
-//                else if (ch == '*') {
-//                    newMap.setTile(x,y,tiles.get(tile));
+                else if (ch == '*') {
+                    System.out.println("Here?");
+                    newMap.setStar(x,y);
 //                    addSprite(newMap, goalSprite, x, y);
-//                }
+                }
             }
         }
         return newMap;
@@ -153,7 +153,7 @@ public class TileMapManager {
             }
 
             Image tileImage = new ImageIcon(filename).getImage();
-            tileImage = tileImage.getScaledInstance(64, 64,Image.SCALE_DEFAULT);
+            tileImage = tileImage.getScaledInstance(32, 32,Image.SCALE_DEFAULT);
             tiles.add(tileImage);
             ch++;
         }
@@ -176,7 +176,7 @@ public class TileMapManager {
             }
 
             Image decorImage = new ImageIcon(filename).getImage();
-            decorImage = decorImage.getScaledInstance(64, 64,Image.SCALE_DEFAULT);
+            decorImage = decorImage.getScaledInstance(32, 32,Image.SCALE_DEFAULT);
             decor.put(num,decorImage);
             num++;
         }

@@ -13,12 +13,10 @@ import javax.swing.JFrame;
 
 public class TileMap {
 
-    private static int TILE_SIZE = 64;
-    private static final int TILE_SIZE_BITS = 6;
-    private PlayerAnimation pAni;
+    private static int TILE_SIZE = 32;
 
     private Tile[][] tiles;
-    private int screenWidth, screenHeight;
+    private final int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
     private int offsetY;
     public int offsetX;
@@ -26,24 +24,26 @@ public class TileMap {
     private LinkedList sprites;
     private Player player;
 
+    //Add animations
     private FireAnimation fire;
+    private PlayerAnimation pAni;
+    private AnimationManager aniManager;
+    private Animation starAni;
 
     BackgroundManager bgManager;
-    private GameWindow gWindow;
-    private JFrame window;
-    private Dimension dimension;
+    private GamePanel window;
+    private Star star;
 
     /**
         Creates a new TileMap with the specified width and
         height (in number of tiles) of the map.
     */
-    public TileMap(JFrame window, int width, int height, GameWindow gWindow) {
+    public TileMap(GamePanel window, int width, int height) {
         this.window = window;
-        this.gWindow = gWindow;
-        dimension = window.getSize();
 
-        screenWidth = dimension.width;
-        screenHeight = dimension.height;
+        screenWidth = window.getWidth();
+        screenHeight = window.getHeight();
+
 
         mapWidth = width;
         mapHeight = height;
@@ -56,20 +56,19 @@ public class TileMap {
         player = new Player (window, this, bgManager);
         sprites = new LinkedList<>();
         fire = FireAnimation.getInstance();
-        if(gWindow.getLevel()==1)
+        if(window.getLevel()==1)
             fire.start();
 
         this.pAni = player.getPlayerAnimation();
-
+        aniManager = new AnimationManager();
+//        aniManager.start("star");
+        star = Star.getInstance(window,player);
+        starAni = star.getAnimation();
+        starAni.start();
     }
 
 
-    int getMapHeight() {
-        return mapHeight;
-    }
-    int getMapWidth() {
-        return mapWidth;
-    }
+
     /**
         Gets the width of this TileMap (number of pixels across).
     */
@@ -135,11 +134,18 @@ public class TileMap {
      * Sets the FireAnimation at the specified locations
      */
     public void setFire(int x, int y) {
-        Tile fireT = new Tile(x, y);
+        Tile fireT = new Tile(x, y,"FOUNDATION");
         tiles[x][y] = fireT;
     }
 
-
+    /**
+     * Sets the Star at the specified locations
+     */
+    public void setStar(int x, int y ) {
+        Tile star = new Tile(x, y,"STAR");
+        tiles[x][y] = star;
+        System.out.println("Star set at " + x + " " + y);
+    }
 
     /**
         Gets an Iterator of all the Sprites in this map,
@@ -185,13 +191,15 @@ public class TileMap {
         Draws the specified TileMap.
     */
     public synchronized void draw(Graphics2D g2)  {
+
         int mapWidthPixels = tilesToPixels(mapWidth);
 
         // get the scrolling position of the map based on player's position
         int playerX = player.getX();
         offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
         System.out.println("\n_______________________________");
-        System.out.println("\n Player x: "+player.getX()+"\noffsetX: "+offsetX);
+        System.out.println("\n Player x: "+playerX+"\noffsetX: "+offsetX);
+        System.out.println("Player tile: "+pixelsToTiles(playerX));
 
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
@@ -204,7 +212,6 @@ public class TileMap {
         int firstTileX = pixelsToTiles(-offsetX);
         int lastTileX = firstTileX + pixelsToTiles(screenWidth)+1;
         System.out.println("First: " + firstTileX+"\t Last:"  + lastTileX);
-        System.out.println("_______________________________\n");
         for (int y=0; y<mapHeight; y++) {
             for (int x=firstTileX; x <= lastTileX; x++) {
                 if(x<mapWidth){
@@ -212,19 +219,30 @@ public class TileMap {
                         Tile tile = tiles[x][y];
                         switch (tile.getDisplay()) {
                             case "IMAGE" ->
-                                    g2.drawImage(tile.getImage(), tilesToPixels(x) + offsetX, tilesToPixels(y) + offsetY, null);
+                                    g2.drawImage(tile.getImage(),
+                                            tilesToPixels(x) + offsetX,
+                                            tilesToPixels(y) + offsetY,
+                                            null);
                             case "ANIMATION" -> {
-                                fire.setX(tilesToPixels(x) + offsetX);
-                                fire.setY(tilesToPixels(y) + offsetY);
-                                fire.draw(g2);
-                                fire.update();
+                                if(Objects.equals(tile.getState(), "STAR")){
+                                    System.out.println("star?: x"+x+" y"+y);
+                                    star.setX(tilesToPixels(x)+offsetX);
+                                    star.setY(tilesToPixels(y)+offsetY);
+                                    star.draw(g2);
+                                    star.update();
+                                }else {
+                                    fire.setX(tilesToPixels(x) + offsetX);
+                                    fire.setY(tilesToPixels(y) + offsetY);
+                                    fire.draw(g2);
+                                    fire.update();
+                                }
                             }
                         }
+
                     }
                 }
             }
         }
-
         //draw player animation
         int y = player.getY();
         playerX = Math.round((float)playerX)+offsetX;
@@ -308,24 +326,23 @@ public class TileMap {
     public void update() {
         player.update();
 
-//        TODO Update level when player collides with door
-//        if (door.collidesWithPlayer()) {
-//            gWindow.endLevel();
-//            return;
-//        }
-//
-//        door.update();
-//
-//        if (door.collidesWithPlayer()) {
-//            window.endLevel();
-//        }
+        if (star.collidesWithPlayer()) {
+            window.endLevel();
+            return;
+        }
+
+        star.update();
+
+        if (star.collidesWithPlayer()) {
+            window.endLevel();
+        }
 
     }
 
     public void restartLevel(){
         if(player.getState().equals("DIE")){
-            int l = gWindow.getLevel();
-            gWindow.setLevel(l);
+            int l = window.getLevel();
+            window.setLevel(l);
         }
     }
 

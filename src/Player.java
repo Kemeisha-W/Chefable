@@ -3,6 +3,7 @@ import java.awt.Graphics2D;
 import javax.swing.*;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
 public class Player {
@@ -24,7 +25,7 @@ public class Player {
 	private State pState;
 	private int offsetY;
 	private static final int TILE_SIZE = TileMap.getTileSize();
-	private JFrame window;        // reference to the JFrame on which player is drawn
+	private JPanel window;        // reference to the JFrame on which player is drawn
 	private TileMap tileMap;
 	private final BackgroundManager bgManager;
 
@@ -36,7 +37,7 @@ public class Player {
 
    private int timeElapsed;
    private int startY;
-   private PlayerAnimation playerAnimation;
+   private final PlayerAnimation playerAnimation;
    private Animation currentAnimation;
 	private boolean goingUp;
    private boolean goingDown;
@@ -46,7 +47,7 @@ public class Player {
    private int initialVelocity;
    private int startAir;
 
-   public Player (JFrame window, TileMap t, BackgroundManager b) {
+   public Player (JPanel window, TileMap t, BackgroundManager b) {
 	   this.window = window;
 	   tileMap = t;            // tile map on which the player's sprite is displayed
 	   bgManager = b;            // instance of BackgroundManager
@@ -78,11 +79,11 @@ public class Player {
 
 
    public Tile isTileBelow(int newX, int newY) {
-	   int xTile = TileMap.pixelsToTiles(newX+150);
+	   int xTile = TileMap.pixelsToTiles(newX+100);
 	    int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
+	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +64);
 	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
-//		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX));
+		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX));
 		   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTile+"\t XTile: "+xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
 		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")){
@@ -418,4 +419,12 @@ public class Player {
 	public String getState() {
 		return this.pState.toString();
 	}
+
+	public Rectangle2D.Double getBoundingRectangle() {
+		int playerWidth = playerAnimation.getWidth();
+		int playerHeight = playerAnimation.getHeight();
+
+		return new Rectangle2D.Double (x, y, playerWidth, playerHeight);
+	}
+
 }

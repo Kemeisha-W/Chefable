@@ -1,31 +1,17 @@
 import javax.swing.*;            // need this for GUI objects
 import java.awt.*;            // need this for certain AWT classes
-import java.awt.image.BufferedImage;
 import java.awt.event.*;
-import java.awt.image.BufferStrategy;    // need this to implement page flipping
 
 public class GameWindow extends JFrame implements
-		Runnable,
 		KeyListener,
 		MouseListener,
+		ActionListener,
 		MouseMotionListener
 {
-	private static final int NUM_BUFFERS = 2;    // used for page flipping
-	private int level;
 
-	private boolean gameOver;
-	private boolean levelChange;
-	private int pWidth, pHeight;             // width and height of screen
 
-	private Thread gameThread = null;                // the thread that controls the game
 	private volatile boolean isRunning = false;        // used to stop the game thread
 
-	private BufferedImage image;            // drawing area for each frame
-
-	private Image quit1Image;            // first image for quit button
-	private Image quit2Image;            // second image for quit button
-
-	private boolean finishedOff = false;        // used when the game terminates
 
 	private volatile boolean isOverQuitButton = false;
 	private Rectangle quitButtonArea;        // used by the quit button
@@ -36,383 +22,140 @@ public class GameWindow extends JFrame implements
 
 	private volatile boolean isOverStopButton = false;
 	private Rectangle stopButtonArea;        // used by the stop 'button'
+
 	private volatile boolean isStopped = false;
 
-	private volatile boolean isOverShowAnimButton = false;
-	private Rectangle showAnimButtonArea;        // used by the show animation 'button'
-	private volatile boolean isAnimShown = false;
+	private GamePanel gamePanel;
+	private InfoPanel infoPanel;
+	private JPanel mainPanel;
 
-	private volatile boolean isOverPauseAnimButton = false;
-	private Rectangle pauseAnimButtonArea;        // used by the pause animation 'button'
-	private volatile boolean isAnimPaused = false;
 
-	private GraphicsDevice device;            // used for full-screen exclusive mode
-	private Graphics gScr;
-	private BufferStrategy bufferStrategy;
-
-	private SoundManager soundManager;
-	TileMapManager tileManager;
-	TileMap tileMap;
+// declare buttons
+	private JButton pauseB;
+	private JButton endB;
+	private JButton startNewB;
+	private JButton exitB;
 
 	public GameWindow() {
 
-		super("Tiled Bat and Ball Game: Full Screen Exclusive Mode");
+		super("Chefable Project");
+		setTitle ("Chefable Project");
 
-		initScreen();
-
-		quit1Image = ImageManager.loadImage("images/Quit1.png");
-		quit2Image = ImageManager.loadImage("images/Quit2.png");
-
-		setButtonAreas();
-
-		addKeyListener(this);
-		addMouseListener(this);
-		addMouseMotionListener(this);
-
-		level = 1;
-		levelChange = false;
-
-		soundManager = SoundManager.getInstance();
-		image = new BufferedImage (pWidth, pHeight, BufferedImage.TYPE_INT_RGB);
-
-		startGame();
-	}
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		setSize (screenSize.width, screenSize.height);
 
 
-	// implementation of Runnable interface
+		// create mainPanel
+		mainPanel = new JPanel();
+		BorderLayout layout = new BorderLayout();
+		mainPanel.setLayout(layout);
+		GridLayout gridLayout;
 
-	public void run () {
-		try {
-			isRunning = true;
-			while (isRunning) {
-				if (!isPaused) {
-					gameUpdate();
-				}
-				screenUpdate();
-				Thread.sleep (50);
-			}
-		} catch(InterruptedException e) {}
+		// create the gamePanel for game entities
 
-		finishOff();
-	}
+		gamePanel = new GamePanel();
 
+		// Add Objects to InfoPanel
+		infoPanel = new InfoPanel();
 
-    /* This method performs some tasks before closing the game.
-	   The call to System.exit() should not be necessary; however,
-	   it prevents hanging when the game terminates.
-	*/
+		// create buttonPanel
+		// create buttons
 
-	private void finishOff() {
-		if (!finishedOff) {
-			finishedOff = true;
-			restoreScreen();
-			System.exit(0);
-		}
-	}
+//		startB = new JButton ("Start Game");
+		pauseB = new JButton ("Pause Game");
+		endB = new JButton ("End Game");
+		startNewB = new JButton ("Start New Game");
+		exitB = new JButton ("Exit");
 
 
-	/**
-	 This method switches off full screen mode. The display
-	 mode is also reset if it has been changed.
-	 */
+		// add listener to each button (same as the current object)
 
-	private void restoreScreen() {
-		Window w = device.getFullScreenWindow();
+//		startB.addActionListener(this);
+		pauseB.addActionListener(this);
+		endB.addActionListener(this);
+		startNewB.addActionListener(this);
+		exitB.addActionListener(this);
 
-		if (w != null)
-			w.dispose();
+		JPanel buttonPanel = new JPanel();
+		gridLayout = new GridLayout(1, 4);
+		buttonPanel.setLayout(gridLayout);
 
-		device.setFullScreenWindow(null);
-	}
+		// add buttons to buttonPanel
 
-	public void createGameEntities() {
-		//TODO :create game entities
-	}
+		buttonPanel.add (startNewB);
+		buttonPanel.add (pauseB);
+		buttonPanel.add (endB);
+		buttonPanel.add (exitB);
 
-	public int getLevel(){
-		return level;
-	}
+		// add sub-panels with GUI objects to mainPanel and set its colour
+		mainPanel.add(infoPanel,BorderLayout.NORTH);
+		mainPanel.add(gamePanel,BorderLayout.CENTER);
+		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
 
-	public void setLevel(int level) {
-		this.level = level;
-		levelChange = true;
-	}
+		mainPanel.setBackground(Color.WHITE);
 
-	public void gameUpdate () {
-		tileMap.update();
-		if(levelChange){
-			levelChange = false;
-			tileManager = new TileMapManager (this,this);
+		//Add listeners
+		gamePanel.addMouseListener(this);
+		gamePanel.addMouseMotionListener( this);
+		mainPanel.addKeyListener(this);
 
-			try {
-				String filename = "maps/map" + level + ".txt";
-				tileMap = tileManager.loadMap(filename) ;
-				int w, h;
-				w = tileMap.getWidth();
-				h = tileMap.getHeight();
-				System.out.println ("Changing level to Level " + level);
-				System.out.println ("Width of tilemap " + w);
-				System.out.println ("Height of tilemap " + h);
-			} catch (Exception e) {        // no more maps: terminate game
-				gameOver = true;
-				System.out.println(e);
-				System.out.println("Game Over");
-				return;
-			}
+		// add mainPanel to window surface
+		Container c = getContentPane();
+		c.add(mainPanel);
 
-			createGameEntities();
-			return;
-		}
-//		if (!isPaused && isAnimShown && !isAnimPaused)
-//			animation.update();
-//		imageEffect.update();
+		// set properties of window
+		setResizable(true);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
 
 	}
 
+	// implement single method in ActionListener interface
 
-	private void screenUpdate() {
-		try {
-			gScr = bufferStrategy.getDrawGraphics();
-			gameRender(gScr);
-			gScr.dispose();
-			if (!bufferStrategy.contentsLost())
-				bufferStrategy.show();
+	public void actionPerformed(ActionEvent e) {
+
+		String command = e.getActionCommand();
+
+		if (command.equals(pauseB.getText())) {
+			gamePanel.pauseGame();
+			if (command.equals("Pause Game"))
+				pauseB.setText ("Resume");
 			else
-				System.out.println("Contents of buffer lost.");
+				pauseB.setText ("Pause Game");
 
-			// Sync the display on some systems.
-			// (on Linux, this fixes event queue problems)
-
-			Toolkit.getDefaultToolkit().sync();
-		} catch (Exception e) {
-			e.printStackTrace();
-			isRunning = false;
 		}
-	}
 
+		if (command.equals(endB.getText())) {
+			gamePanel.endGame();
+		}
 
-	public void gameRender (Graphics gScr)  {        // draw the game objects
+		if (command.equals(startNewB.getText()))
+			gamePanel.startNewGame();
 
-		Graphics2D imageContext = (Graphics2D) image.getGraphics();
-
-		tileMap.draw(imageContext);
-
-		//Graphics2D g2 = (Graphics2D) getGraphics();	// get the graphics context for window
-		drawButtons(imageContext);            // draw the buttons
-
-		Graphics2D g2 = (Graphics2D) gScr;
-		g2.drawImage(image, 0, 0, pWidth, pHeight, null);
-
-		imageContext.dispose();
-		g2.dispose();
-	}
-
-
-	private void initScreen() {                // standard procedure to get into FSEM
-
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		device = ge.getDefaultScreenDevice();
-
-		setUndecorated(false);    // no menu bar, borders, etc.
-		setIgnoreRepaint(true);    // turn off all paint events since doing active rendering
-		setResizable(true);    // screen cannot be resized
-
-		if (!device.isFullScreenSupported()) {
-			System.out.println("Full-screen exclusive mode not supported");
+		if (command.equals(exitB.getText()))
 			System.exit(0);
-		}
 
-		device.setFullScreenWindow(this); // switch on full-screen exclusive mode
-
-		// we can now adjust the display modes, if we wish
-
-		showCurrentMode();
-
-		pWidth = getBounds().width;
-		pHeight = getBounds().height;
-
-//		System.out.println("Width of window is " + pWidth);
-//		System.out.println("Height of window is " + pHeight);
-
-		try {
-			createBufferStrategy(NUM_BUFFERS);
-		} catch (Exception e) {
-			System.out.println("Error while creating buffer strategy " + e);
-			System.exit(0);
-		}
-
-		bufferStrategy = getBufferStrategy();
-	}
-
-
-	// This method provides details about the current display mode.
-
-	private void showCurrentMode() {
-
-		DisplayMode dm = device.getDisplayMode();
-
-		System.out.println("Current Display Mode: (" +
-                           dm.getWidth() + "," + dm.getHeight() + "," +
-                           dm.getBitDepth() + "," + dm.getRefreshRate() + ")  " );
-	}
-
-
-	// Specify screen areas for the buttons and create bounding rectangles
-
-	private void setButtonAreas() {
-
-		//  leftOffset is the distance of a button from the left side of the window.
-		//  Buttons are placed at the top of the window.
-
-		int leftOffset = (pWidth - (5 * 150) - (4 * 20)) / 2;
-		pauseButtonArea = new Rectangle(leftOffset, 60, 150, 40);
-
-		leftOffset = leftOffset + 170;
-		stopButtonArea = new Rectangle(leftOffset, 60, 150, 40);
-
-		leftOffset = leftOffset + 170;
-		pauseAnimButtonArea = new Rectangle(leftOffset, 60, 150, 40);
-
-		leftOffset = leftOffset + 170;
-//		int quitLength = quit1Image.getWidth(null);
-//		int quitHeight = quit1Image.getHeight(null);
-		quitButtonArea = new Rectangle(leftOffset, 60, 180, 50);
-	}
-
-
-	private void drawButtons (Graphics g) {
-		Font oldFont, newFont;
-
-		oldFont = g.getFont();        // save current font to restore when finished
-
-		newFont = new Font ("TimesRoman", Font.ITALIC + Font.BOLD, 18);
-		g.setFont(newFont);        // set this as font for text on buttons
-		g.setColor(Color.black);    // set outline colour of button
-
-		// draw the pause 'button'
-		g.setColor(Color.BLACK);
-		g.drawOval(pauseButtonArea.x, pauseButtonArea.y,
-				pauseButtonArea.width, pauseButtonArea.height);
-
-		if (isOverPauseButton && !isStopped)
-			g.setColor(Color.WHITE);
-		else
-			g.setColor(Color.RED);
-
-		if (isPaused && !isStopped)
-			g.drawString("Paused", pauseButtonArea.x+45, pauseButtonArea.y+25);
-		else
-			g.drawString("Pause", pauseButtonArea.x+55, pauseButtonArea.y+25);
-
-		// draw the stop 'button'
-
-		g.setColor(Color.BLACK);
-		g.drawOval(stopButtonArea.x, stopButtonArea.y,
-				stopButtonArea.width, stopButtonArea.height);
-
-		if (isOverStopButton && !isStopped)
-			g.setColor(Color.WHITE);
-		else
-			g.setColor(Color.RED);
-
-		if (isStopped)
-			g.drawString("Stopped", stopButtonArea.x+40, stopButtonArea.y+25);
-		else
-			g.drawString("Stop", stopButtonArea.x+60, stopButtonArea.y+25);
-
-
-		// draw the quit button (an actual image that changes when the mouse moves over it)
-
-		if (isOverQuitButton)
-			g.drawImage(quit1Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
-			//quitButtonArea.width, quitButtonArea.height, null);
-
-		else
-			g.drawImage(quit2Image, quitButtonArea.x, quitButtonArea.y, 180, 50, null);
-		//quitButtonArea.width, quitButtonArea.height, null);
-		g.setFont(oldFont);        // reset font
-
-	}
-
-	public void endLevel() {
-		level = level + 1;
-		levelChange = true;
-	}
-
-	private void startGame() {
-		if (gameThread == null) {
-//			soundManager.playSound ("background2", true); TODO
-
-			tileManager = new TileMapManager (this,this);
-
-			try {
-				tileMap = tileManager.loadMap("maps/map1.txt");
-			}
-			catch (Exception e) {
-				System.out.println(e);
-				System.exit(0);
-			}
-
-			gameThread = new Thread(this);
-			gameThread.start();
-
-		}
-	}
-
-
-	// displays a message to the screen when the user stops the game
-
-	private void gameOverMessage(Graphics g) {
-
-		Font font = new Font("SansSerif", Font.BOLD, 24);
-		FontMetrics metrics = this.getFontMetrics(font);
-
-		String msg = "Game Over. Thanks for playing!";
-
-		int x = (pWidth - metrics.stringWidth(msg)) / 2;
-		int y = (pHeight - metrics.getHeight()) / 2;
-
-		g.setColor(Color.BLUE);
-		g.setFont(font);
-		g.drawString(msg, x, y);
-
+		mainPanel.requestFocus();
 	}
 
 
 	// implementation of methods in KeyListener interface
 
 	public void keyPressed (KeyEvent e) {
-		if (isPaused)
-			return;
 
 		int keyCode = e.getKeyCode();
-		if ((keyCode == KeyEvent.VK_ESCAPE) || (keyCode == KeyEvent.VK_Q) || (keyCode == KeyEvent.VK_END)) {
-			isRunning = false;        // user can quit anytime by pressing
-			return;                //  one of these keys (ESC, Q, END)
+		switch (keyCode) {
+			case KeyEvent.VK_LEFT -> gamePanel.moveLeft();
+			case KeyEvent.VK_RIGHT -> gamePanel.moveRight();
+			case KeyEvent.VK_SPACE -> gamePanel.jump();
 		}
-		switch (keyCode){
-			case KeyEvent.VK_LEFT:
-				tileMap.moveLeft();
-				break;
-			case KeyEvent.VK_RIGHT:
-				tileMap.moveRight();
-				break;
-			case KeyEvent.VK_SPACE:
-				tileMap.jump();
-				break;
-			case KeyEvent.VK_UP:
-				//bat.moveUp();
-			case KeyEvent.VK_DOWN:
-				//bat.moveDown();
-		}
-
 	}
 
 
 	public void keyReleased (KeyEvent e) {
 		int keyCode = e.getKeyCode();
 		if (keyCode == KeyEvent.VK_LEFT||keyCode == KeyEvent.VK_RIGHT) {
-			tileMap.idle();
+			gamePanel.idle();
 		}
 	}
 
@@ -425,7 +168,6 @@ public class GameWindow extends JFrame implements
 	// implement methods of MouseListener interface
 
 	public void mouseClicked(MouseEvent e) {
-
 	}
 
 
@@ -461,7 +203,7 @@ public class GameWindow extends JFrame implements
 	}
 
 
-    /* This method handles mouse clicks on one of the buttons
+    /** This method handles mouse clicks on one of the buttons
 	   (Pause, Stop, Start Anim, Pause Anim, and Quit).
 	*/
 
@@ -476,41 +218,22 @@ public class GameWindow extends JFrame implements
 		} else if (isOverPauseButton) {        // mouse click on Pause button
 			isPaused = !isPaused;         // toggle pausing
 		}
-//		else
-//		if (isOverShowAnimButton && !isPaused) {// mouse click on Start Anim button
-//			isAnimShown = true;
-//		 	isAnimPaused = false;
-//			animation.start();
-//		}
-//		else
-//		if (isOverPauseAnimButton) {		// mouse click on Pause Anim button
-//			if (isAnimPaused) {
-//				isAnimPaused = false;
-//				animation.playSound();
-//			}
-//			else {
-//				isAnimPaused = true;	// toggle pausing
-//				animation.stopSound();
-//			}
-//		}
 		else if (isOverQuitButton) {        // mouse click on Quit button
 			isRunning = false;        // set running to false to terminate
 		}
 	}
 
 
-    /* This method checks to see if the mouse is currently moving over one of
+    /** This method checks to see if the mouse is currently moving over one of
 	   the buttons (Pause, Stop, Show Anim, Pause Anim, and Quit). It sets a
 	   boolean value which will cause the button to be displayed accordingly.
 	*/
 
 	private void testMouseMove(int x, int y) {
 		if (isRunning) {
-			isOverPauseButton = pauseButtonArea.contains(x,y) ? true : false;
-			isOverStopButton = stopButtonArea.contains(x,y) ? true : false;
-//			isOverShowAnimButton = showAnimButtonArea.contains(x,y) ? true : false;
-//			isOverPauseAnimButton = pauseAnimButtonArea.contains(x,y) ? true : false;
-			isOverQuitButton = quitButtonArea.contains(x,y) ? true : false;
+			isOverPauseButton = pauseButtonArea.contains(x, y);
+			isOverStopButton = stopButtonArea.contains(x, y);
+			isOverQuitButton = quitButtonArea.contains(x, y);
 		}
 	}
 
