@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.LinkedList;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -21,7 +19,6 @@ public class TileMap {
     private int offsetY;
     public int offsetX;
 
-    private LinkedList sprites;
     private Player player;
 
     //Add animations
@@ -32,6 +29,8 @@ public class TileMap {
     BackgroundManager bgManager;
     private GamePanel window;
     private final Star star;
+    private final Heart heart;
+    private final Basket basket;
 
     /**
         Creates a new TileMap with the specified width and
@@ -52,17 +51,29 @@ public class TileMap {
         bgManager = new BackgroundManager (window, 12);
         tiles = new Tile[mapWidth][mapHeight];
 
-        player = new Player (window, this, bgManager);
-        sprites = new LinkedList<>();
+        //Add instance of fires
         fire = FireAnimation.getInstance();
         if(window.getLevel()==1)
             fire.start();
 
+        //Add Player
+        player = new Player (window, this, bgManager);
         this.pAni = player.getPlayerAnimation();
         aniManager = new AnimationManager();
+
+        //Add the star
         star = Star.getInstance(window,player);
         Animation starAni = star.getAnimation();
         starAni.start();
+
+        //Add the heart
+        heart = Heart.getInstance(window,player);
+        Animation heartAni = heart.getAnimation();
+        heartAni.start();
+
+        basket = Basket.getInstance(window,player);
+        Animation basketAni = basket.getAnimation();
+        basketAni.start();
     }
 
 
@@ -132,7 +143,7 @@ public class TileMap {
      * Sets the FireAnimation at the specified locations
      */
     public void setFire(int x, int y) {
-        Tile fireT = new Tile(x, y,"FOUNDATION");
+        Tile fireT = new Tile(x, y,"FIRE");
         tiles[x][y] = fireT;
     }
 
@@ -142,20 +153,36 @@ public class TileMap {
     public void setStar(int x, int y ) {
         Tile star = new Tile(x, y,"STAR");
         tiles[x][y] = star;
-        x = tilesToPixels(x);
-        y = tilesToPixels(y);
-        this.star.setX(x);
-        this.star.setY(y);
+        this.star.setX(tilesToPixels(x));
+        this.star.setY(tilesToPixels(y));
     }
 
     /**
-        Gets an Iterator of all the Sprites in this map,
-        excluding the player Sprite.
-    */
-
-    public Iterator getSprites() {
-        return sprites.iterator();
+     * Sets the Food at the specified locations
+     */
+    public void setFood(int x, int y) {
+        Tile food = new Tile(x, y,"USE");
+        tiles[x][y] = food ;
     }
+
+    /**
+     * Sets the Heart at the specified locations
+     */
+    public void setHeart(int x, int y) {
+        Tile heart = new Tile(x, y,"HEART");
+        tiles[x][y] = heart;
+        this.heart.setX( tilesToPixels(x));
+        this.heart.setY(tilesToPixels(y));
+    }
+    /**
+     * Sets the Heart at the specified locations
+     */
+    public void setBasket(int x, int y) {
+        Tile basket = new Tile(x, y,"BASKET");
+        tiles[x][y] = basket;
+        //TODO ADD BASKET
+    }
+
 
     /**
         Class method to convert a pixel position to a tile position.
@@ -222,12 +249,16 @@ public class TileMap {
                     if(tiles[x][y] != null){
                         Tile tile = tiles[x][y];
                         switch (tile.getDisplay()) {
-                            case "IMAGE" ->
-                                    g2.drawImage(tile.getImage(),
-                                            tilesToPixels(x) + offsetX,
-                                            tilesToPixels(y) + offsetY,
-                                            null);
+                            case "IMAGE" ->{
+                                //TODO Draw Food
+                                g2.drawImage(tile.getImage(),
+                                        tilesToPixels(x) + offsetX,
+                                        tilesToPixels(y) + offsetY,
+                                        null);
+                            }
                             case "ANIMATION" -> {
+                                //TODO DRAW Heart
+                                // Draw Basket
                                 if(!Objects.equals(tile.getState(), "STAR")){
                                     fire.setX(tilesToPixels(x) + offsetX);
                                     fire.setY(tilesToPixels(y) + offsetY);

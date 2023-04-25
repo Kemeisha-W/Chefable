@@ -11,7 +11,7 @@ import javax.swing.ImageIcon;
 public class TileMapManager {
 
     private ArrayList<Image> tiles;
-    private HashMap<String,Image> ingredients;
+    private HashMap<String,Image> foodImgs;
     private ArrayList<String> foods = new ArrayList<String>();
     private GamePanel window;
     private GameWindow gWindow;
@@ -77,12 +77,9 @@ public class TileMapManager {
                 switch (ch) {
                     case '^' -> newMap.setPlayer(x,y);
                     case '~' -> newMap.setFire(x,y);
-                    case '+' -> {//TODO add ingredient
-                         }
-                    case '#' -> {//TODO add heart
-                    }
-                    case '&' -> {//TODO add basket something to open
-                    }
+                    case '+' -> newMap.setFood(x,y);
+                    case '#' -> newMap.setHeart(x,y);
+                    case '&' -> newMap.setBasket(x,y);
                     case '*' -> newMap.setStar(x,y);
                 }
             }
@@ -114,7 +111,9 @@ public class TileMapManager {
 //        }
 //    }
 
-
+    public HashMap<String,Image> getFoods(){
+        return foodImgs;
+    }
 
     // -----------------------------------------------------------
     // code for loading sprites and images
@@ -167,7 +166,7 @@ public class TileMapManager {
 
         File file;
         String filename;
-        ingredients = new HashMap<>();
+        foodImgs = new HashMap<>();
         for (String food : foods) {
             filename = "Assets/Food/" + food;
             file = new File(filename);
@@ -179,7 +178,7 @@ public class TileMapManager {
             Image image = new ImageIcon(filename).getImage();
             image = image.getScaledInstance(32, 32, Image.SCALE_DEFAULT);
             String temp = food.replace(".png","");
-            ingredients.put(temp, image);
+            foodImgs.put(temp, image);
         }
     }
 

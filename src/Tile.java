@@ -6,6 +6,9 @@ public class Tile {
         FOUNDATION,
         USE,
         STAR,
+        BASKET,
+        HEART,
+        FIRE
     }
     private enum Display {
         IMAGE,
@@ -22,7 +25,10 @@ public class Tile {
         switch (key) {
             case "FOUNDATION" -> tState = State.FOUNDATION;
             case "USE" -> tState = State.USE;
-            case "STAR" -> tState = State.STAR;
+            default -> {
+                //TODO ADD ERROR message
+                return;
+            }
         }
         position = new Point(x,y);
         tImage = i;
@@ -32,9 +38,14 @@ public class Tile {
     public Tile(int x, int y,String state){
         tDisplay = Display.ANIMATION;
         switch (state) {
-            case "FOUNDATION" -> tState = State.FOUNDATION;
-            case "USE" -> tState = State.USE;
             case "STAR" -> tState = State.STAR;
+            case "HEART" -> tState = State.HEART;
+            case "BASKET" -> tState = State.BASKET;
+            case "FIRE" -> tState = State.FIRE;
+            default -> {
+                //TODO ADD ERROR message
+                return;
+            }
         }
         position = new Point(x,y);
     }

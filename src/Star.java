@@ -6,10 +6,9 @@ import javax.swing.JPanel;
 import java.awt.Image;
 
 
-public class Star {
+public class Star implements Sprite {
 
-    private static final int XSIZE = 50;        // width of the image
-    private static final int YSIZE = 50;        // height of the image
+
     //private static final int DX = 2;		// amount of pixels to move in one update
     private static final int YPOS = 150;        // vertical position of the image
 
@@ -48,31 +47,37 @@ public class Star {
         loadStar();
         soundManager = SoundManager.getInstance();
     }
+    public static Star getInstance(JPanel panel, Player player) {
+        if (Star.single_instance == null)
+            Star.single_instance = new Star(panel, player);
 
-    private void loadStar(){
-        for(int num=0;num<4;num++){
-            Image i = ImageManager.loadBufferedImage("Assets/star/star"+num+".png");
-            i = i.getScaledInstance(XSIZE,YSIZE,Image.SCALE_DEFAULT);
+        return Star.single_instance;
+    }
+    private void loadStar() {
+        for (int num = 0; num < 4; num++) {
+            Image i = ImageManager.loadBufferedImage("Assets/star/star" + num + ".png");
+            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
             starImages.add(i);
         }
 
         animation = new Animation(true);    // play continuously
 
-        for(int num=0;num<4;num++){
+        for (int num = 0; num < 4; num++) {
             animation.addFrame(starImages.get(num), 150);
         }
     }
 
-
-    public void draw (Graphics2D g2) {
+    @Override
+    public void draw(Graphics2D g2) {
         if (!animation.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY-32, XSIZE, YSIZE, null);
+        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
     }
 
 
-    public boolean collidesWithPlayer () {
+    @Override
+    public boolean collidesWithPlayer() {
         if(x==0 || y==0)
             return false;
         Rectangle2D.Double myRect = getBoundingRectangle();
@@ -88,12 +93,14 @@ public class Star {
     }
 
 
+    @Override
     public Rectangle2D.Double getBoundingRectangle() {
-//        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY-32));
-        return new Rectangle2D.Double (x+offsetX, (y+offsetY-32), XSIZE, YSIZE);
+//        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
+        return new Rectangle2D.Double (x+offsetX, (y+offsetY), xSize, ySize);
     }
 
 
+    @Override
     public void update() {
         if (!animation.isStillActive()) {
             return;
@@ -101,33 +108,31 @@ public class Star {
         animation.update();
     }
 
-    public static synchronized Star getInstance(JPanel panel, Player player)
-    {
-        if (single_instance == null)
-            single_instance = new Star(panel, player);
-
-        return single_instance;
-    }
+    @Override
     public int getX() {
         return x;
     }
 
 
+    @Override
     public void setX(int x) {
         this.x = x;
     }
 
 
+    @Override
     public int getY() {
         return y;
     }
 
 
+    @Override
     public void setY(int y) {
         this.y = y;
     }
 
 
+    @Override
     public Animation getAnimation() {
         return animation;
     }

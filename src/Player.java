@@ -1,11 +1,10 @@
-import java.awt.Dimension;
+import java.awt.*;
 import javax.swing.*;
-import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
 public class Player {
-
+	private int heart = 0;
 	private static final int DX = 16;    // amount of X pixels to move in one keystroke
 	private static final int DY = 32;    // amount of Y pixels to move in one keystroke
 
@@ -19,7 +18,7 @@ public class Player {
 		IDLE,
 		USE
 	}
-
+	protected Image heartImage=null;
 	private State pState;
 	private int offsetY;
 	private int offsetX;
@@ -50,6 +49,8 @@ public class Player {
 
 	   goingUp = goingDown = false;
        inAir = false;
+
+	   heart = 3;
 
 	   playerAnimation = new PlayerAnimation();
 	   this.pState = State.IDLE;
@@ -116,10 +117,10 @@ public class Player {
 
    public Tile isTileAbove(int newX, int newY) {
 	   int playerWidth = playerAnimation.getWidth();
-	   int xTile = TileMap.pixelsToTiles(newX);
+	   int xTile = TileMap.pixelsToTiles(newX+96);
 
 	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY);
+	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY+100);
 
 	   for (int yTile=yTileFrom; yTile>=yTileTo; yTile--) {
 		   Tile tile = tileMap.getTile(xTile, yTile);
@@ -287,13 +288,12 @@ public class Player {
    }
 
 	private void die(){
-		System.out.println ("Collision FIRE");
+		heart --;
 		inAir = false;
 		jumping = false;
 		goingDown =false;
 		pState = State.DIE;
 		playerAnimation.start("death","");
-
 	}
 
    private void jump () {
@@ -376,15 +376,15 @@ public class Player {
       y = y - DY;
    }
 
-
+   public int getHeart() {
+	   return heart;
+   }
+	public void increaseHeart() {
+		this.heart++;
+	}
 
    public int getX() {
       return x;
-   }
-
-
-   public void setX(int x) {
-      this.x = x;
    }
 
 
@@ -392,10 +392,13 @@ public class Player {
       return y;
    }
 
-
+	public void setX(int x) {
+		this.x = x;
+	}
    public void setY(int y) {
       this.y = y;
    }
+
    public void setPlayOffsetY(int offsetY){
 	   this.offsetY = offsetY;
    }
