@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 
 /**
     The FireAnimation class creates an animation of a fire.

@@ -1,9 +1,7 @@
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 
 /**
@@ -43,7 +41,7 @@ public class TileMapManager {
 
         ArrayList<String> lines = new ArrayList<>();
         int mapWidth = 0;
-        int mapHeight = 0;
+        int mapHeight;
 
         // read every line in the text file into the list
 
@@ -143,7 +141,7 @@ public class TileMapManager {
 
         tiles = new ArrayList<>();
         char ch = 'A';
-        String filename ="";
+        String filename;
         while(true) {
             filename= "Assets/cartoon game tileset/PNG/Platformer/Ground_" + ch + ".png";
             file = new File(filename);
@@ -164,7 +162,7 @@ public class TileMapManager {
     public void loadDecor(){
         File file;
 
-        String filename ="";
+        String filename;
         int num = 1;
         decor = new HashMap<>();
         while(true) {

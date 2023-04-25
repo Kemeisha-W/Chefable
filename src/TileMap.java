@@ -2,7 +2,6 @@ import java.awt.*;
 import java.util.LinkedList;
 import java.util.Iterator;
 import java.util.Objects;
-import javax.swing.JFrame;
 
 /**
     The TileMap class contains the data for a tile-based

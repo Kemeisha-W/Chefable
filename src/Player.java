@@ -1,7 +1,5 @@
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import javax.swing.*;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
