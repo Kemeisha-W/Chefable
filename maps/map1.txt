@@ -9,10 +9,21 @@
 #   ~       Fire
 #   ^       Player initial position
 #change / to herbs
+                             &
+                         DBBBBBBH
+                                                            +
+                                                         DBBBBBBH
+                                           #
 
-                             &                              +
-                           DBBBH           #              DBBBH
-                #    +                 +  ABBH
- ^          +       DBH         +      DBBEFFM       #                   *
-BBBBBBH    DBBBH    IFM     DBBBBBBH   IFFFFFM   DBBBBBBBBH         DBBBBBBBBBB
-FFFFFFM~~~~IFFFM~~~~IFM~~~~~IFFFFFFM~~~IFFFFFM~~~IFFFFFFFFM~~~~~~~~~IFFFFFFFFFF
+                                   +
+                                 DBBBH             +
+
+
+                     +                           DBBBH
+                    DBH         #
+                    IFM
+                #   IFM
+                    IFM                      ABBH
+ ^          +       IFM                   DBBEFFM           #                   *
+BBBBBBH    DBBBH    IFM     DBBBBBBH      IFFFFFM      DBBBBBBBBH         DBBBBBBBBBB
+FFFFFFM~~~~IFFFM~~~~IFM~~~~~IFFFFFFM~~~~~~IFFFFFM~~~~~~IFFFFFFFFM~~~~~~~~~IFFFFFFFFFF
