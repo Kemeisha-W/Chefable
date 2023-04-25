@@ -1,27 +1,24 @@
-import java.awt.Graphics2D;
-import java.awt.Dimension;
-import java.awt.Image;
+import java.awt.*;
 import javax.swing.*;
 
 public class Background {
   	private Image bgImage;
   	private int bgImageWidth;      		// width of the background (>= panel Width)
 
-	private Dimension dimension;
-
- 	private int bgX;
+	private int bgX;
 	private int backgroundX;
 	private int backgroundX2;
 	private int bgDX;			// size of the background move (in pixels)
 
 
 	public Background(JPanel window, String imageFile, int bgDX) {
+		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 
 		this.bgImage = loadImage(imageFile);
-		bgImageWidth = bgImage.getWidth(null);	// get width of the background
+		bgImageWidth = dimension.width;	// get width of the background
 
 		dimension = window.getSize();
-			this.bgImage = this.bgImage.getScaledInstance(dimension.width,dimension.height,Image.SCALE_DEFAULT);
+		this.bgImage = this.bgImage.getScaledInstance(bgImageWidth, dimension.height,Image.SCALE_DEFAULT);
 		this.bgDX = bgDX;
 
   	}

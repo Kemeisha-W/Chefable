@@ -170,10 +170,10 @@ public class GamePanel extends JPanel
 
     public void startNewGame() {				// initialise and start a new game thread
         if(isRunning){
-           return;
+           endGame();
         }
         if (gameThread == null) {
-            soundManager.playSound ("background1", true);
+//            soundManager.playSound ("background1", true);
 
             gameOver = false;
             level = 1;
@@ -218,18 +218,17 @@ public class GamePanel extends JPanel
 
     private void gameOverMessage(Graphics g) {
 
-            Font font = new Font("SansSerif", Font.BOLD, 24);
-            FontMetrics metrics = this.getFontMetrics(font);
+        Font font = new Font("SansSerif", Font.BOLD, 40);
+        FontMetrics metrics = this.getFontMetrics(font);
 
-            String msg = "Game Over. Thanks for playing!";
+        String msg = "Game Over. Thanks for playing!";
 
-            int x = (width - metrics.stringWidth(msg)) / 2;
-            int y = (height - metrics.getHeight()) / 2;
+        int x = (width - metrics.stringWidth(msg)) / 2;
+        int y = (height - metrics.getHeight()) / 2;
 
-            g.setColor(Color.BLUE);
-            g.setFont(font);
-            g.drawString(msg, x, y);
-
+        g.setColor(Color.BLUE);
+        g.setFont(font);
+        g.drawString(msg, x, y);
 	}
 
     public void gameStartMessage() {
@@ -252,6 +251,7 @@ public class GamePanel extends JPanel
     public void endGame() {					// end the game thread
         isRunning = false;
         soundManager.stopSound ("background1");
+        gameThread=null;
         gameOverMessage(getGraphics());
     }
 

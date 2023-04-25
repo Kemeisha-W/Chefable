@@ -59,9 +59,6 @@ public class GameWindow extends JFrame implements
 		infoPanel = new InfoPanel();
 
 		// create buttonPanel
-		// create buttons
-
-//		startB = new JButton ("Start Game");
 		pauseB = new JButton ("Pause Game");
 		endB = new JButton ("End Game");
 		startNewB = new JButton ("Start New Game");
@@ -69,8 +66,6 @@ public class GameWindow extends JFrame implements
 
 
 		// add listener to each button (same as the current object)
-
-//		startB.addActionListener(this);
 		pauseB.addActionListener(this);
 		endB.addActionListener(this);
 		startNewB.addActionListener(this);

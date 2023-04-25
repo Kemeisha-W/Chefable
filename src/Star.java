@@ -19,6 +19,8 @@ public class Star {
     private Dimension dimension;
     private int x;
     private int y;
+    public int offsetX;
+    public int offsetY;
     private int dx;
 
     private Player player;
@@ -27,16 +29,12 @@ public class Star {
 
     private static Star single_instance = null;
 
-    //Graphics2D g2;
-
     int time, timeChange;                // to control when the image is grayed
     boolean originalImage, grayImage;
 
 
     private Star (JPanel panel, Player player) {
         this.panel = panel;
-        //Graphics g = window.getGraphics ();
-        //g2 = (Graphics2D) g;
 
         dimension = panel.getSize();
 
@@ -58,7 +56,7 @@ public class Star {
             starImages.add(i);
         }
 
-        animation = new Animation(false);    // play once continuously
+        animation = new Animation(true);    // play continuously
 
         for(int num=0;num<4;num++){
             animation.addFrame(starImages.get(num), 150);
@@ -70,12 +68,14 @@ public class Star {
         if (!animation.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x, y, XSIZE, YSIZE, null);
-
+        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY-32, XSIZE, YSIZE, null);
+        System.out.println("Star draw X:"+(x+offsetX)+" y:"+(y+offsetY-32));
     }
 
 
     public boolean collidesWithPlayer () {
+        if(x==0 || y==0)
+            return false;
         Rectangle2D.Double myRect = getBoundingRectangle();
         Rectangle2D.Double playerRect = player.getBoundingRectangle();
 
@@ -90,7 +90,8 @@ public class Star {
 
 
     public Rectangle2D.Double getBoundingRectangle() {
-        return new Rectangle2D.Double (x, y, XSIZE, YSIZE);
+        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY-32));
+        return new Rectangle2D.Double (x+offsetX, (y+offsetY-32), XSIZE, YSIZE);
     }
 
 

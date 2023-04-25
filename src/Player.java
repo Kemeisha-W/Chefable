@@ -24,6 +24,7 @@ public class Player {
 
 	private State pState;
 	private int offsetY;
+	private int offsetX;
 	private static final int TILE_SIZE = TileMap.getTileSize();
 	private JPanel window;        // reference to the JFrame on which player is drawn
 	private TileMap tileMap;
@@ -66,7 +67,7 @@ public class Player {
 	   int yTile = TileMap.pixelsToTiles(newY- offsetY);
 //	   System.out.println("XTile: "+xTile+" YTile: "+yTile);
 	   Tile tile = tileMap.getTile(xTile, yTile);
-	   System.out.println("is collision TILE: " + tile);
+	   System.out.println("is collision TILE" );
 	   if (tile!= null && Objects.equals(tile.getState(), "FOUNDATION")) {
 		   if(isFire(tile)){
 			   return null;
@@ -80,8 +81,8 @@ public class Player {
 
    public Tile isTileBelow(int newX, int newY) {
 	   int xTile = TileMap.pixelsToTiles(newX+100);
-	    int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +64);
+	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
+	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
 	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
 		   System.out.println("\n\nnew X: "+(newX-tileMap.offsetX));
 		   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTile+"\t XTile: "+xTile);
@@ -225,7 +226,7 @@ public class Player {
 			  System.out.println("In the air. Starting to fall.");
 			  if (direction == 1) {                // make adjustment for falling on left side of tile
 				  int playerWidth = playerAnimation.getWidth();
-				  x = x - playerWidth - DX;
+				  x = x - DX;
 				  y = y-playerWidth-DY;
 			  }
 			  fall();
@@ -423,8 +424,9 @@ public class Player {
 	public Rectangle2D.Double getBoundingRectangle() {
 		int playerWidth = playerAnimation.getWidth();
 		int playerHeight = playerAnimation.getHeight();
-
-		return new Rectangle2D.Double (x, y, playerWidth, playerHeight);
+		offsetX= tileMap.getOffsetX();
+		System.out.println("Player x: " + (x+offsetX) + " y: " + (y));
+		return new Rectangle2D.Double (x+offsetX, y, playerWidth, playerHeight);
 	}
 
 }

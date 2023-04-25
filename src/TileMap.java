@@ -28,11 +28,10 @@ public class TileMap {
     private FireAnimation fire;
     private PlayerAnimation pAni;
     private AnimationManager aniManager;
-    private Animation starAni;
 
     BackgroundManager bgManager;
     private GamePanel window;
-    private Star star;
+    private final Star star;
 
     /**
         Creates a new TileMap with the specified width and
@@ -63,7 +62,7 @@ public class TileMap {
         aniManager = new AnimationManager();
 //        aniManager.start("star");
         star = Star.getInstance(window,player);
-        starAni = star.getAnimation();
+        Animation starAni = star.getAnimation();
         starAni.start();
     }
 
@@ -123,7 +122,7 @@ public class TileMap {
      * Sets the Player at the specified location
      */
     public void setPlayer(int x, int y) {
-        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-100;
+        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-85;
         player.setPlayOffsetY(offsetY);
         System.out.println("offsetY = " + offsetY);
         player.setX(tilesToPixels(x));
@@ -144,7 +143,10 @@ public class TileMap {
     public void setStar(int x, int y ) {
         Tile star = new Tile(x, y,"STAR");
         tiles[x][y] = star;
-        System.out.println("Star set at " + x + " " + y);
+        x = tilesToPixels(x);
+        y = tilesToPixels(y);
+        this.star.setX(x);
+        this.star.setY(y);
     }
 
     /**
@@ -177,6 +179,10 @@ public class TileMap {
         return TILE_SIZE;
     }
 
+    public int getOffsetX(){
+        return offsetX;
+    }
+
     /**
         Class method to convert a tile position to a pixel position.
     */
@@ -197,6 +203,7 @@ public class TileMap {
         // get the scrolling position of the map based on player's position
         int playerX = player.getX();
         offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
+
         System.out.println("\n_______________________________");
         System.out.println("\n Player x: "+playerX+"\noffsetX: "+offsetX);
         System.out.println("Player tile: "+pixelsToTiles(playerX));
@@ -224,17 +231,18 @@ public class TileMap {
                                             tilesToPixels(y) + offsetY,
                                             null);
                             case "ANIMATION" -> {
-                                if(Objects.equals(tile.getState(), "STAR")){
-                                    System.out.println("star?: x"+x+" y"+y);
-                                    star.setX(tilesToPixels(x)+offsetX);
-                                    star.setY(tilesToPixels(y)+offsetY);
-                                    star.draw(g2);
-                                    star.update();
-                                }else {
+                                if(!Objects.equals(tile.getState(), "STAR")){
                                     fire.setX(tilesToPixels(x) + offsetX);
                                     fire.setY(tilesToPixels(y) + offsetY);
                                     fire.draw(g2);
                                     fire.update();
+                                }else{
+                                    star.offsetY = offsetY;
+                                    star.offsetX = offsetX;
+                                    star.setX(tilesToPixels(x));
+                                    star.setY(tilesToPixels(y));
+                                    star.draw(g2);
+                                    star.update();
                                 }
                             }
                         }
@@ -243,6 +251,7 @@ public class TileMap {
                 }
             }
         }
+
         //draw player animation
         int y = player.getY();
         playerX = Math.round((float)playerX)+offsetX;
@@ -325,6 +334,7 @@ public class TileMap {
 
     public void update() {
         player.update();
+        System.out.println("Player Tiles: "+ TileMap.pixelsToTiles(player.getX())+" y: "+TileMap.pixelsToTiles(player.getY()-offsetY));
 
         if (star.collidesWithPlayer()) {
             window.endLevel();
