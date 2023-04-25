@@ -56,7 +56,7 @@ public class Player {
 
 	   playerAnimation = new PlayerAnimation();
 	   this.pState = State.IDLE;
-	   newAnimation("idle");
+	   playerAnimation.start("idle","");
    }
 
 
@@ -141,39 +141,40 @@ public class Player {
 
 
    public synchronized void move (int direction) {
-      int newX = x;
+	   int newX = x;
 	   Tile tile = null;
-      Point tilePos = null;
+	   Point tilePos = null;
+	   if (!window.isVisible ()) return;
+	  // move left
 
-      if (!window.isVisible ()) return;
+	   if (direction == 1) {
+		   this.pState = State.LEFT;
+		   if(!inAir){
+			   playerAnimation.loop = true;
+			   playerAnimation.start("walk_left","footstep");
+		   }
 
-
-      if (direction == 1) {        // move left
-		  this.pState = State.LEFT;
-		  newAnimation("walk_left");
-		  newX = x - DX;
-		  if (newX < 0) {
-			  System.out.println("NEW X: " + newX);
-			  x = 0;
-			  return;
-		  }
-		  tile = isCollision(newX, y);
-
-      } else if (direction == 2 ) {        // move right
-		  if(!jumping){
-			  this.pState = State.RIGHT;
-			  newAnimation("walk_right");
-			  int pWidth = playerAnimation.getWidth();
-			  newX = x + DX;
-
-			  int tileMapWidth = tileMap.getWidthPixels();
-
-			  if (newX + pWidth >= tileMapWidth) {
-				  System.out.println("New X: "+newX);
-				  x = tileMapWidth - pWidth;
-				  return;
-			  }
-			  tile = isCollision(newX+pWidth, y);
+		   newX = x - DX;
+		   if (newX < 0) {
+			   System.out.println("NEW X: " + newX);
+			   x = 0;
+			   return;
+		   }
+		   tile = isCollision(newX, y);
+	   } else if (direction == 2 ) {        // move right
+		    if(!inAir){
+				this.pState = State.RIGHT;
+				playerAnimation.loop = true;
+			    playerAnimation.start("walk_right","footstep");
+				int pWidth = playerAnimation.getWidth();
+				newX = x + DX;
+				int tileMapWidth = tileMap.getWidthPixels();
+				if (newX + pWidth >= tileMapWidth) {
+					System.out.println("New X: "+newX);
+					x = tileMapWidth - pWidth;
+					return;
+				}
+			   tile = isCollision(newX+pWidth, y);
 		  }else{
 			  System.out.println("Jumping right");
 			  int pWidth = playerAnimation.getWidth();
@@ -189,8 +190,9 @@ public class Player {
 			  tile = isCollision(newX+pWidth, y);
 		  }
 
-      }else if (direction == 3 ) {
-		  newAnimation("jumping");
+      }else if (direction == 3 && !jumping) {
+		  playerAnimation.loop = false;
+		  playerAnimation.start("jumping","jump");
 		  jump();
 		  return;
 	  }
@@ -249,23 +251,6 @@ public class Player {
       return false;
    }
 
-	private void newAnimation(String key){
-		if(currentAnimation!=null){
-			if(currentAnimation == playerAnimation.animations.get(key)){
-				if(currentAnimation.isStillActive()) {
-					return;
-				}else{
-					playerAnimation.animations.get(key).start();
-				}
-			}
-			currentAnimation.stop();
-			playerAnimation.animations.get(key).start();
-			currentAnimation = playerAnimation.animations.get(key);
-			return;
-		}
-		playerAnimation.animations.get(key).start();
-		currentAnimation = playerAnimation.animations.get(key);
-	}
 
 	private boolean isFire(Tile tile){
 		System.out.println("Is Fire below check");
@@ -279,9 +264,10 @@ public class Player {
 
    private void fall() {
 	   this.pState = State.FALL;
-	   newAnimation("falling");
+	   playerAnimation.start("falling","");
 
-       inAir = true;
+
+	   inAir = true;
        timeElapsed = 0;
 
        goingUp = false;
@@ -299,13 +285,15 @@ public class Player {
 		jumping = false;
 		goingDown =false;
 		pState = State.DIE;
-		newAnimation("death");
+		playerAnimation.start("death","");
+
 	}
 
    private void jump () {
 	   if (!window.isVisible ()) return;
+	   playerAnimation.loop = false;
+	   playerAnimation.start("jumping","jump");
 
-	   newAnimation("jumping");
 	   jumping = true;
 	   this.pState = State.JUMP;
 	   timeElapsed = 0;
@@ -363,7 +351,8 @@ public class Player {
 				  jumping = false;
 
 				  this.pState = State.LAND;
-				  newAnimation("land");
+				  playerAnimation.start("land","");
+
 			  } else {
 				  y = newY;
 				  fall();
@@ -407,7 +396,8 @@ public class Player {
    public void setState(String strState){
 	   if(Objects.equals(strState, "IDLE")){
 		   this.pState = State.IDLE;
-		   newAnimation("idle");
+		   playerAnimation.start("idle","");
+
 	   }
    }
 

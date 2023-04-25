@@ -8,10 +8,6 @@ import java.util.HashMap;				// for storing sound clips
 public class SoundManager {				// a Singleton class
 	HashMap<String, Clip> clips;
 
-   	Clip hitClip = null;				// played when bat hits ball
-   	Clip appearClip = null;				// played when ball is re-generated
-   	Clip backgroundClip = null;			// played continuously after ball is created
-
 	private static SoundManager instance = null;	// keeps track of Singleton instance
 
 	private SoundManager () {
@@ -20,17 +16,21 @@ public class SoundManager {				// a Singleton class
 		Clip clip = loadClip("sounds/background1.wav");
 		clips.put("background1", clip);		// background theme sound option1
 
+
 		clip = loadClip("sounds/background2.wav");
 		clips.put("background2", clip);		// background theme sound option 2
 
-		clip = loadClip("sounds/background3.wav");
-		clips.put("background3", clip);		// background theme sound option 2
+		clip = loadClip("sounds/footstep.wav");
+		clips.put("footstep", clip);		// played when player is moving right or left
 
-		clip = loadClip("sounds/AppearSound.wav");
-		clips.put("appear", clip);		// played when a special sprite makes an appearance
+		clip = loadClip("sounds/jump 1.wav");
+		clips.put("jump", clip);		// player is jumping
 
-		clip = loadClip("sounds/door.wav");
-		clips.put("door", clip);		// door means moving unto a new level
+		clip = loadClip("sounds/bubble 1.wav");
+		clips.put("bubble", clip);		// moving to another level
+
+		clip = loadClip("sounds/fruit collect 1.wav");
+		clips.put("fruit", clip);		// player is ...
 
 	}
 
@@ -67,22 +67,22 @@ public class SoundManager {				// a Singleton class
 
 
     	public void playSound(String title, Boolean looping) {
-		Clip clip = getClip(title);
-		if (clip != null) {
-			clip.setFramePosition(0);
-			if (looping)
-				clip.loop(Clip.LOOP_CONTINUOUSLY);
-			else
-				clip.start();
-		}
+			Clip clip = getClip(title);
+			if (clip != null) {
+				clip.setFramePosition(0);
+				if (looping)
+					clip.loop(Clip.LOOP_CONTINUOUSLY);
+				else
+					clip.start();
+			}
     	}
 
 
     	public void stopSound(String title) {
-		Clip clip = getClip(title);
-		if (clip != null) {
-			clip.stop();
-		}
+			Clip clip = getClip(title);
+			if (clip != null) {
+				clip.stop();
+			}
     	}
 
 }

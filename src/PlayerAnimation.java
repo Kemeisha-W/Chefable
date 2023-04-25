@@ -7,68 +7,74 @@ public class PlayerAnimation {
      The PlayerAnimation class creates an animation of a player moving, dying, jumping,etc.
      */
 
-        public Animation animation;
-        private static final int pWidth=200;
-        private static final int pHeight=200;
+    public Animation animation;
+    private static final int pWidth=200;
+    private static final int pHeight=200;
+    public boolean loop =false;
+    private String currentSound = "";
+    private Animation currentAnimation = null;
+    public HashMap<String,Animation> animations = new HashMap<>();
+    private HashMap<String,Image> animImages= new HashMap<>();
+
+    private int dx;		// increment to move along x-axis
+    private int dy;		// increment to move along y-axis
+
+    private SoundManager soundManager;		// reference to SoundManager to play clip
+
+    public PlayerAnimation() {
+
+        loadWalkingRight();
+        loadWalkingLeft();
+        loadDeath();
+        loadIdle();
+        loadJump();
+        loadFall();
+        loadLand();
+        loadUse();
+
+    }
 
 
-        public HashMap<String,Animation> animations = new HashMap<>();
-        private HashMap<String,Image> animImages= new HashMap<>();
-
-        private int dx;		// increment to move along x-axis
-        private int dy;		// increment to move along y-axis
-
-        private SoundManager soundManager;		// reference to SoundManager to play clip
-
-        public PlayerAnimation() {
-
-            loadWalkingRight();
-            loadWalkingLeft();
-            loadDeath();
-            loadIdle();
-            loadJump();
-            loadFall();
-            loadLand();
-            loadUse();
-
+    public int getWidth(){return pWidth;}
+    public int getHeight(){return pHeight;}
+    public void start(String key,String sound) {
+        if(currentAnimation != null){
+            currentAnimation.stop();
+            stopSound(currentSound);
         }
 
+        animation = animations.get(key);
+        animation.start();
+        playSound(sound);
+        currentSound = sound;
+        currentAnimation =  animations.get(key);
+    }
 
-        public int getWidth(){return pWidth;}
-        public int getHeight(){return pHeight;}
-        public void start(String sound,String key) {
-            animation = animations.get(key);
-            animation.start();
-            playSound(sound);
+
+    public void update(String sound,String key) {
+        animation = animations.get(key);
+        if (!animation.isStillActive()) {
+            stopSound(sound);
+            return;
         }
+        animation.update();
+
+    }
 
 
-        public void update(String sound,String key) {
-            animation = animations.get(key);
-            if (!animation.isStillActive()) {
-                stopSound(sound);
-                return;
-            }
-            animation.update();
-
+    public void draw(Graphics2D g2,String key,int x, int y) {
+        animation = animations.get(key);
+        if (!animation.isStillActive()) {
+            System.out.println("active animation NOPE");
+            return;
         }
+        g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
+    }
 
-
-        public void draw(Graphics2D g2,String key,int x, int y) {
-            animation = animations.get(key);
-            if (!animation.isStillActive()) {
-                System.out.println("active animation NOPE");
-                return;
-            }
-
-            g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
-        }
-
-        public void playSound(String title) {
-            soundManager.playSound(title, true);
-        }
-
-        public void stopSound(String title) {
+    public void playSound(String title) {
+            soundManager.playSound(title, loop);
+    }
+    public void stopSound(String title) {
             soundManager.stopSound(title);
         }
 
