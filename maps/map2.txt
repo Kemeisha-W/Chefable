@@ -9,12 +9,12 @@
 #   ~       Fire
 #   ^       Player initial position
 
-                        !
-                      DBBBH
-                              DBBBH
-        DBBBH
-                                                DBBBH       *
-                      !             DBBBH                 DBBBBH
-^                   DBBBH                                 IFFFFF
-BBBBBH   DBBH                                             IFFFFF
+                        &
+                      DBBBH     #
+          +                   DBBBH
+        DBBBH                                      +
+                                      +          DBBBH       *
+                      +            DBBBH                  DBBBBH
+^         #         DBBBH                  +              IFFFFF
+BBBBBH   DBBH                            DBBBH            IFFFFF
 FFFFFM000IFFMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOIFFFFF

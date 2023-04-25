@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import javax.swing.ImageIcon;
 
 /**
@@ -12,7 +11,8 @@ import javax.swing.ImageIcon;
 public class TileMapManager {
 
     private ArrayList<Image> tiles;
-    private HashMap<Integer,Image> decor;
+    private HashMap<String,Image> ingredients;
+    private ArrayList<String> foods = new ArrayList<String>();
     private GamePanel window;
     private GameWindow gWindow;
 
@@ -32,7 +32,7 @@ public class TileMapManager {
         this.window = window;
         loadTileImages();
         loadCreatureSprites();
-        loadDecor();
+        loadIngredients();
 //        loadPowerUpSprites();
     }
 
@@ -73,21 +73,17 @@ public class TileMapManager {
                 int tile = ch - 'A';
                 if (tile >= 0 && tile < tiles.size()) {
                     newMap.setTile(x, y, tiles.get(tile),"FOUNDATION");
-                } else if (ch == '^') {
-                    newMap.setPlayer(x,y);
-                }else if(ch == '~'){
-                    newMap.setFire(x,y);
                 }
-                else if (isNumeric(ch)) {
-                    int key = Character.getNumericValue(ch);
-                    newMap.setTile(x,y,decor.get(key),"USE");
-                }
-//                else if (ch == '!') {
-//                    newMap.setTile(x,y,tiles.get(tile));
-//                    addSprite(newMap, musicSprite, x, y);
-//                }
-                else if (ch == '*') {
-                    newMap.setStar(x,y);
+                switch (ch) {
+                    case '^' -> newMap.setPlayer(x,y);
+                    case '~' -> newMap.setFire(x,y);
+                    case '+' -> {//TODO add ingredient
+                         }
+                    case '#' -> {//TODO add heart
+                    }
+                    case '&' -> {//TODO add basket something to open
+                    }
+                    case '*' -> newMap.setStar(x,y);
                 }
             }
         }
@@ -157,24 +153,33 @@ public class TileMapManager {
     }
 
 
-    public void loadDecor(){
-        File file;
+    public void loadIngredients(){
+        try {
+            Scanner s = new Scanner(new File("Assets/Food/food.txt"));
+            while (s.hasNext()){
+                foods.add(s.next());
+            }
+            s.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
+
+        File file;
         String filename;
-        int num = 1;
-        decor = new HashMap<>();
-        while(true) {
-            filename = "Assets/cartoon game tileset/PNG/Environment/Decor_"+num+".png";
+        ingredients = new HashMap<>();
+        for (String food : foods) {
+            filename = "Assets/Food/" + food;
             file = new File(filename);
             if (!file.exists()) {
                 System.out.println("Image file could not be opened: " + filename);
                 break;
             }
 
-            Image decorImage = new ImageIcon(filename).getImage();
-            decorImage = decorImage.getScaledInstance(32, 32,Image.SCALE_DEFAULT);
-            decor.put(num,decorImage);
-            num++;
+            Image image = new ImageIcon(filename).getImage();
+            image = image.getScaledInstance(32, 32, Image.SCALE_DEFAULT);
+            String temp = food.replace(".png","");
+            ingredients.put(temp, image);
         }
     }
 

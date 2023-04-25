@@ -10,8 +10,9 @@
 #   ^       Player initial position
 #change / to herbs
 
-                   1
-                  455        2          ABBH       7         6
- ^          3     DBH       455      DBBEFFM      455      DBBBH     *
-BBBBBBH   DBBBH   IFM     DBBBBBBH   IFFFFFM   DBBBBBBBBH         DBBBBBBBBBB
-FFFFFFM~~~IFFFM~~~IFM~~~~~IFFFFFFM~~~IFFFFFM~~~IFFFFFFFFM~~~~~~~~~IFFFFFFFFFF
+                             &                              +
+                           DBBBH           #              DBBBH
+                #    +                 +  ABBH
+ ^          +       DBH         +      DBBEFFM       #                   *
+BBBBBBH    DBBBH    IFM     DBBBBBBH   IFFFFFM   DBBBBBBBBH         DBBBBBBBBBB
+FFFFFFM~~~~IFFFM~~~~IFM~~~~~IFFFFFFM~~~IFFFFFM~~~IFFFFFFFFM~~~~~~~~~IFFFFFFFFFF
