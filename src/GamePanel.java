@@ -24,7 +24,7 @@ public class GamePanel extends JPanel
 //    private ImageEffect imageEffect;		// sprite demonstrating an image effect
 
     private TileMapManager tileManager;
-    private TileMap	tileMap;
+    private TileMap tileMap;
 
     private boolean levelChange;
     private int level;
@@ -38,7 +38,7 @@ public class GamePanel extends JPanel
     public GamePanel () {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         width = (int) screenSize.getWidth();
-        height =900;
+        height =(int) screenSize.getHeight()-100;
         isRunning = false;
         isPaused = false;
         setSize(width,height);
@@ -97,7 +97,7 @@ public class GamePanel extends JPanel
                 System.out.println ("Width of tilemap " + w);
                 System.out.println ("Height of tilemap " + h);
             }
-            catch (Exception e) {		// no more maps: terminate game
+            catch (Exception e) {        // no more maps: terminate game
                 gameOver = true;
                 System.out.println(e);
                 System.out.println("Game Over");
@@ -130,45 +130,14 @@ public class GamePanel extends JPanel
             imageContext.fill (new Rectangle2D.Double (0, 0, width, height));
         }
 
-        Graphics2D g2 = (Graphics2D) getGraphics();	// get the graphics context for the panel
-        g2.drawImage(image, 0, 0, width, height, null);	// draw the image on the graphics context
+        Graphics2D g2 = (Graphics2D) getGraphics();    // get the graphics context for the panel
+        g2.drawImage(image, 0, 0, width, height, null);    // draw the image on the graphics context
         imageContext.dispose();
     }
 
 
-//    public void startGame() {				// initialise and start the game thread
-//
-//        if (gameThread == null) {
-//            soundManager.playSound ("background1", true);
-//
-//            gameOver = false;
-//
-//            tileManager = new TileMapManager (this);
-//
-//            try {
-//                tileMap = tileManager.loadMap("maps/map1.txt");
-//                int w, h;
-//                w = tileMap.getWidth();
-//                h = tileMap.getHeight();
-//                System.out.println ("Width of tilemap " + w);
-//                System.out.println ("Height of tilemap " + h);
-//            }
-//
-//            catch (Exception e) {
-//                System.out.println(e);
-//                System.exit(0);
-//            }
-//
-//            createGameEntities();
-//
-//            gameThread = new Thread(this);
-//            gameThread.start();
-//
-//        }
-//    }
 
-
-    public void startNewGame() {				// initialise and start a new game thread
+    public void startNewGame() {                // initialise and start a new game thread
         if(isRunning){
            endGame();
         }
@@ -198,16 +167,16 @@ public class GamePanel extends JPanel
     }
 
 
-	public int getLevel(){
-		return level;
-	}
+    public int getLevel(){
+        return level;
+    }
 
-	public void setLevel(int level) {
-		this.level = level;
-		levelChange = true;
-	}
+    public void setLevel(int level) {
+        this.level = level;
+        levelChange = true;
+    }
 
-    public void pauseGame() {				// pause the game (don't update game entities)
+    public void pauseGame() {                // pause the game (don't update game entities)
         if (isRunning) {
             if (isPaused)
                 isPaused = false;
@@ -229,7 +198,7 @@ public class GamePanel extends JPanel
         g.setColor(Color.BLUE);
         g.setFont(font);
         g.drawString(msg, x, y);
-	}
+    }
 
     public void gameStartMessage() {
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -248,7 +217,7 @@ public class GamePanel extends JPanel
 
     }
 
-    public void endGame() {					// end the game thread
+    public void endGame() {                    // end the game thread
         isRunning = false;
         soundManager.stopSound ("background1");
         gameThread=null;
@@ -271,6 +240,11 @@ public class GamePanel extends JPanel
     public void jump() {
         if (!gameOver)
             tileMap.jump();
+    }
+
+    public void use(){
+        if (!gameOver)
+            tileMap.use();
     }
 
     public void idle(){

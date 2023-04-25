@@ -87,9 +87,7 @@ public class TileMapManager {
 //                    addSprite(newMap, musicSprite, x, y);
 //                }
                 else if (ch == '*') {
-                    System.out.println("Here?");
                     newMap.setStar(x,y);
-//                    addSprite(newMap, goalSprite, x, y);
                 }
             }
         }

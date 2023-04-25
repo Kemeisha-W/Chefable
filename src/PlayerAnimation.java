@@ -33,7 +33,9 @@ public class PlayerAnimation {
         loadUse();
 
     }
-
+    public boolean isActive(){
+        return currentAnimation.isStillActive();
+    }
 
     public int getWidth(){return pWidth;}
     public int getHeight(){return pHeight;}
@@ -76,7 +78,7 @@ public class PlayerAnimation {
     }
     public void stopSound(String title) {
             soundManager.stopSound(title);
-        }
+    }
 
     private void loadWalkingRight(){
          for(int num=0;num<8;num++){
@@ -196,9 +198,9 @@ public class PlayerAnimation {
             i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
             animImages.put("use"+num,i);
         }
-        animation = new Animation(false);	// play once only
+        animation = new Animation(false);	// play continuously
 
-        for(int num=0;num<2;num++){
+        for(int num=0;num<13;num++){
             animation.addFrame(animImages.get("use"+num), 200);
         }
         animations.put("use",animation);

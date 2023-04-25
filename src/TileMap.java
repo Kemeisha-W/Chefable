@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Iterator;
@@ -59,7 +60,6 @@ public class TileMap {
 
         this.pAni = player.getPlayerAnimation();
         aniManager = new AnimationManager();
-//        aniManager.start("star");
         star = Star.getInstance(window,player);
         Animation starAni = star.getAnimation();
         starAni.start();
@@ -203,9 +203,8 @@ public class TileMap {
         int playerX = player.getX();
         offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
 
-        System.out.println("\n_______________________________");
-        System.out.println("\n Player x: "+playerX+"\noffsetX: "+offsetX);
-        System.out.println("Player tile: "+pixelsToTiles(playerX));
+//        System.out.println("\n_______________________________");
+//        System.out.println("\n Player x: "+playerX+"\noffsetX: "+offsetX);
 
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
@@ -217,7 +216,6 @@ public class TileMap {
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
         int lastTileX = firstTileX + pixelsToTiles(screenWidth)+1;
-        System.out.println("First: " + firstTileX+"\t Last:"  + lastTileX);
         for (int y=0; y<mapHeight; y++) {
             for (int x=firstTileX; x <= lastTileX; x++) {
                 if(x<mapWidth){
@@ -280,13 +278,22 @@ public class TileMap {
             }
             case "DIE" -> {
                 key = "death";
-                System.out.println("DIE: ");
                 this.pAni.draw(g2, key, playerX, y);
-                this.pAni.draw(g2, key, playerX, y);
+                if(!this.pAni.isActive()){
+                    restartLevel();
+                }
             }
             case "IDLE" -> {
                 key = "idle";
                 this.pAni.draw(g2, key, playerX, y);
+            }
+            case "USE" -> {
+                key = "use";
+                this.pAni.draw(g2, key, playerX, y);
+                if(!this.pAni.isActive()) {
+                    JPanel panel = new JPanel();
+                    window.add(panel);
+                }
             }
         }
         this.pAni.update("",key);
@@ -308,9 +315,7 @@ public class TileMap {
 //                ((Creature)sprite).wakeUp();
 //            }
 //        }
-        if(Objects.equals(player.getState(), "DIE")){
-            restartLevel();
-        }
+
     }
 
     public void moveLeft() {
@@ -327,13 +332,16 @@ public class TileMap {
         player.move(3);
     }
 
+    public void use(){
+        player.use();
+    }
+
     public void idle(){
         player.setState("IDLE");
     }
 
     public void update() {
         player.update();
-        System.out.println("Player Tiles: "+ TileMap.pixelsToTiles(player.getX())+" y: "+TileMap.pixelsToTiles(player.getY()-offsetY));
 
         if (star.collidesWithPlayer()) {
             window.endLevel();

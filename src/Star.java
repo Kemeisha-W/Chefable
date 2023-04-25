@@ -20,6 +20,7 @@ public class Star {
     public int offsetX;
     public int offsetY;
     private int dx;
+    private final SoundManager soundManager;		// reference to SoundManager to play clip
 
     private Player player;
     private Animation animation;
@@ -45,6 +46,7 @@ public class Star {
         originalImage = true;
         grayImage = false;
         loadStar();
+        soundManager = SoundManager.getInstance();
     }
 
     private void loadStar(){
@@ -67,7 +69,6 @@ public class Star {
             return;
         }
         g2.drawImage(animation.getImage(), x+offsetX, y+offsetY-32, XSIZE, YSIZE, null);
-        System.out.println("Star draw X:"+(x+offsetX)+" y:"+(y+offsetY-32));
     }
 
 
@@ -79,7 +80,7 @@ public class Star {
 
         if (myRect.intersects(playerRect)) {
             System.out.println ("Collision with player!");
-            //TODO Add play sound to move to next map
+            soundManager.playSound("bubble", false);
             return true;
         }
         else
@@ -88,7 +89,7 @@ public class Star {
 
 
     public Rectangle2D.Double getBoundingRectangle() {
-        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY-32));
+//        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY-32));
         return new Rectangle2D.Double (x+offsetX, (y+offsetY-32), XSIZE, YSIZE);
     }
 

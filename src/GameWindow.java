@@ -1,6 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;            // need this for GUI objects
 import java.awt.*;            // need this for certain AWT classes
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
 
 public class GameWindow extends JFrame implements
 		KeyListener,
@@ -31,12 +34,13 @@ public class GameWindow extends JFrame implements
 
 
 // declare buttons
-	private JButton pauseB;
+private JButton pauseB;
 	private JButton endB;
 	private JButton startNewB;
 	private JButton exitB;
+	private SoundManager soundManager;
 
-	public GameWindow() {
+	public GameWindow() throws IOException {
 
 		super("Chefable Project");
 		setTitle ("Chefable Project");
@@ -87,14 +91,19 @@ public class GameWindow extends JFrame implements
 		mainPanel.add(gamePanel,BorderLayout.CENTER);
 		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
 
-		mainPanel.setBackground(Color.WHITE);
 
 		//Add listeners
 		gamePanel.addMouseListener(this);
 		gamePanel.addMouseMotionListener( this);
 		mainPanel.addKeyListener(this);
 
-		// add mainPanel to window surface
+		ImageIcon imageIcon = new ImageIcon("Assets/Logo.png");
+		Image image = imageIcon.getImage(); // transform it
+		Image newImg = image.getScaledInstance(screenSize.width,1000,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+		imageIcon = new ImageIcon(newImg);  // transform it back
+		gamePanel.add(new JLabel(imageIcon));
+
+
 		Container c = getContentPane();
 		c.add(mainPanel);
 
@@ -102,6 +111,9 @@ public class GameWindow extends JFrame implements
 		setResizable(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+
+		soundManager = SoundManager.getInstance();
+		soundManager.playSound("background2",true);
 
 	}
 
@@ -124,8 +136,10 @@ public class GameWindow extends JFrame implements
 			gamePanel.endGame();
 		}
 
-		if (command.equals(startNewB.getText()))
+		if (command.equals(startNewB.getText())){
+			soundManager.stopSound("background2");
 			gamePanel.startNewGame();
+		}
 
 		if (command.equals(exitB.getText()))
 			System.exit(0);
@@ -143,6 +157,7 @@ public class GameWindow extends JFrame implements
 			case KeyEvent.VK_LEFT -> gamePanel.moveLeft();
 			case KeyEvent.VK_RIGHT -> gamePanel.moveRight();
 			case KeyEvent.VK_SPACE -> gamePanel.jump();
+			case KeyEvent.VK_UP -> gamePanel.use();
 		}
 	}
 
@@ -199,8 +214,8 @@ public class GameWindow extends JFrame implements
 
 
     /** This method handles mouse clicks on one of the buttons
-	   (Pause, Stop, Start Anim, Pause Anim, and Quit).
-	*/
+	 (Pause, Stop, Start Anim, Pause Anim, and Quit).
+	 */
 
 	private void testMousePress(int x, int y) {
 
@@ -212,17 +227,16 @@ public class GameWindow extends JFrame implements
 			isPaused = false;
 		} else if (isOverPauseButton) {        // mouse click on Pause button
 			isPaused = !isPaused;         // toggle pausing
-		}
-		else if (isOverQuitButton) {        // mouse click on Quit button
+		} else if (isOverQuitButton) {        // mouse click on Quit button
 			isRunning = false;        // set running to false to terminate
 		}
 	}
 
 
     /** This method checks to see if the mouse is currently moving over one of
-	   the buttons (Pause, Stop, Show Anim, Pause Anim, and Quit). It sets a
-	   boolean value which will cause the button to be displayed accordingly.
-	*/
+	 the buttons (Pause, Stop, Show Anim, Pause Anim, and Quit). It sets a
+	 boolean value which will cause the button to be displayed accordingly.
+	 */
 
 	private void testMouseMove(int x, int y) {
 		if (isRunning) {
