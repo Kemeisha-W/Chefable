@@ -72,8 +72,10 @@ public class TileMap {
         heartAni.start();
 
         basket = Basket.getInstance(window,player);
+        basket.setAnimation("close");
         Animation basketAni = basket.getAnimation();
         basketAni.start();
+        System.out.println("Basket added");
     }
 
 
@@ -124,7 +126,7 @@ public class TileMap {
         Sets the tile at the specified location.
     */
     public void setTile(int x, int y, Image tile, String key) {
-        Tile t = new Tile(tile, x, y, key);
+        Tile t = new Tile(tile, x, y,"Image", key);
         tiles[x][y] = t;
     }
 
@@ -143,7 +145,7 @@ public class TileMap {
      * Sets the FireAnimation at the specified locations
      */
     public void setFire(int x, int y) {
-        Tile fireT = new Tile(x, y,"FIRE");
+        Tile fireT = new Tile(null,x, y,"Animation","FIRE");
         tiles[x][y] = fireT;
     }
 
@@ -151,7 +153,7 @@ public class TileMap {
      * Sets the Star at the specified locations
      */
     public void setStar(int x, int y ) {
-        Tile star = new Tile(x, y,"STAR");
+        Tile star = new Tile(null,x, y,"Animation","STAR");
         tiles[x][y] = star;
         this.star.setX(tilesToPixels(x));
         this.star.setY(tilesToPixels(y));
@@ -161,15 +163,16 @@ public class TileMap {
      * Sets the Food at the specified locations
      */
     public void setFood(int x, int y) {
-        Tile food = new Tile(x, y,"USE");
+        Tile food = new Tile(null,x, y,"Image","USE");
         tiles[x][y] = food ;
+        System.out.println("food?");
     }
 
     /**
      * Sets the Heart at the specified locations
      */
     public void setHeart(int x, int y) {
-        Tile heart = new Tile(x, y,"HEART");
+        Tile heart = new Tile(null,x, y,"Animation","HEART");
         tiles[x][y] = heart;
         this.heart.setX( tilesToPixels(x));
         this.heart.setY(tilesToPixels(y));
@@ -178,7 +181,7 @@ public class TileMap {
      * Sets the Heart at the specified locations
      */
     public void setBasket(int x, int y) {
-        Tile basket = new Tile(x, y,"BASKET");
+        Tile basket = new Tile(null,x, y,"Animation","BASKET");
         tiles[x][y] = basket;
         //TODO ADD BASKET
     }
@@ -249,32 +252,49 @@ public class TileMap {
                     if(tiles[x][y] != null){
                         Tile tile = tiles[x][y];
                         switch (tile.getDisplay()) {
-                            case "IMAGE" ->{
-                                //TODO Draw Food
-                                g2.drawImage(tile.getImage(),
-                                        tilesToPixels(x) + offsetX,
-                                        tilesToPixels(y) + offsetY,
-                                        null);
+                            case "IMAGE" -> {
+                                if(Objects.equals(tile.getState(),"USE")){
+//                                    g2.drawImage(tile.getImage(),
+//                                            tilesToPixels(x) + offsetX,
+//                                            tilesToPixels(y) + offsetY,
+//                                            null);
+                                }else{
+                                    g2.drawImage(tile.getImage(),
+                                            tilesToPixels(x) + offsetX,
+                                            tilesToPixels(y) + offsetY,
+                                            null);
+                                }
                             }
                             case "ANIMATION" -> {
-                                //TODO DRAW Heart
-                                // Draw Basket
-                                if(!Objects.equals(tile.getState(), "STAR")){
+                                if (Objects.equals(tile.getState(), "FIRE")) {
                                     fire.setX(tilesToPixels(x) + offsetX);
                                     fire.setY(tilesToPixels(y) + offsetY);
                                     fire.draw(g2);
                                     fire.update();
-                                }else{
+                                } else if (Objects.equals(tile.getState(), "STAR")) {
                                     star.offsetY = offsetY;
                                     star.offsetX = offsetX;
                                     star.setX(tilesToPixels(x));
                                     star.setY(tilesToPixels(y));
                                     star.draw(g2);
                                     star.update();
+                                } else if (Objects.equals(tile.getState(), "HEART")) {
+                                    heart.offsetY = offsetY;
+                                    heart.offsetX = offsetX;
+                                    heart.setX(tilesToPixels(x));
+                                    heart.setY(tilesToPixels(y));
+                                    heart.draw(g2);
+                                    heart.update();
+                                } else if (Objects.equals(tile.getState(), "BASKET")) {
+                                    basket.offsetY = offsetY;
+                                    basket.offsetX = offsetX;
+                                    basket.setX(tilesToPixels(x));
+                                    basket.setY(tilesToPixels(y));
+                                    basket.draw(g2);
+                                    basket.update();
                                 }
                             }
                         }
-
                     }
                 }
             }

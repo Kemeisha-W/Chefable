@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.util.Objects;
 
 public class Tile {
     Point position;
@@ -20,24 +21,21 @@ public class Tile {
     private Image tImage = null;
 
     /** Set Image Tile position*/
-    public Tile(Image i, int x, int y,String key){
-        tDisplay = Display.IMAGE;
-        switch (key) {
+    public Tile(Image i, int x, int y,String dKey, String state){
+        if(Objects.equals(dKey, "Image")){
+            tDisplay = Display.IMAGE;
+            position = new Point(x,y);
+            if(i != null){
+                tImage = i;
+            }
+        }else {
+            tDisplay = Display.ANIMATION;
+            position = new Point(x,y);
+
+        }
+        switch (state) {
             case "FOUNDATION" -> tState = State.FOUNDATION;
             case "USE" -> tState = State.USE;
-            default -> {
-                //TODO ADD ERROR message
-                return;
-            }
-        }
-        position = new Point(x,y);
-        tImage = i;
-    }
-
-    /** Set Animation Tile position*/
-    public Tile(int x, int y,String state){
-        tDisplay = Display.ANIMATION;
-        switch (state) {
             case "STAR" -> tState = State.STAR;
             case "HEART" -> tState = State.HEART;
             case "BASKET" -> tState = State.BASKET;
@@ -47,7 +45,6 @@ public class Tile {
                 return;
             }
         }
-        position = new Point(x,y);
     }
 
     public String getState(){
@@ -60,5 +57,8 @@ public class Tile {
 
     public Image getImage(){
         return tImage;
+    }
+    public void setImage(Image img){
+        tImage = img;
     }
 }

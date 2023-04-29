@@ -59,7 +59,6 @@ eggtart_dish.png
 Fish.png
 FishFillet.png
 FishSteak.png
-food.txt
 frenchfries.png
 frenchfries_dish.png
 friedegg.png

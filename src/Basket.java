@@ -4,26 +4,29 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Basket implements Sprite{
-    private final SoundManager soundManager;		// reference to SoundManager to play clip
+    private final SoundManager soundManager;        // reference to SoundManager to play clip
     private JPanel panel;                // JPanel on which image will be drawn
     private Dimension dimension;
     private Player player;
-    private Animation animation;
+    private Animation closedAni;
+    private Animation openAni;
+    private Animation currentAni;
     private int x;
     private int y;
     public int offsetX;
     public int offsetY;
-    private final ArrayList<Image> basketImages= new ArrayList<>();
+    private final ArrayList<Image> openImages= new ArrayList<>();
+    private final ArrayList<Image> closedImages= new ArrayList<>();
 
     private static Basket single_instance = null;
 
     private Basket(JPanel panel, Player player){
         this.panel = panel;
-
         dimension = panel.getSize();
-
+        currentAni = closedAni;
         this.player = player;
-        loadBasket();
+        loadClosedBasket();
+        loadOpenBasket();
         soundManager = SoundManager.getInstance();
     }
 
@@ -34,30 +37,40 @@ public class Basket implements Sprite{
         return Basket.single_instance;
     }
 
-    private void loadBasket() {
-        //TODO EDIT TO DISPLAY BASKETS
-        // Open Animation
-        // Closed Animation
-//        for (int num = 11; num < 21; num++) {
-//            Image i = ImageManager.loadBufferedImage("Assets/Gold/Gold_" + num + ".png");
-//            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
-//            basketImages.add(i);
-//        }
-//
-//        animation = new Animation(true);    // play continuously
-//
-//        for (int num = 11; num < 21; num++) {
-//            animation.addFrame(basketImages.get(num), 150);
-//        }
+    private void loadClosedBasket() {
+        for (int num = 0; num < 5; num++) {
+            Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_closed"+num+".png");
+            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            closedImages.add(i);
+        }
+
+        closedAni = new Animation(true);    // play continuously
+
+        for (int num = 0; num < 5; num++) {
+            closedAni.addFrame(closedImages.get(num), 150);
+        }
+    }
+
+    private void loadOpenBasket() {
+        for (int num = 0; num < 5; num++) {
+            Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_open"+num+".png");
+            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            openImages.add(i);
+        }
+
+        openAni = new Animation(true);    // play continuously
+
+        for (int num = 0; num < 5; num++) {
+            openAni.addFrame(openImages.get(num), 150);
+        }
     }
 
     @Override
     public void draw(Graphics2D g2) {
-        if (!animation.isStillActive()) {
+        if (!currentAni.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
-
+        g2.drawImage(currentAni.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
     }
 
     @Override
@@ -84,10 +97,10 @@ public class Basket implements Sprite{
 
     @Override
     public void update() {
-        if (!animation.isStillActive()) {
+        if (!currentAni.isStillActive()) {
             return;
         }
-        animation.update();
+        currentAni.update();
     }
 
     @Override
@@ -104,6 +117,13 @@ public class Basket implements Sprite{
 
     @Override
     public Animation getAnimation() {
-        return animation;
+        return currentAni;
+    }
+
+    public void setAnimation(String ani) {
+        switch (ani) {
+            case "open"-> currentAni = openAni;
+            case "close"-> currentAni = closedAni;
+        }
     }
 }

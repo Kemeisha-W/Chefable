@@ -30,7 +30,6 @@ public class AnimationManager {
         loadChefWalking();
         loadFire();
         loadFireworks();
-        loadHeart();
         loadGameOverAni();
         loadStartGameAni();
     }
@@ -175,21 +174,21 @@ public class AnimationManager {
         soundManager = SoundManager.getInstance();
     }
 
-    private void loadHeart(){
-        for(int num=11;num<21;num++){
-            Image i = ImageManager.loadBufferedImage("Assets/Free-Game-Coins-Sprite/PNG/Gold/Gold_"+num+".png");
-//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
-            animImages.put("heart"+num,i);
-        }
-
-        animation = new Animation(false);	// play once continuously
-
-        for(int num=11;num<21;num++){
-            animation.addFrame(animImages.get("heart"+num), 150);
-        }
-        animations.put("heart",animation);
-        soundManager = SoundManager.getInstance();
-    }
+//    private void loadHeart(){
+//        for(int num=11;num<21;num++){
+//            Image i = ImageManager.loadBufferedImage("Assets/Free-Game-Coins-Sprite/PNG/Gold/Gold_"+num+".png");
+////            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
+//            animImages.put("heart"+num,i);
+//        }
+//
+//        animation = new Animation(false);	// play once continuously
+//
+//        for(int num=11;num<21;num++){
+//            animation.addFrame(animImages.get("heart"+num), 150);
+//        }
+//        animations.put("heart",animation);
+//        soundManager = SoundManager.getInstance();
+//    }
 
 
 }

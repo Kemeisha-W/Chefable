@@ -4,7 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
 public class Heart implements Sprite{
-    private final SoundManager soundManager;		// reference to SoundManager to play clip
+    private final SoundManager soundManager;        // reference to SoundManager to play clip
     private JPanel panel;                // JPanel on which image will be drawn
     private Dimension dimension;
     private Player player;
@@ -14,7 +14,8 @@ public class Heart implements Sprite{
     public int offsetX;
     public int offsetY;
     private final ArrayList<Image> heartImages= new ArrayList<>();
-
+    private int width = 32;        // width of the image
+    private int height = 32;        // height of the image
     private static Heart single_instance = null;
 
     private Heart(JPanel panel, Player player){
@@ -37,14 +38,13 @@ public class Heart implements Sprite{
     private void loadHeart() {
         for (int num = 11; num < 21; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Gold/Gold_" + num + ".png");
-            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
             heartImages.add(i);
         }
-
         animation = new Animation(true);    // play continuously
 
-        for (int num = 11; num < 21; num++) {
-            animation.addFrame(heartImages.get(num), 150);
+        for (int num = 0; num < 10; num++) {
+            animation.addFrame(heartImages.get(num), 100);
         }
     }
 
@@ -53,7 +53,7 @@ public class Heart implements Sprite{
         if (!animation.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
+        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, width, height, null);
 
     }
 
