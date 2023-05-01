@@ -29,7 +29,6 @@ public class GameWindow extends JFrame implements
 	private volatile boolean isStopped = false;
 
 	private GamePanel gamePanel;
-	private InfoPanel infoPanel;
 	private JPanel mainPanel;
 
 
@@ -59,8 +58,6 @@ private JButton pauseB;
 
 		gamePanel = new GamePanel();
 
-		// Add Objects to InfoPanel
-		infoPanel = new InfoPanel();
 
 		// create buttonPanel
 		pauseB = new JButton ("Pause Game");
@@ -87,7 +84,6 @@ private JButton pauseB;
 		buttonPanel.add (exitB);
 
 		// add sub-panels with GUI objects to mainPanel and set its colour
-		mainPanel.add(infoPanel,BorderLayout.NORTH);
 		mainPanel.add(gamePanel,BorderLayout.CENTER);
 		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
 

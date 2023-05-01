@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.io.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.ImageIcon;
 
 /**
@@ -13,14 +12,16 @@ public class TileMapManager {
 
     private ArrayList<Image> tiles;
     private HashMap<String,Image> foodImgs;
-    private LinkedList<String> foods = new LinkedList<>();
+    private LinkedList<String> foodStr = new LinkedList<>();
     private GamePanel window;
+    private Theme theme;
 
 
     public TileMapManager(GamePanel window) {
         this.window = window;
         loadTileImages();
-        loadIngredients();
+        loadFoods();
+        theme = new Theme(foodImgs, foodStr);
     }
 
 
@@ -51,7 +52,8 @@ public class TileMapManager {
         // parse the lines to create a TileMap
         mapHeight = lines.size();
 
-        TileMap newMap = new TileMap(window, mapWidth, mapHeight);
+        TileMap newMap = new TileMap(window, mapWidth, mapHeight,theme);
+
          System.out.println("New Tile map");
         for (int y=0; y<mapHeight; y++) {
             String line = lines.get(y);
@@ -67,7 +69,7 @@ public class TileMapManager {
                     case '~' -> newMap.setFire(x,y);
                     case '+' -> newMap.setFood(x,y);
                     case '#' -> newMap.setHeart(x,y);
-                    case '&' -> newMap.setBasket(x,y);
+                    case '&' -> newMap.setChest(x,y);
                     case '*' -> newMap.setStar(x,y);
                 }
             }
@@ -76,23 +78,9 @@ public class TileMapManager {
     }
 
 
-
-
-    public HashMap<String,Image> getFoods(){
-        return foodImgs;
-    }
-
     // -----------------------------------------------------------
     // code for loading sprites and images
     // -----------------------------------------------------------
-    private static boolean isNumeric(Character str) {
-        try {
-            Double.parseDouble(String.valueOf(str));
-            return true;
-        } catch(NumberFormatException e){
-            return false;
-        }
-    }
 
     public void loadTileImages() {
         // keep looking for tile A,B,C, etc. this makes it
@@ -110,7 +98,7 @@ public class TileMapManager {
                 break;
             }
 
-            Image tileImage = new ImageIcon(filename).getImage();
+            Image tileImage = ImageManager.loadBufferedImage(filename);
             tileImage = tileImage.getScaledInstance(32, 32,Image.SCALE_DEFAULT);
             tiles.add(tileImage);
             ch++;
@@ -119,11 +107,11 @@ public class TileMapManager {
     }
 
 
-    public void loadIngredients(){
+    public void loadFoods(){
         try {
             Scanner s = new Scanner(new File("Assets/Food/food.txt"));
             while (s.hasNextLine()){
-                foods.add(s.nextLine());
+                foodStr.add(s.nextLine());
             }
             s.close();
         }catch (IOException e){
@@ -134,7 +122,7 @@ public class TileMapManager {
         File file;
         String filename;
         foodImgs = new HashMap<>();
-        for (String food : foods) {
+        for (String food : foodStr) {
             filename = "Assets/Food/" + food;
             file = new File(filename);
             if (!file.exists()) {
@@ -142,28 +130,12 @@ public class TileMapManager {
                 break;
             }
 
-            Image image = new ImageIcon(filename).getImage();
+            Image image = ImageManager.loadBufferedImage(filename);
             image = image.getScaledInstance(32, 32, Image.SCALE_DEFAULT);
             String temp = food.replace(".png","");
             foodImgs.put(temp, image);
         }
     }
 
-    private LinkedList<String> loadThemeBased(String themeStr){
-
-        LinkedList<String> themeList = new LinkedList<String>();
-        try {
-            Scanner s = new Scanner(new File("Assets/Food/"+themeStr.trim()+".txt"));
-            while (s.hasNextLine()){
-                themeList.add(s.nextLine());
-            }
-            s.close();
-        }catch (IOException e){
-            e.printStackTrace();
-            return null;
-        }
-
-        return themeList;
-    }
 
 }

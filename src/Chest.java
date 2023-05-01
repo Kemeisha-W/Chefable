@@ -3,10 +3,12 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 
-public class Basket implements Sprite{
+public class Chest implements Sprite{
     private final SoundManager soundManager;        // reference to SoundManager to play clip
     private JPanel panel;                // JPanel on which image will be drawn
     private Dimension dimension;
+    private final int width=xSize+32;
+    private final int height=ySize+32;
     private Player player;
     private Animation closedAni;
     private Animation openAni;
@@ -18,9 +20,9 @@ public class Basket implements Sprite{
     private final ArrayList<Image> openImages= new ArrayList<>();
     private final ArrayList<Image> closedImages= new ArrayList<>();
 
-    private static Basket single_instance = null;
+    private static Chest single_instance = null;
 
-    private Basket(JPanel panel, Player player){
+    private Chest(JPanel panel, Player player){
         this.panel = panel;
         dimension = panel.getSize();
         currentAni = closedAni;
@@ -30,17 +32,17 @@ public class Basket implements Sprite{
         soundManager = SoundManager.getInstance();
     }
 
-    static Basket getInstance(JPanel panel, Player player) {
-        if (Basket.single_instance == null)
-            Basket.single_instance = new Basket(panel, player);
+    static Chest getInstance(JPanel panel, Player player) {
+        if (Chest.single_instance == null)
+            Chest.single_instance = new Chest(panel, player);
 
-        return Basket.single_instance;
+        return Chest.single_instance;
     }
 
     private void loadClosedBasket() {
         for (int num = 0; num < 5; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_closed"+num+".png");
-            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
             closedImages.add(i);
         }
 
@@ -54,7 +56,7 @@ public class Basket implements Sprite{
     private void loadOpenBasket() {
         for (int num = 0; num < 5; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_open"+num+".png");
-            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
             openImages.add(i);
         }
 
@@ -70,7 +72,8 @@ public class Basket implements Sprite{
         if (!currentAni.isStillActive()) {
             return;
         }
-        g2.drawImage(currentAni.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
+        offsetY =offsetY-32;
+        g2.drawImage(currentAni.getImage(), x+offsetX, y+offsetY, width,height, null);
     }
 
     @Override
@@ -92,7 +95,7 @@ public class Basket implements Sprite{
     @Override
     public Rectangle2D.Double getBoundingRectangle() {
         //        System.out.println("Heart bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
-        return new Rectangle2D.Double (x+offsetX, (y+offsetY), xSize, ySize);
+        return new Rectangle2D.Double (x+offsetX, (y+offsetY), width, height);
     }
 
     @Override

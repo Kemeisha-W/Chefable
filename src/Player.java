@@ -18,6 +18,7 @@ public class Player {
 		IDLE,
 		USE
 	}
+
 	protected Image heartImage=null;
 	private State pState;
 	private int offsetY;
@@ -49,7 +50,7 @@ public class Player {
 
 	   goingUp = goingDown = false;
        inAir = false;
-
+	   heartImage =  ImageManager.loadBufferedImage("Assets/heart.png");
 	   heart = 3;
 
 	   playerAnimation = new PlayerAnimation();
@@ -85,7 +86,7 @@ public class Player {
 	   int xTile = TileMap.pixelsToTiles(newX+96);
 	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
 	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
-	   System.out.println("\n Below? new X: "+(newX+96));
+	   System.out.println("\n !!!!!!!!!BELOW new Y: "+(newX));
 	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\t XTile: "+xTile);
 
 	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
@@ -117,24 +118,23 @@ public class Player {
 
    public Tile isTileAbove(int newX, int newY) {
 	   int playerWidth = playerAnimation.getWidth();
-	   int xTile = TileMap.pixelsToTiles(newX+96);
+	   int xTile = TileMap.pixelsToTiles(newX);
 
 	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY+100);
+	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY+32);
+	   System.out.println("\n ________ABOVE new Y: "+newY);
+	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\t XTile: "+xTile);
 
 	   for (int yTile=yTileFrom; yTile>=yTileTo; yTile--) {
+		   System.out.println(" Y from:"+yTileFrom+ " \tyTile: " +yTile+"\t XTile: "+xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
 		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")) {
-			   if(isFire(tile)){
-				   return null;
-			   }
+			   System.out.println("Collides with Tile:"+yTile);
+
 			   return tile;
 		   } else {
 			   tile =tileMap.getTile(xTile+1, yTile);
 			   if ( tile!= null&& Objects.equals(tile.getState(), "FOUNDATION")){
-				   if(isFire(tile)){
-					   return null;
-				   }
 				   int leftSide = (xTile + 1) * TILE_SIZE;
 				   if (newX + playerWidth > leftSide) {
 					   return tile;
@@ -161,11 +161,14 @@ public class Player {
 		   }
 
 		   newX = x - DX;
+		   System.out.println("NEW X left: " + newX);
+
 		   if (newX < 0) {
 			   System.out.println("left NEW X: " + newX);
 			   x = 0;
 			   return;
 		   }
+		   System.out.println("X left: " + x);
 		   tile = isCollision(newX, y);
 		   if(tile != null && Objects.equals(tile.getState(), "USE"))
 			   tile = null;
@@ -260,58 +263,6 @@ public class Player {
    }
 
 
-	private boolean isFire(Tile tile){
-		System.out.println("Is Fire below check");
-		System.out.println("Tile: " + tile.getDisplay());
-		if(Objects.equals(tile.getDisplay(), "ANIMATION")){
-			die();
-			return true;
-		}
-		return false;
-	}
-
-   private void fall() {
-	   this.pState = State.FALL;
-	   playerAnimation.start("falling","");
-
-
-	   inAir = true;
-       timeElapsed = 0;
-
-       goingUp = false;
-       goingDown = true;
-
-	   jumping = false;
-
-	   startY = y;
-       initialVelocity = 0;
-   }
-
-	private void die(){
-		heart --;
-		inAir = false;
-		jumping = false;
-		goingDown =false;
-		pState = State.DIE;
-		playerAnimation.start("death","");
-	}
-
-   private void jump () {
-	   if (!window.isVisible ()) return;
-	   playerAnimation.loop = false;
-	   playerAnimation.start("jumping","jump");
-
-	   jumping = true;
-	   this.pState = State.JUMP;
-	   timeElapsed = 0;
-
-	   goingUp = true;
-	   goingDown = false;
-
-
-	   startY = y;
-	   initialVelocity = 60;
-   }
 
 
    public void update () {
@@ -324,6 +275,7 @@ public class Player {
 		  System.out.println("Jumping: "+jumping+" \n inAir: "+inAir);
 		  distance = (int) (initialVelocity * timeElapsed - 4.9 * timeElapsed * timeElapsed);
 		  newY = startY - distance;
+		  System.out.println("Start y: "+startY+" Distance: "+distance);
 
 		  if (newY > y && goingUp) {
 			  goingUp = false;
@@ -376,13 +328,20 @@ public class Player {
       y = y - DY;
    }
 
-   public int getHeart() {
+   public int getHeartNum() {
 	   return heart;
    }
+
+   public Image getHeartImage(){
+	   return heartImage;
+   }
+
 	public void increaseHeart() {
 		this.heart++;
 	}
-
+	public void reduceHeart() {
+		this.heart--;
+	}
    public int getX() {
       return x;
    }
@@ -422,6 +381,59 @@ public class Player {
 	public Rectangle2D.Double getBoundingRectangle() {
 		offsetX= tileMap.getOffsetX();
 		return new Rectangle2D.Double (x+offsetX, y, 50, 50);
+	}
+
+	private boolean isFire(Tile tile){
+		System.out.println("Is Fire below check");
+		System.out.println("Tile: " + tile.getDisplay());
+		if(Objects.equals(tile.getDisplay(), "ANIMATION")){
+			die();
+			return true;
+		}
+		return false;
+	}
+
+	private void fall() {
+		this.pState = State.FALL;
+		playerAnimation.start("falling","");
+
+
+		inAir = true;
+		timeElapsed = 1;
+
+		goingUp = false;
+		goingDown = true;
+
+		jumping = false;
+
+		startY = y;
+		initialVelocity = 0;
+	}
+
+	private void die(){
+		heart --;
+		inAir = false;
+		jumping = false;
+		goingDown =false;
+		pState = State.DIE;
+		playerAnimation.start("death","");
+	}
+
+	private void jump () {
+		if (!window.isVisible ()) return;
+		playerAnimation.loop = false;
+		playerAnimation.start("jumping","jump");
+
+		jumping = true;
+		this.pState = State.JUMP;
+		timeElapsed = 0;
+
+		goingUp = true;
+		goingDown = false;
+
+
+		startY = y;
+		initialVelocity = 60;
 	}
 
 }

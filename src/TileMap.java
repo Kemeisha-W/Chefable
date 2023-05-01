@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.Objects;
+import java.util.*;
 
 /**
     The TileMap class contains the data for a tile-based
@@ -12,6 +12,7 @@ import java.util.Objects;
 public class TileMap {
 
     private static int TILE_SIZE = 32;
+    private String currentTheme = "";
 
     private Tile[][] tiles;
     private final int screenWidth, screenHeight;
@@ -30,13 +31,17 @@ public class TileMap {
     private GamePanel window;
     private final Star star;
     private final Heart heart;
-    private final Basket basket;
+    private final Chest chest;
+    private final Theme theme;
+    private int level;
+
+    private Food food;
 
     /**
         Creates a new TileMap with the specified width and
         height (in number of tiles) of the map.
     */
-    public TileMap(GamePanel window, int width, int height) {
+    public TileMap(GamePanel window, int width, int height, Theme theme) {
         this.window = window;
 
         screenWidth = window.getWidth();
@@ -51,10 +56,13 @@ public class TileMap {
         bgManager = new BackgroundManager (window, 12);
         tiles = new Tile[mapWidth][mapHeight];
 
+        level = window.getLevel();
+        //Set Theme
+        this.theme = theme;
+
         //Add instance of fires
         fire = FireAnimation.getInstance();
-        if(window.getLevel()==1)
-            fire.start();
+        fire.start();
 
         //Add Player
         player = new Player (window, this, bgManager);
@@ -71,11 +79,15 @@ public class TileMap {
         Animation heartAni = heart.getAnimation();
         heartAni.start();
 
-        basket = Basket.getInstance(window,player);
-        basket.setAnimation("close");
-        Animation basketAni = basket.getAnimation();
+        //Add the chest
+        chest = Chest.getInstance(window,player);
+        chest.setAnimation("close");
+        Animation basketAni = chest.getAnimation();
         basketAni.start();
-        System.out.println("Basket added");
+
+        //Add the food
+
+        System.out.println("Chest added");
     }
 
 
@@ -174,18 +186,31 @@ public class TileMap {
     public void setHeart(int x, int y) {
         Tile heart = new Tile(null,x, y,"Animation","HEART");
         tiles[x][y] = heart;
-        this.heart.setX( tilesToPixels(x));
+        this.heart.setX(tilesToPixels(x));
         this.heart.setY(tilesToPixels(y));
     }
+
     /**
-     * Sets the Heart at the specified locations
+      Sets the Chest at the specified locations
      */
-    public void setBasket(int x, int y) {
-        Tile basket = new Tile(null,x, y,"Animation","BASKET");
-        tiles[x][y] = basket;
-        //TODO ADD BASKET
+    public void setChest(int x, int y) {
+        Tile chest = new Tile(null,x, y,"Animation","BASKET");
+        tiles[x][y] = chest;
     }
 
+
+    public void setTheme(){
+        Random rand = new Random();
+        ArrayList<String> themes = new ArrayList<>(Arrays.asList("Never","Vegetable","Fruit","Lunch","Bakery","Snacks","Meat"));
+        int tValue;
+        if(level ==1 || level ==2){
+            tValue = rand.nextInt(2) + 1;
+        }else{
+            tValue = rand.nextInt(7 - 3) + 3;
+        }
+        currentTheme = themes.get(tValue);
+        theme.loadTheme(currentTheme);
+    }
 
     /**
         Class method to convert a pixel position to a tile position.
@@ -225,9 +250,11 @@ public class TileMap {
     /**
         Draws the specified TileMap.
     */
-    public synchronized void draw(Graphics2D g2)  {
-
+    public synchronized void draw(Graphics2D g2){
         int mapWidthPixels = tilesToPixels(mapWidth);
+
+        // draw the background first
+        bgManager.draw (g2);
 
         // get the scrolling position of the map based on player's position
         int playerX = player.getX();
@@ -239,9 +266,19 @@ public class TileMap {
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
 
+        //Draw Hearts
+        Image heartImg = player.getHeartImage();
+        int numHearts = player.getHeartNum();
+        for (int i = 0;i<numHearts;i++){
+            g2.drawImage(heartImg, tilesToPixels(i), tilesToPixels(1),32,32, null);
+        }
 
-        // draw the background first
-        bgManager.draw (g2);
+        //Draw Current Theme
+        Font font = new Font("Serif", Font.PLAIN, 50);
+        g2.setFont(font);
+        g2.setColor(Color.DARK_GRAY);
+        g2.drawString(currentTheme,(screenWidth/2)-50,tilesToPixels(2));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
@@ -254,6 +291,9 @@ public class TileMap {
                         switch (tile.getDisplay()) {
                             case "IMAGE" -> {
                                 if(Objects.equals(tile.getState(),"USE")){
+                                    if(tile.getImage() ==null){
+
+                                    }
 //                                    g2.drawImage(tile.getImage(),
 //                                            tilesToPixels(x) + offsetX,
 //                                            tilesToPixels(y) + offsetY,
@@ -286,12 +326,12 @@ public class TileMap {
                                     heart.draw(g2);
                                     heart.update();
                                 } else if (Objects.equals(tile.getState(), "BASKET")) {
-                                    basket.offsetY = offsetY;
-                                    basket.offsetX = offsetX;
-                                    basket.setX(tilesToPixels(x));
-                                    basket.setY(tilesToPixels(y));
-                                    basket.draw(g2);
-                                    basket.update();
+                                    chest.offsetY = offsetY;
+                                    chest.offsetX = offsetX;
+                                    chest.setX(tilesToPixels(x));
+                                    chest.setY(tilesToPixels(y));
+                                    chest.draw(g2);
+                                    chest.update();
                                 }
                             }
                         }
@@ -331,6 +371,7 @@ public class TileMap {
                 key = "death";
                 this.pAni.draw(g2, key, playerX, y);
                 if(!this.pAni.isActive()){
+                    player.reduceHeart();
                     restartLevel();
                 }
             }
@@ -349,39 +390,13 @@ public class TileMap {
         }
         this.pAni.update("",key);
 
-
-
-        // draw sprites
-//        Iterator i = map.getSprites();
-//        while (i.hasNext()) {
-//            Sprite sprite = (Sprite)i.next();
-//            int x = Math.round(sprite.getX()) + offsetX;
-//            int y = Math.round(sprite.getY()) + offsetY;
-//            g.drawImage(sprite.getImage(), x, y, null);
-//
-//            // wake up the creature when it's on screen
-//            if (sprite instanceof Creature &&
-//                x >= 0 && x < screenWidth)
-//            {
-//                ((Creature)sprite).wakeUp();
-//            }
-//        }
-
     }
 
-    public void moveLeft() {
-        player.move(1);
-    }
+    public void moveLeft() {player.move(1);}
 
+    public void moveRight() {player.move(2);}
 
-    public void moveRight() {
-        player.move(2);
-    }
-
-
-    public void jump() {
-        player.move(3);
-    }
+    public void jump() {player.move(3);}
 
     public void use(){
         player.use();
@@ -395,6 +410,7 @@ public class TileMap {
         player.update();
 
         if (star.collidesWithPlayer()) {
+
             window.endLevel();
             return;
         }

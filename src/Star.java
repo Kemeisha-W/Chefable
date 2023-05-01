@@ -8,10 +8,6 @@ import java.awt.Image;
 
 public class Star implements Sprite {
 
-
-    //private static final int DX = 2;		// amount of pixels to move in one update
-    private static final int YPOS = 150;        // vertical position of the image
-
     private JPanel panel;                // JPanel on which image will be drawn
     private Dimension dimension;
     private int x;
@@ -19,6 +15,8 @@ public class Star implements Sprite {
     public int offsetX;
     public int offsetY;
     private int dx;
+    private final int width=xSize+32;
+    private final int height=ySize+32;
     private final SoundManager soundManager;		// reference to SoundManager to play clip
 
     private Player player;
@@ -56,7 +54,7 @@ public class Star implements Sprite {
     private void loadStar() {
         for (int num = 0; num < 4; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/star/star" + num + ".png");
-            i = i.getScaledInstance(xSize, ySize, Image.SCALE_DEFAULT);
+            i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
             starImages.add(i);
         }
 
@@ -72,7 +70,8 @@ public class Star implements Sprite {
         if (!animation.isStillActive()) {
             return;
         }
-        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, xSize, ySize, null);
+        offsetY -=32;
+        g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, width, height, null);
     }
 
 
@@ -96,7 +95,7 @@ public class Star implements Sprite {
     @Override
     public Rectangle2D.Double getBoundingRectangle() {
 //        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
-        return new Rectangle2D.Double (x+offsetX, (y+offsetY), xSize, ySize);
+        return new Rectangle2D.Double (x+offsetX, (y+offsetY), width, height);
     }
 
 
