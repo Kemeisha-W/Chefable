@@ -56,8 +56,43 @@ public class ImageManager {
     		g2d.drawImage(src, 0, 0, null);
     		g2d.dispose();
 
-    		return copy; 
-	  }
+    		return copy;
+	}
+	public static BufferedImage vFlipImage(BufferedImage src) {
+
+		int imWidth = src.getWidth();
+		int imHeight = src.getHeight();
+
+		BufferedImage dest = new BufferedImage (imWidth, imHeight,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dest.createGraphics();
+
+		// Perform vertical flip
+
+		g2d.drawImage(src, 0, imHeight, imWidth, 0,
+				0, 0, imWidth, imHeight, null);
+
+		return dest;
+	}
+
+	public static BufferedImage hFlipImage(BufferedImage src) {
+
+		int imWidth = src.getWidth();
+		int imHeight = src.getHeight();
+
+		BufferedImage dest = new BufferedImage (imWidth, imHeight,
+				BufferedImage.TYPE_INT_ARGB);
+
+		Graphics2D g2d = dest.createGraphics();
+
+		// Perform horizontal flip
+
+		g2d.drawImage(src, imWidth, 0, 0,imHeight,
+				0, 0, imWidth, imHeight, null);
+
+		return dest;
+	}
 
 }
 

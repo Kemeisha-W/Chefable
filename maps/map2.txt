@@ -4,7 +4,7 @@
 #   (Space) Empty tile
 #   A..Z    Tiles [ground or spikes]
 #   1-9     Environment
-#   !       Timer icon
+#   +       Food
 #   *       Door
 #   ~       Fire
 #   ^       Player initial position
@@ -17,4 +17,4 @@
                       +            DBBBH                  DBBBBH
 ^         #         DBBBH                  +              IFFFFF
 BBBBBH   DBBH                            DBBBH            IFFFFF
-FFFFFM000IFFMOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOIFFFFF
+FFFFFM~~~IFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFF

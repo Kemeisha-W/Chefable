@@ -185,21 +185,6 @@ public class GamePanel extends JPanel
         }
     }
 
-    private void gameOverMessage(Graphics g) {
-
-        Font font = new Font("SansSerif", Font.BOLD, 40);
-        FontMetrics metrics = this.getFontMetrics(font);
-
-        String msg = "Game Over. Thanks for playing!";
-
-        int x = (width - metrics.stringWidth(msg)) / 2;
-        int y = (height - metrics.getHeight()) / 2;
-
-        g.setColor(Color.BLUE);
-        g.setFont(font);
-        g.drawString(msg, x, y);
-    }
-
     public void gameStartMessage() {
         Graphics2D g = (Graphics2D) image.getGraphics();
 
@@ -214,14 +199,26 @@ public class GamePanel extends JPanel
         g.setColor(Color.CYAN);
         g.setFont(font);
         g.drawString(msg, x, y);
-
     }
 
     public void endGame() {                    // end the game thread
         isRunning = false;
         soundManager.stopSound ("background1");
         gameThread=null;
-        gameOverMessage(getGraphics());
+
+        Graphics g= getGraphics();
+        Font font = new Font("SansSerif", Font.BOLD, 40);
+        FontMetrics metrics = this.getFontMetrics(font);
+
+        String msg = "Game Over. Thanks for playing!";
+
+        int x = (width - metrics.stringWidth(msg)) / 2;
+        int y = (height - metrics.getHeight()) / 2;
+
+        g.setColor(Color.BLUE);
+        g.setFont(font);
+        g.drawString(msg, x, y);
+        //TODO ADD ANIMATION OR GAME PHYSICS OR SOMETHING
     }
 
 

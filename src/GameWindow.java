@@ -109,7 +109,7 @@ private JButton pauseB;
 		setVisible(true);
 
 		soundManager = SoundManager.getInstance();
-		soundManager.playSound("background2",true);
+//		soundManager.playSound("background2",true);
 
 	}
 

@@ -27,8 +27,8 @@ public class Chest implements Sprite{
         dimension = panel.getSize();
         currentAni = closedAni;
         this.player = player;
-        loadClosedBasket();
-        loadOpenBasket();
+        loadClosedChest();
+        loadOpenChest();
         soundManager = SoundManager.getInstance();
     }
 
@@ -39,7 +39,7 @@ public class Chest implements Sprite{
         return Chest.single_instance;
     }
 
-    private void loadClosedBasket() {
+    private void loadClosedChest() {
         for (int num = 0; num < 5; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_closed"+num+".png");
             i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
@@ -53,7 +53,7 @@ public class Chest implements Sprite{
         }
     }
 
-    private void loadOpenBasket() {
+    private void loadOpenChest() {
         for (int num = 0; num < 5; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Animated Chests/black_open"+num+".png");
             i = i.getScaledInstance(width, height, Image.SCALE_DEFAULT);
@@ -85,7 +85,7 @@ public class Chest implements Sprite{
 
         if (myRect.intersects(playerRect)) {
             System.out.println ("Heart Collision with player!");
-            //TODO ADD HEART SOUND and increment player heart
+            //TODO ADD CHEST SOUND OPEN AND CLOSE
             return true;
         }
         else

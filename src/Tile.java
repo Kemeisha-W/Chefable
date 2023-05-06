@@ -2,12 +2,14 @@ import java.awt.*;
 import java.util.Objects;
 
 public class Tile {
+
     Point position;
+    public boolean isUsed = false;
     private enum State{
         FOUNDATION,
         USE,
         STAR,
-        BASKET,
+        CHEST,
         HEART,
         FIRE
     }
@@ -16,9 +18,17 @@ public class Tile {
         ANIMATION
     }
 
+    private enum Type{
+        NEVER,
+        CORRECT,
+        INCORRECT
+    }
+
     private State tState;
+    private Type useType;
     private final Display tDisplay;
     private Image tImage = null;
+    protected boolean used = false;
 
     /** Set Image Tile position*/
     public Tile(Image i, int x, int y,String dKey, String state){
@@ -38,7 +48,7 @@ public class Tile {
             case "USE" -> tState = State.USE;
             case "STAR" -> tState = State.STAR;
             case "HEART" -> tState = State.HEART;
-            case "BASKET" -> tState = State.BASKET;
+            case "CHEST" -> tState = State.CHEST;
             case "FIRE" -> tState = State.FIRE;
             default -> {
                 //TODO ADD ERROR message
@@ -61,4 +71,17 @@ public class Tile {
     public void setImage(Image img){
         tImage = img;
     }
+
+    public void setUseTile(int value){
+        switch (value){
+            case 0-> useType = Type.CORRECT;
+            case 1-> useType = Type.INCORRECT;
+            case 2-> useType = Type.NEVER;
+        }
+    }
+
+    public String getUseType(){
+        return useType.toString();
+    }
+
 }

@@ -4,9 +4,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.Objects;
 
 public class Player {
-	private int heart = 0;
-	private static final int DX = 16;    // amount of X pixels to move in one keystroke
-	private static final int DY = 32;    // amount of Y pixels to move in one keystroke
+	public int heart=3;
+	public boolean alreadyExecuted = false;
+
+	private static final int DX = 10;    // amount of X pixels to move in one keystroke
+//	private static final int DY = 32;    // amount of Y pixels to move in one keystroke
 
 	private enum State{
 		RIGHT,
@@ -19,7 +21,7 @@ public class Player {
 		USE
 	}
 
-	protected Image heartImage=null;
+	protected Image heartImage;
 	private State pState;
 	private int offsetY;
 	private int offsetX;
@@ -35,13 +37,15 @@ public class Player {
 	private int timeElapsed;
    private int startY;
    private final PlayerAnimation playerAnimation;
+   private final int playerHeight;
+   private final int playerWidth;
    private boolean goingUp;
    private boolean goingDown;
 
    private boolean jumping = false;
    private boolean inAir;
    private int initialVelocity;
-   private int startAir;
+   protected boolean gameOver=false;
 
    public Player (JPanel window, TileMap t, BackgroundManager b) {
 	   this.window = window;
@@ -51,11 +55,13 @@ public class Player {
 	   goingUp = goingDown = false;
        inAir = false;
 	   heartImage =  ImageManager.loadBufferedImage("Assets/heart.png");
-	   heart = 3;
 
 	   playerAnimation = new PlayerAnimation();
 	   this.pState = State.IDLE;
 	   playerAnimation.start("idle","");
+
+	   playerHeight = playerAnimation.getHeight();
+	   playerWidth = playerAnimation.getWidth();
    }
 
 
@@ -63,22 +69,18 @@ public class Player {
 	   offsetX= tileMap.getOffsetX();
 	   int xTile = TileMap.pixelsToTiles(newX+96);
 	   int yTile = TileMap.pixelsToTiles(newY-offsetY);
-	   System.out.println("Player collision X: "+(newX+96)+" Y: "+(newY-offsetY));
 	   Tile tile = tileMap.getTile(xTile, yTile);
-	   System.out.println("XTile: "+xTile+" YTile: "+yTile);
 
-	   if (tile!= null && Objects.equals(tile.getState(), "FOUNDATION")) {
-		   System.out.println("is collision TILE" );
-		   if(isFire(tile)){
+	   if (tile!= null) {
+//		   System.out.println("is collision TILE" );
+		   if(Objects.equals(tile.getState(), "FOUNDATION"))
+			   return tile;
+		   else if(Objects.equals(tile.getState(), "USE")){
+			   use();
 			   return null;
 		   }
-		   return tile;
-	   } else if(tile != null && Objects.equals(tile.getState(), "USE")){
-		   System.out.println("TILE collision  USE" );
-		   return tile;
-	   }else {
-		   return null;
 	   }
+	   return null;
    }
 
 
@@ -86,26 +88,24 @@ public class Player {
 	   int xTile = TileMap.pixelsToTiles(newX+96);
 	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
 	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY +100);
-	   System.out.println("\n !!!!!!!!!BELOW new Y: "+(newX));
-	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\t XTile: "+xTile);
+//	   System.out.println("\n !!!!!!!!!BELOW new Y: "+(newX));
+//	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\t XTile: "+xTile);
 
 	   for (int yTile=yTileFrom+1; yTile<=yTileTo; yTile++) {
-		   System.out.println(" Y from:"+yTileFrom+ " \tyTile: " +yTile+"\t XTile: "+xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
-		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")){
+		   if ( tile!= null ){
 			   System.out.println("Collides with tile going down");
-			   if(isFire(tile)){
+			   if(Objects.equals(tile.getState(), "FOUNDATION"))
+				   return tile;
+			   else if(Objects.equals(tile.getState(), "USE")){
+				   use();
 				   return null;
 			   }
-			   return tile;
 		   } else {
 			   tile =tileMap.getTile(xTile+1, yTile);
 			   if ( tile!= null&& Objects.equals(tile.getState(), "FOUNDATION")) {
-				   if(isFire(tile)){
-					   return null;
-				   }
 				   int leftSide = (xTile + 1) * TILE_SIZE;
-				   if (newX + playerAnimation.getWidth() > leftSide) {
+				   if (newX + playerWidth > leftSide) {
 					   return tile;
 				   }
 			   }
@@ -117,21 +117,26 @@ public class Player {
 
 
    public Tile isTileAbove(int newX, int newY) {
-	   int playerWidth = playerAnimation.getWidth();
-	   int xTile = TileMap.pixelsToTiles(newX);
+	   int xTile = TileMap.pixelsToTiles(newX+96);
 
-	   int yTileFrom = TileMap.pixelsToTiles(y - offsetY);
-	   int yTileTo = TileMap.pixelsToTiles(newY - offsetY+32);
-	   System.out.println("\n ________ABOVE new Y: "+newY);
-	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\t XTile: "+xTile);
+	   int yTileFrom = TileMap.pixelsToTiles(y-offsetY);
+	   int yTileTo = TileMap.pixelsToTiles(newY-offsetY);
+//	   System.out.println("\n ________ABOVE? ");
+//	   System.out.println(" Y from:"+yTileFrom+ " \tyTileTo: " +yTileTo+"\txTile: " + xTile);
 
 	   for (int yTile=yTileFrom; yTile>=yTileTo; yTile--) {
-		   System.out.println(" Y from:"+yTileFrom+ " \tyTile: " +yTile+"\t XTile: "+xTile);
+//		   System.out.print(" Y from:"+yTileFrom+ " \tyTile: " +yTile+"\txTile: " + xTile);
 		   Tile tile = tileMap.getTile(xTile, yTile);
-		   if ( tile!= null && Objects.equals(tile.getState(), "FOUNDATION")) {
-			   System.out.println("Collides with Tile:"+yTile);
-
-			   return tile;
+//		   System.out.println("   Tile: " + tile);
+		   if ( tile!= null ){
+			   System.out.println("Collides with tile going down");
+			   if(Objects.equals(tile.getState(), "FOUNDATION")){
+				   System.out.println("Collides with Tile:"+yTile);
+				   return tile;
+			   }else if(Objects.equals(tile.getState(), "USE")){
+				   use();
+				   return null;
+			   }
 		   } else {
 			   tile =tileMap.getTile(xTile+1, yTile);
 			   if ( tile!= null&& Objects.equals(tile.getState(), "FOUNDATION")){
@@ -149,13 +154,13 @@ public class Player {
    public synchronized void move (int direction) {
 	   int newX = x;
 	   Tile tile = null;
-	   Point tilePos = null;
+	   Point tilePos;
 	   if (!window.isVisible ()) return;
-	   // move left
 
+	   // move left
 	   if (direction == 1) {
-		   this.pState = State.LEFT;
 		   if(!inAir){
+			   this.pState = State.LEFT;
 			   playerAnimation.loop = true;
 			   playerAnimation.start("walk_left","footstep");
 		   }
@@ -173,25 +178,24 @@ public class Player {
 		   if(tile != null && Objects.equals(tile.getState(), "USE"))
 			   tile = null;
 	   } else if (direction == 2 ) {        // move right
-		   this.pState = State.RIGHT;
 		   if(!inAir) {
+			   this.pState = State.RIGHT;
 			   playerAnimation.loop = true;
 			   playerAnimation.start("walk_right", "footstep");
 		   }
 
 		   System.out.println("moving right");
-		   int pWidth = playerAnimation.getWidth();
 		   newX = x + DX;
 		   int tileMapWidth = tileMap.getWidthPixels();
-		   if (newX + pWidth >= tileMapWidth) {
-			   x = tileMapWidth - pWidth;
-//			   System.out.println(" right X: "+x);
+		   if (newX + playerWidth >= tileMapWidth) {
+			   x = tileMapWidth - playerWidth;
 			   return;
 		   }
 		   tile = isCollision(newX, y);
 		   if(tile != null && Objects.equals(tile.getState(), "USE"))
 			   tile = null;
 	   }else if (direction == 3 && !jumping) {
+		   System.out.println("Jumping ");
 		   playerAnimation.loop = false;
 		   playerAnimation.start("jumping","jump");
 		   jump();
@@ -201,39 +205,29 @@ public class Player {
       if (tile != null) {  //If player collides with wall (tile to the right or left)
 		  tilePos = tile.position;
 		  System.out.println("tile position is " + tilePos.x+"\t"+tilePos.y);
-		  if(pState == State.DIE){
-			  die();
-			  return;
-		  }
 		  if (direction == 1) {
 			  System.out.println (": Collision going left");
 			  x = ((int) tilePos.getX() + 1) * TILE_SIZE;       // keep flush with right side of tile
 		  } else {
 			  System.out.println (": Collision going right");
-			  int playerWidth = playerAnimation.getWidth();
 			  x = ((int) tilePos.getX()) * TILE_SIZE - playerWidth; // keep flush with left side of tile
 		  }
 	  } else {
-		  System.out.println("**NO Collision left or right**");
+//		  System.out.println("**NO Collision left or right**");
 		  if (direction == 1) {
 			  x = newX;
-			  System.out.println(" left X: "+x);
 			  bgManager.moveLeft();
 		  } else if (direction == 2) {
 			  x = newX;
-			  System.out.println(" right X: "+x);
 			  bgManager.moveRight();
 		  }
 		  if (isInAir()) {
-			  System.out.println("In the air. Starting to fall.");
 			  if (direction == 1) {                // make adjustment for falling on left side of tile
-				  int playerWidth = playerAnimation.getWidth();
-				  x = x -playerWidth+ DX;
+				  x = x - DX;
 			  }
 			  fall();
 		  }
 	  }
-
    }
 
    public void use(){
@@ -258,7 +252,6 @@ public class Player {
 			  return false;
 		  }
       }
-
       return false;
    }
 
@@ -272,10 +265,9 @@ public class Player {
       timeElapsed++;
 
       if (jumping || inAir) {
-		  System.out.println("Jumping: "+jumping+" \n inAir: "+inAir);
 		  distance = (int) (initialVelocity * timeElapsed - 4.9 * timeElapsed * timeElapsed);
 		  newY = startY - distance;
-		  System.out.println("Start y: "+startY+" Distance: "+distance);
+//		  System.out.println("Start y: "+startY+" Distance: "+distance);
 
 		  if (newY > y && goingUp) {
 			  goingUp = false;
@@ -283,20 +275,23 @@ public class Player {
 		  }
 
 		  if (goingUp) {
+			  newY-=playerHeight;
 			  Tile tile = isTileAbove(x, newY);
 			  if (tile != null) {                // hits a tile going up
 				  Point tilePos = tile.position;
 				  System.out.println ("Collision Going Up!");
-				  int topTileY = ((int) tilePos.getY()) * TILE_SIZE + offsetY;
-				  y = topTileY + TILE_SIZE;
+				  int topTileY = ((int) tilePos.getY()) *TILE_SIZE+offsetY;
+				  y = topTileY+TILE_SIZE+64;
+				  System.out.println("top tile y: " + topTileY+" y="+y);
 				  fall();
 			  } else {
-				  y = newY;
-				  System.out.println ("No collision. Going up");
+				  y = newY+playerHeight;
+				  System.out.println ("NO collision. Going up y="+y);
 			  }
 		  } else if (goingDown) {
 			  Tile tile = isTileBelow(x, newY);
-			  if(pState == State.DIE||y>800){
+			  if(pState != State.DIE&&y>800){
+				  System.out.println("died1");
 				  die();
 				  return;
 			  }
@@ -305,7 +300,7 @@ public class Player {
 				  System.out.println ("Jumping: Collision Going Down!");
 				  goingDown = false;
 				  int topTileY = (((int) tilePos.getY()) * TILE_SIZE)+offsetY;
-				  y = topTileY-TILE_SIZE  ;
+				  y = topTileY-TILE_SIZE;
 				  inAir = false;
 				  jumping = false;
 
@@ -321,13 +316,6 @@ public class Player {
       }
    }
 
-
-   public void moveUp () {
-      if (!window.isVisible ()) return;
-
-      y = y - DY;
-   }
-
    public int getHeartNum() {
 	   return heart;
    }
@@ -336,12 +324,6 @@ public class Player {
 	   return heartImage;
    }
 
-	public void increaseHeart() {
-		this.heart++;
-	}
-	public void reduceHeart() {
-		this.heart--;
-	}
    public int getX() {
       return x;
    }
@@ -380,23 +362,12 @@ public class Player {
 
 	public Rectangle2D.Double getBoundingRectangle() {
 		offsetX= tileMap.getOffsetX();
-		return new Rectangle2D.Double (x+offsetX, y, 50, 50);
-	}
-
-	private boolean isFire(Tile tile){
-		System.out.println("Is Fire below check");
-		System.out.println("Tile: " + tile.getDisplay());
-		if(Objects.equals(tile.getDisplay(), "ANIMATION")){
-			die();
-			return true;
-		}
-		return false;
+		return new Rectangle2D.Double (x+offsetX, y+offsetY, playerWidth, playerHeight);
 	}
 
 	private void fall() {
 		this.pState = State.FALL;
 		playerAnimation.start("falling","");
-
 
 		inAir = true;
 		timeElapsed = 1;
@@ -416,7 +387,11 @@ public class Player {
 		jumping = false;
 		goingDown =false;
 		pState = State.DIE;
+		alreadyExecuted = false;
 		playerAnimation.start("death","");
+		if(heart == 0){
+			gameOver = true;
+		}
 	}
 
 	private void jump () {
@@ -433,7 +408,7 @@ public class Player {
 
 
 		startY = y;
-		initialVelocity = 60;
+		initialVelocity = 50;
 	}
 
 }

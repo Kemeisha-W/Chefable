@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ public class Theme {
     private final LinkedList<String> neverList = new LinkedList<>();
     private LinkedList<String> themeList = new LinkedList<String>();
 
+    private LinkedList<String> noneCurrentList = new LinkedList<>();
     public String currentTheme="";
     private HashMap<String, Image> foodImgs;
     private LinkedList<String> foodStr;
@@ -53,5 +55,16 @@ public class Theme {
         String neverStr = neverList.get(rand.nextInt(neverList.size()));
         return foodImgs.get(neverStr);
     }
+
+    public Image getOtherImage(){
+        Random rand = new Random();
+        String other = foodStr.get(rand.nextInt(foodStr.size()));
+        while(neverList.contains(other)||themeList.contains(other)){
+            other = foodStr.get(rand.nextInt(foodStr.size()));
+        }
+        return foodImgs.get(other);
+    }
+
+
 
 }

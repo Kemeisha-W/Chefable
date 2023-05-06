@@ -11,19 +11,20 @@ import java.util.*;
 
 public class TileMap {
 
-    private static int TILE_SIZE = 32;
+    private static final int TILE_SIZE = 32;
     private String currentTheme = "";
-
+    private int origX;
+    private int origY;
     private Tile[][] tiles;
     private final int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
     private int offsetY;
     public int offsetX;
 
-    private Player player;
+    private final Player player;
 
     //Add animations
-    private FireAnimation fire;
+    private final FireAnimation fire;
     private PlayerAnimation pAni;
     private AnimationManager aniManager;
 
@@ -34,8 +35,8 @@ public class TileMap {
     private final Chest chest;
     private final Theme theme;
     private int level;
+    private int correct, incorrect, never = 0;
 
-    private Food food;
 
     /**
         Creates a new TileMap with the specified width and
@@ -59,6 +60,7 @@ public class TileMap {
         level = window.getLevel();
         //Set Theme
         this.theme = theme;
+        setTheme();
 
         //Add instance of fires
         fire = FireAnimation.getInstance();
@@ -82,10 +84,9 @@ public class TileMap {
         //Add the chest
         chest = Chest.getInstance(window,player);
         chest.setAnimation("close");
-        Animation basketAni = chest.getAnimation();
-        basketAni.start();
+        Animation chestAni = chest.getAnimation();
+        chestAni.start();
 
-        //Add the food
 
         System.out.println("Chest added");
     }
@@ -132,7 +133,7 @@ public class TileMap {
         }
     }
 
-    public void setTileSize(int size){TILE_SIZE = size;}
+//    public void setTileSize(int size){TILE_SIZE = size;}
 
     /**
         Sets the tile at the specified location.
@@ -148,9 +149,10 @@ public class TileMap {
     public void setPlayer(int x, int y) {
         int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-85;
         player.setPlayOffsetY(offsetY);
-        System.out.println("offsetY = " + offsetY);
         player.setX(tilesToPixels(x));
         player.setY(tilesToPixels(y)+offsetY);
+        origX = x;
+        origY = y;
     }
 
     /**
@@ -177,7 +179,6 @@ public class TileMap {
     public void setFood(int x, int y) {
         Tile food = new Tile(null,x, y,"Image","USE");
         tiles[x][y] = food ;
-        System.out.println("food?");
     }
 
     /**
@@ -194,7 +195,7 @@ public class TileMap {
       Sets the Chest at the specified locations
      */
     public void setChest(int x, int y) {
-        Tile chest = new Tile(null,x, y,"Animation","BASKET");
+        Tile chest = new Tile(null,x, y,"Animation","CHEST");
         tiles[x][y] = chest;
     }
 
@@ -251,6 +252,7 @@ public class TileMap {
         Draws the specified TileMap.
     */
     public synchronized void draw(Graphics2D g2){
+        System.out.println("\n____________Draw___________________");
         int mapWidthPixels = tilesToPixels(mapWidth);
 
         // draw the background first
@@ -260,12 +262,11 @@ public class TileMap {
         int playerX = player.getX();
         offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
 
-//        System.out.println("\n_______________________________");
-//        System.out.println("\n Player x: "+playerX+"\noffsetX: "+offsetX);
-
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
 
+        System.out.println("\n Player x: "+playerX+"\n y="+player.getY());
+        System.out.println("\noffsetX:"+offsetX+"\n offsetY="+offsetY);
         //Draw Hearts
         Image heartImg = player.getHeartImage();
         int numHearts = player.getHeartNum();
@@ -292,16 +293,30 @@ public class TileMap {
                             case "IMAGE" -> {
                                 if(Objects.equals(tile.getState(),"USE")){
                                     if(tile.getImage() ==null){
-
+                                        Random rand = new Random();
+                                        int temp = rand.nextInt(3);
+                                        tile.setUseTile(temp);
+                                        if(Objects.equals(tile.getUseType(), "NEVER")){
+                                            tile.setImage(theme.getNeverImage());
+                                            never++;
+                                        }
+                                        else if(Objects.equals(tile.getUseType(), "CORRECT")){
+                                            tile.setImage(theme.getThemeImage());
+                                            correct++;
+                                        }
+                                        else{
+                                            tile.setImage(theme.getOtherImage());
+                                            incorrect++;
+                                        }
                                     }
-//                                    g2.drawImage(tile.getImage(),
-//                                            tilesToPixels(x) + offsetX,
-//                                            tilesToPixels(y) + offsetY,
-//                                            null);
+                                    g2.drawImage(tile.getImage(),
+                                            tilesToPixels(x) + offsetX,
+                                            tilesToPixels(y) + offsetY,32,32,
+                                            null);
                                 }else{
                                     g2.drawImage(tile.getImage(),
                                             tilesToPixels(x) + offsetX,
-                                            tilesToPixels(y) + offsetY,
+                                            tilesToPixels(y) + offsetY,32,32,
                                             null);
                                 }
                             }
@@ -325,7 +340,7 @@ public class TileMap {
                                     heart.setY(tilesToPixels(y));
                                     heart.draw(g2);
                                     heart.update();
-                                } else if (Objects.equals(tile.getState(), "BASKET")) {
+                                } else if (Objects.equals(tile.getState(), "CHEST")) {
                                     chest.offsetY = offsetY;
                                     chest.offsetX = offsetX;
                                     chest.setX(tilesToPixels(x));
@@ -369,11 +384,22 @@ public class TileMap {
             }
             case "DIE" -> {
                 key = "death";
-                this.pAni.draw(g2, key, playerX, y);
-                if(!this.pAni.isActive()){
-                    player.reduceHeart();
-                    restartLevel();
+                if(!this.pAni.isActive()&&!player.alreadyExecuted){
+                    offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
+                    offsetX = Math.min(offsetX, 0);
+                    offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
+
+                    offsetY = screenHeight - tilesToPixels(mapHeight);
+                    int playerOffY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-85;
+                    player.setPlayOffsetY(playerOffY);
+                    player.setX(tilesToPixels(origX));
+                    player.setY(tilesToPixels(origY)+playerOffY);
+
+                    player.alreadyExecuted = true;
+                    player.setState("IDLE");
+                    playerX = Math.round((float)tilesToPixels(origX));
                 }
+                this.pAni.draw(g2, key, playerX, y);
             }
             case "IDLE" -> {
                 key = "idle";
@@ -388,6 +414,7 @@ public class TileMap {
                 }
             }
         }
+        System.out.println("\n___X="+playerX+"___y="+y);
         this.pAni.update("",key);
 
     }
@@ -410,23 +437,13 @@ public class TileMap {
         player.update();
 
         if (star.collidesWithPlayer()) {
-
             window.endLevel();
+            setTheme();
             return;
         }
-
         star.update();
-
-        if (star.collidesWithPlayer()) {
-            window.endLevel();
-        }
-
-    }
-
-    public void restartLevel(){
-        if(player.getState().equals("DIE")){
-            int l = window.getLevel();
-            window.setLevel(l);
+        if(player.gameOver){
+            window.endGame();
         }
     }
 

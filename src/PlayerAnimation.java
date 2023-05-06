@@ -15,10 +15,6 @@ public class PlayerAnimation {
     private Animation currentAnimation = null;
     public HashMap<String,Animation> animations = new HashMap<>();
     private HashMap<String,Image> animImages= new HashMap<>();
-
-    private int dx;		// increment to move along x-axis
-    private int dy;		// increment to move along y-axis
-
     private SoundManager soundManager;		// reference to SoundManager to play clip
 
     public PlayerAnimation() {
@@ -33,6 +29,7 @@ public class PlayerAnimation {
         loadUse();
 
     }
+
     public boolean isActive(){
         return currentAnimation.isStillActive();
     }
@@ -67,7 +64,6 @@ public class PlayerAnimation {
     public void draw(Graphics2D g2,String key,int x, int y) {
         animation = animations.get(key);
         if (!animation.isStillActive()) {
-            System.out.println("active animation NOPE");
             return;
         }
         g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
