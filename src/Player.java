@@ -79,6 +79,8 @@ public class Player {
 			   return tile;
 		   }else if(Objects.equals(tile.getState(), "STAR")){
 			   return tile;
+		   }else if(Objects.equals(tile.getState(), "CHEST")){
+			   return tile;
 		   }
 	   }
 	   return null;
@@ -350,7 +352,8 @@ public class Player {
 		Tile tile = isCollision(x,y);
 		if(tile !=null && Objects.equals(tile.getState(),"STAR")){
 			offsetX= tileMap.getOffsetX();
-			System.out.println("\n\nBounding rect player x: " + (x+offsetX) + " y: " + y);
+			System.out.println("\n\n```Bounding rect player x: " + (x+offsetX) + " y: " + y+"```");
+			System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
 			return new Rectangle2D.Double (x+offsetX, y, 100, 100);
 		}
 		return null;
@@ -358,12 +361,12 @@ public class Player {
 
 	public void use(){
 		Tile tile = isCollision(x,y);
-		System.out.println("\n\nUse test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
+//		System.out.println("\n\nUse test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
 		if(tile !=null && Objects.equals(tile.getState(),"USE")){
 			if(!tile.used){
 				System.out.println("USE");
 				playerAnimation.loop = true;
-				playerAnimation.start("use","");
+				playerAnimation.start("use","collect");
 				pState = State.USE;
 				switch (tile.getUseType()){
 					case "CORRECT"-> points +=5;
@@ -372,6 +375,18 @@ public class Player {
 				}
 				tile.used = true;
 				System.out.println("POINTS: " + points);
+			}
+		}
+	}
+
+	public void openChest(){
+		Tile tile = isCollision(x,y);
+//		System.out.println("\n\nChest test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
+		if(tile !=null && Objects.equals(tile.getState(),"CHEST")){
+			if(!tile.open){
+				System.out.println("CHEST");
+				pState = State.IDLE;
+				tile.open = true;
 			}
 		}
 	}

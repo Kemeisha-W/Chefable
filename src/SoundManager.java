@@ -1,7 +1,6 @@
 import javax.sound.sampled.AudioInputStream;		// for playing sound clips
 import javax.sound.sampled.*;
 import java.io.*;
-
 import java.util.HashMap;				// for storing sound clips
 
 
@@ -11,11 +10,10 @@ public class SoundManager {				// a Singleton class
 	private static SoundManager instance = null;	// keeps track of Singleton instance
 
 	private SoundManager () {
-		clips = new HashMap<String, Clip>();
+		clips = new HashMap<>();
 
 		Clip clip = loadClip("sounds/background1.wav");
 		clips.put("background1", clip);		// background theme sound option1
-
 
 		clip = loadClip("sounds/background2.wav");
 		clips.put("background2", clip);		// background theme sound option 2
@@ -30,7 +28,16 @@ public class SoundManager {				// a Singleton class
 		clips.put("bubble", clip);		// moving to another level
 
 		clip = loadClip("sounds/fruit collect 1.wav");
-		clips.put("fruit", clip);		// player is ...
+		clips.put("collect", clip);		// player is collecting food
+
+		clip = loadClip("sounds/heart.wav");
+		clips.put("heart", clip);		// player is collecting heart
+
+		clip = loadClip("sounds/crate open 7.wav");
+		clips.put("open", clip);
+
+		clip = loadClip("sounds/crate close.wav");
+		clips.put("close", clip);
 
 	}
 

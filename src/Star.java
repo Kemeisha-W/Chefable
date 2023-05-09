@@ -90,8 +90,8 @@ public class Star implements Sprite {
 
     @Override
     public Rectangle2D.Double getBoundingRectangle() {
-//        offsetY -=32;
         System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
+        System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
         return new Rectangle2D.Double (x+offsetX, y+offsetY, 32, 32);
     }
 

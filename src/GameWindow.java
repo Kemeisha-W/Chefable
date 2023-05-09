@@ -52,16 +52,18 @@ private JButton pauseB;
 		mainPanel.setLayout(layout);
 		GridLayout gridLayout;
 
-		// create the gamePanel for game entities
 
-		gamePanel = new GamePanel();
 
 
 		// create buttonPanel
 		pauseB = new JButton ("Pause Game");
+		pauseB.setBackground(Color.CYAN);
 		endB = new JButton ("End Game");
+		endB.setBackground(Color.CYAN);
 		startNewB = new JButton ("Start New Game");
+		startNewB.setBackground(Color.CYAN);
 		exitB = new JButton ("Exit");
+		exitB.setBackground(Color.RED);
 
 
 		// add listener to each button (same as the current object)
@@ -73,7 +75,6 @@ private JButton pauseB;
 		JPanel buttonPanel = new JPanel();
 		gridLayout = new GridLayout(1, 4);
 		buttonPanel.setLayout(gridLayout);
-
 		// add buttons to buttonPanel
 
 		buttonPanel.add (startNewB);
@@ -81,10 +82,13 @@ private JButton pauseB;
 		buttonPanel.add (endB);
 		buttonPanel.add (exitB);
 
-		// add sub-panels with GUI objects to mainPanel and set its colour
-		mainPanel.add(gamePanel,BorderLayout.CENTER);
-		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
 
+		// create the gamePanel for game entities
+		gamePanel = new GamePanel(70);
+
+		// add sub-panels with GUI objects to mainPanel and set its colour
+		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
+		mainPanel.add(gamePanel,BorderLayout.CENTER);
 
 		//Add listeners
 		gamePanel.addMouseListener(this);
@@ -93,8 +97,10 @@ private JButton pauseB;
 
 		ImageIcon imageIcon = new ImageIcon("Assets/Logo.png");
 		Image image = imageIcon.getImage(); // transform it
-		Image newImg = image.getScaledInstance(screenSize.width,1000,  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
+		Image newImg = image.getScaledInstance(screenSize.width,(screenSize.height-buttonPanel.getHeight()),  java.awt.Image.SCALE_SMOOTH); // scale it the smooth way
 		imageIcon = new ImageIcon(newImg);  // transform it back
+		mainPanel.setBackground(new Color(110,186,197));
+		gamePanel.setBackground(new Color(110,186,197));
 		gamePanel.add(new JLabel(imageIcon));
 
 
@@ -132,6 +138,7 @@ private JButton pauseB;
 
 		if (command.equals(startNewB.getText())){
 			soundManager.stopSound("background2");
+			mainPanel.setBackground(Color.BLACK);
 			gamePanel.startNewGame();
 		}
 

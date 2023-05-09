@@ -21,8 +21,6 @@ public class GamePanel extends JPanel
     private Image backgroundImage;
 
 
-//    private ImageEffect imageEffect;		// sprite demonstrating an image effect
-
     private TileMapManager tileManager;
     private TileMap tileMap;
 
@@ -35,10 +33,11 @@ public class GamePanel extends JPanel
 
     private Dimension dimension;
 
-    public GamePanel () {
+    public GamePanel (int bPanelHeight) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         width = (int) screenSize.getWidth();
-        height =(int) screenSize.getHeight()-100;
+        System.out.println("bPanelHeight: " + bPanelHeight);
+        height =(int) screenSize.getHeight()-bPanelHeight;
         isRunning = false;
         isPaused = false;
         setSize(width,height);
@@ -49,7 +48,7 @@ public class GamePanel extends JPanel
 
         level = 1;
         levelChange = false;
-        gameStartMessage();
+//        gameStartMessage();
     }
 
     public int getWidth(){
@@ -58,11 +57,6 @@ public class GamePanel extends JPanel
     public int getHeight(){
         return height;
     }
-
-    public void createGameEntities() {
-//        imageEffect = new ImageEffect (this);
-    }
-
 
     public void run () {
         try {
@@ -104,11 +98,7 @@ public class GamePanel extends JPanel
                 return;
             }
 
-            createGameEntities();
-            return;
-
         }
-//        imageEffect.update();
     }
 
 
@@ -121,8 +111,6 @@ public class GamePanel extends JPanel
         Graphics2D imageContext = (Graphics2D) image.getGraphics();
 
         tileMap.draw (imageContext);
-
-//        imageEffect.draw(imageContext);			// draw the image effect
 
         if (gameOver) {
             Color darken = new Color (0, 0, 0, 125);
@@ -139,7 +127,7 @@ public class GamePanel extends JPanel
 
     public void startNewGame() {                // initialise and start a new game thread
         if(isRunning){
-           endGame();
+           restartGame();
         }
         if (gameThread == null) {
 //            soundManager.playSound ("background1", true);
@@ -157,8 +145,6 @@ public class GamePanel extends JPanel
                 System.out.println(e);
                 System.exit(0);
             }
-
-            createGameEntities();
 
             gameThread = new Thread(this);
             gameThread.start();
@@ -185,21 +171,21 @@ public class GamePanel extends JPanel
         }
     }
 
-    public void gameStartMessage() {
-        Graphics2D g = (Graphics2D) image.getGraphics();
-
-        Font font = new Font("SansSerif", Font.BOLD, 40);
-        FontMetrics metrics = this.getFontMetrics(font);
-
-        String msg = "Chefable";
-
-        int x = (width - metrics.stringWidth(msg)) / 2;
-        int y = (height - metrics.getHeight()) / 2;
-
-        g.setColor(Color.CYAN);
-        g.setFont(font);
-        g.drawString(msg, x, y);
-    }
+//    public void gameStartMessage() {
+//        Graphics2D g = (Graphics2D) image.getGraphics();
+//
+//        Font font = new Font("SansSerif", Font.BOLD, 40);
+//        FontMetrics metrics = this.getFontMetrics(font);
+//
+//        String msg = "Chefable";
+//
+//        int x = (width - metrics.stringWidth(msg)) / 2;
+//        int y = (height - metrics.getHeight()) / 2;
+//
+//        g.setColor(Color.CYAN);
+//        g.setFont(font);
+//        g.drawString(msg, x, y);
+//    }
 
     public void endGame() {                    // end the game thread
         isRunning = false;
@@ -219,6 +205,13 @@ public class GamePanel extends JPanel
         g.setFont(font);
         g.drawString(msg, x, y);
         //TODO ADD ANIMATION OR GAME PHYSICS OR SOMETHING
+    }
+
+    public void restartGame(){
+        isRunning = false;
+        soundManager.stopSound ("background1");
+        gameThread=null;
+        levelChange = false;
     }
 
 

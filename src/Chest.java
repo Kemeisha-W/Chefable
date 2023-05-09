@@ -19,7 +19,7 @@ public class Chest implements Sprite{
     public int offsetY;
     private final ArrayList<Image> openImages= new ArrayList<>();
     private final ArrayList<Image> closedImages= new ArrayList<>();
-
+    private boolean open = false;
     private static Chest single_instance = null;
 
     private Chest(JPanel panel, Player player){
@@ -85,7 +85,7 @@ public class Chest implements Sprite{
 
         if (myRect.intersects(playerRect)) {
             System.out.println ("Heart Collision with player!");
-            //TODO ADD CHEST SOUND OPEN AND CLOSE
+            soundManager.playSound("open", false);
             return true;
         }
         else
@@ -128,5 +128,9 @@ public class Chest implements Sprite{
             case "open"-> currentAni = openAni;
             case "close"-> currentAni = closedAni;
         }
+    }
+
+    public boolean isOpen() {
+        return open;
     }
 }

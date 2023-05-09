@@ -15,7 +15,7 @@ public class TileMapManager {
     private LinkedList<String> foodStr = new LinkedList<>();
     private GamePanel window;
     private Theme theme;
-
+    private int count =0;
 
     public TileMapManager(GamePanel window) {
         this.window = window;
@@ -68,7 +68,10 @@ public class TileMapManager {
                     case '^' -> newMap.setPlayer(x,y);
                     case '~' -> newMap.setFire(x,y);
                     case '+' -> newMap.setFood(x,y);
-                    case '#' -> newMap.setHeart(x,y);
+                    case '#' -> {
+                        newMap.setHeart(x,y, count);
+                        count++;
+                    }
                     case '&' -> newMap.setChest(x,y);
                     case '*' -> newMap.setStar(x,y);
                 }

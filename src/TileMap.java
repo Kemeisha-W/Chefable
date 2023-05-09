@@ -28,12 +28,12 @@ public class TileMap {
     //Add animations
     private final FireAnimation fire;
     private PlayerAnimation pAni;
-    private AnimationManager aniManager;
+    private GameAnimation gameAni;
 
     BackgroundManager bgManager;
     private GamePanel window;
     private final Star star;
-    private final Heart heart;
+    private Heart[] hearts;
     private final Chest chest;
     private final Theme theme;
     private int level;
@@ -58,8 +58,10 @@ public class TileMap {
 
         bgManager = new BackgroundManager (window, 12);
         tiles = new Tile[mapWidth][mapHeight];
+        hearts = new Heart[10];
 
         level = window.getLevel();
+
         //Set Theme
         this.theme = theme;
         setTheme();
@@ -71,17 +73,13 @@ public class TileMap {
         //Add Player
         player = new Player (window, this, bgManager);
         this.pAni = player.getPlayerAnimation();
-        aniManager = new AnimationManager();
+        gameAni = new GameAnimation();
+        gameAni.start("heart","");
 
         //Add the star
         star = Star.getInstance(window,player);
         Animation starAni = star.getAnimation();
         starAni.start();
-
-        //Add the heart
-        heart = Heart.getInstance(window,player);
-        Animation heartAni = heart.getAnimation();
-        heartAni.start();
 
         //Add the chest
         chest = Chest.getInstance(window,player);
@@ -185,11 +183,18 @@ public class TileMap {
     /**
      * Sets the Heart at the specified locations
      */
-    public void setHeart(int x, int y) {
+    public void setHeart(int x, int y, int count) {
         Tile heart = new Tile(null,x, y,"Animation","HEART");
+        heart.count = count;
         tiles[x][y] = heart;
-        this.heart.setX(tilesToPixels(x));
-        this.heart.setY(tilesToPixels(y));
+        System.out.println("heart");
+        Heart h = new Heart(player);
+
+        this.hearts[count] = h;
+        System.out.println("heart");
+        h.setX(tilesToPixels(x));
+        h.setY(tilesToPixels(y));
+
     }
 
     /**
@@ -373,12 +378,8 @@ public class TileMap {
                                     star.draw(g2);
                                     star.update();
                                 } else if (Objects.equals(tile.getState(), "HEART")) {
-                                    heart.offsetY = offsetY;
-                                    heart.offsetX = offsetX;
-                                    heart.setX(tilesToPixels(x));
-                                    heart.setY(tilesToPixels(y));
-                                    heart.draw(g2);
-                                    heart.update();
+                                    gameAni.draw(g2,"heart",tilesToPixels(x)+offsetX,tilesToPixels(y)+offsetY);
+                                    gameAni.update("","heart");
                                 } else if (Objects.equals(tile.getState(), "CHEST")) {
                                     chest.offsetY = offsetY;
                                     chest.offsetX = offsetX;
@@ -481,6 +482,7 @@ public class TileMap {
             return;
         }
         star.update();
+
         if(player.gameOver){
             window.endGame();
         }

@@ -1,8 +1,0 @@
-private String bgImages[] = {
-			"Assets/art-streets/PNG/City2/Bright/Sky.png",
-			"Assets/art-streets/PNG/City2/Bright/back.png",
-			"Assets/art-streets/PNG/City2/Bright/houses3.png",
-			"Assets/art-streets/PNG/City2/Bright/houses1.png",
-			"Assets/art-streets/PNG/City2/Bright/minishop&calbox.png",
-			"Assets/art-streets/PNG/City2/Bright/road&lamps.png"
-	};

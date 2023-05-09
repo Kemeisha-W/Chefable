@@ -1,24 +1,16 @@
 import java.awt.*;
 import java.util.HashMap;
 
-public class PlayerAnimation {
+public class PlayerAnimation extends AnimationManager{
 
     /**
      The PlayerAnimation class creates an animation of a player moving, dying, jumping,etc.
      */
 
-    public Animation animation;
     private static final int pWidth=200;
     private static final int pHeight=200;
-    public boolean loop =false;
-    private String currentSound = "";
-    private Animation currentAnimation = null;
-    public HashMap<String,Animation> animations = new HashMap<>();
-    private HashMap<String,Image> animImages= new HashMap<>();
-    private SoundManager soundManager;		// reference to SoundManager to play clip
 
     public PlayerAnimation() {
-
         loadWalkingRight();
         loadWalkingLeft();
         loadDeath();
@@ -27,36 +19,21 @@ public class PlayerAnimation {
         loadFall();
         loadLand();
         loadUse();
-
+        soundManager = SoundManager.getInstance();
     }
 
-    public boolean isActive(){
-        return currentAnimation.isStillActive();
-    }
 
     public int getWidth(){return pWidth;}
     public int getHeight(){return pHeight;}
-    public void start(String key,String sound) {
-        if(currentAnimation != null){
-            currentAnimation.stop();
-            stopSound(currentSound);
-        }
-
-        animation = animations.get(key);
-        animation.start();
-        playSound(sound);
-        currentSound = sound;
-        currentAnimation =  animations.get(key);
-    }
 
 
     public void update(String sound,String key) {
-        animation = animations.get(key);
-        if (!animation.isStillActive()) {
+//        currentAnimation = animations.get(key);
+        if (!currentAnimation.isStillActive()) {
             stopSound(sound);
             return;
         }
-        animation.update();
+        currentAnimation.update();
 
     }
 
@@ -69,12 +46,6 @@ public class PlayerAnimation {
         g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
     }
 
-    public void playSound(String title) {
-            soundManager.playSound(title, loop);
-    }
-    public void stopSound(String title) {
-            soundManager.stopSound(title);
-    }
 
     private void loadWalkingRight(){
          for(int num=0;num<8;num++){
@@ -89,7 +60,7 @@ public class PlayerAnimation {
             animation.addFrame(animImages.get("walk"+num), 150);
         }
         animations.put("walk_right",animation);
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
     private void loadWalkingLeft(){
@@ -104,8 +75,9 @@ public class PlayerAnimation {
             animation.addFrame(animImages.get("walk"+num), 150);
         }
         animations.put("walk_left",animation);
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
+
     private void loadDeath(){
         for(int num=0;num<8;num++){
             Image i = ImageManager.loadBufferedImage("Assets/characters/player/Character3F_1_death_"+num+".png");
@@ -120,7 +92,7 @@ public class PlayerAnimation {
 
         animations.put("death",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
     private void loadIdle(){
@@ -136,7 +108,7 @@ public class PlayerAnimation {
         }
         animations.put("idle",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
     private void loadJump(){
@@ -153,7 +125,7 @@ public class PlayerAnimation {
 
         animations.put("jumping",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
     private void loadFall(){
@@ -170,7 +142,7 @@ public class PlayerAnimation {
 
         animations.put("falling",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
     private void loadLand(){
@@ -186,8 +158,9 @@ public class PlayerAnimation {
         }
         animations.put("land",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
+    
     private void loadUse(){
         for(int num=0;num<13;num++){
             Image i = ImageManager.loadBufferedImage("Assets/characters/player/Character3F_1_use_"+num+".png");
@@ -201,7 +174,7 @@ public class PlayerAnimation {
         }
         animations.put("use",animation);
 
-        soundManager = SoundManager.getInstance();
+//        soundManager = SoundManager.getInstance();
     }
 
 }

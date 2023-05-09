@@ -9,6 +9,7 @@ public class Tile {
     private BufferedImage buffImage;
     Point position;
     public boolean isUsed = false;
+    public int count;
     private enum State{
         FOUNDATION,
         USE,
@@ -33,6 +34,7 @@ public class Tile {
     private final Display tDisplay;
     private Image tImage = null;
     protected boolean used = false;
+    protected boolean open = false;
     public boolean alreadyExecuted = false;
 
     /** Set Image Tile position*/
