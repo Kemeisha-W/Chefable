@@ -400,11 +400,7 @@ public class TileMap {
         playerX = Math.round((float)playerX)+offsetX;
         String key ="";
         switch (player.getState()) {
-            case "LEFT" -> {
-                key = "walk_left";
-                this.pAni.draw(g2, key, playerX, y);
-            }
-            case "RIGHT" -> {
+            case "WALK" -> {
                 key = "walk_right";
                 this.pAni.draw(g2, key, playerX, y);
             }

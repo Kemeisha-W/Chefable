@@ -70,7 +70,6 @@ public class GameAnimation extends AnimationManager{
     private void loadFireworks(){
         for(int num=1;num<11;num++){
             Image i = ImageManager.loadBufferedImage("Assets/blue fireworks/Explosion_"+num+".png");
-//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
             animImages.put("fireworks"+num,i);
         }
 
@@ -80,13 +79,11 @@ public class GameAnimation extends AnimationManager{
             animation.addFrame(animImages.get("fireworks"+num), 150);
         }
         animations.put("fireworks",animation);
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadChefWalking(){
         for(int num=1;num<9;num++){
             Image i = ImageManager.loadBufferedImage("Assets/characters/chef/walk_left/walk_left("+num+").png");
-//            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
             animImages.put("walk"+num,i);
         }
 
@@ -96,7 +93,6 @@ public class GameAnimation extends AnimationManager{
             animation.addFrame(animImages.get("walk"+num), 150);
         }
         animations.put("chef_walk",animation);
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadGameOverAni(){
@@ -111,7 +107,6 @@ public class GameAnimation extends AnimationManager{
             animation.addFrame(animImages.get("game_over"+num), 150);
         }
         animations.put("game_over",animation);
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadStartGameAni(){
@@ -126,7 +121,6 @@ public class GameAnimation extends AnimationManager{
             animation.addFrame(animImages.get("start"+num), 150);
         }
         animations.put("start",animation);
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadHeart() {

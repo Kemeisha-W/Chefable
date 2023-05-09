@@ -11,8 +11,7 @@ public class Player {
 //	private static final int DY = 32;    // amount of Y pixels to move in one keystroke
 
 	private enum State{
-		RIGHT,
-		LEFT,
+		WALK,
 		JUMP,
 		FALL,
 		LAND,
@@ -156,11 +155,11 @@ public class Player {
 	   // move left
 	   if (direction == 1) {
 		   if(!inAir){
-			   this.pState = State.LEFT;
+			   this.pState = State.WALK;
 			   playerAnimation.loop = true;
-			   playerAnimation.start("walk_left","footstep");
+			   playerAnimation.start("walk_right","footstep");
 		   }
-
+		   playerAnimation.left = true;
 		   newX = x - DX;
 		   System.out.println("NEW X left: " + newX);
 
@@ -177,11 +176,12 @@ public class Player {
 		   }
 	   } else if (direction == 2 ) {        // move right
 		   if(!inAir) {
-			   this.pState = State.RIGHT;
+			   this.pState = State.WALK;
 			   playerAnimation.loop = true;
 			   playerAnimation.start("walk_right", "footstep");
 		   }
 
+		   playerAnimation.left = false;
 		   System.out.println("moving right");
 		   newX = x + DX;
 		   int tileMapWidth = tileMap.getWidthPixels();

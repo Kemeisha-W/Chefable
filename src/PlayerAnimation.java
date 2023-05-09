@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class PlayerAnimation extends AnimationManager{
 
@@ -8,10 +9,11 @@ public class PlayerAnimation extends AnimationManager{
 
     private static final int pWidth=200;
     private static final int pHeight=200;
+    protected boolean left = false;
 
     public PlayerAnimation() {
         loadWalkingRight();
-        loadWalkingLeft();
+//        loadWalkingLeft();
         loadDeath();
         loadIdle();
         loadJump();
@@ -42,6 +44,13 @@ public class PlayerAnimation extends AnimationManager{
         if (!animation.isStillActive()) {
             return;
         }
+        if(left){
+
+            BufferedImage flipped = ImageManager.toBufferedImage(animation.getImage(),200);
+            flipped = ImageManager.hFlipImage(flipped);
+            g2.drawImage(flipped, x, y, pWidth, pHeight, null);
+            return;
+        }
         g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
     }
 
@@ -59,23 +68,9 @@ public class PlayerAnimation extends AnimationManager{
             animation.addFrame(animImages.get("walk"+num), 150);
         }
         animations.put("walk_right",animation);
-//        soundManager = SoundManager.getInstance();
     }
 
-    private void loadWalkingLeft(){
-        for(int num=1;num<9;num++){
-            Image i = ImageManager.loadBufferedImage("Assets/characters/player/walk_left/walk_left ("+num+").png");
-            i = i.getScaledInstance(pWidth,pHeight,Image.SCALE_DEFAULT);
-            animImages.put("walk"+num,i);
-        }
-        animation = new Animation(true);	// play continuously
 
-        for(int num=1;num<9;num++){
-            animation.addFrame(animImages.get("walk"+num), 150);
-        }
-        animations.put("walk_left",animation);
-//        soundManager = SoundManager.getInstance();
-    }
 
     private void loadDeath(){
         for(int num=0;num<8;num++){
@@ -90,8 +85,6 @@ public class PlayerAnimation extends AnimationManager{
         }
 
         animations.put("death",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadIdle(){
@@ -106,8 +99,6 @@ public class PlayerAnimation extends AnimationManager{
             animation.addFrame(animImages.get("idle"+num), 200);
         }
         animations.put("idle",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadJump(){
@@ -123,8 +114,6 @@ public class PlayerAnimation extends AnimationManager{
         }
 
         animations.put("jumping",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadFall(){
@@ -140,8 +129,6 @@ public class PlayerAnimation extends AnimationManager{
         }
 
         animations.put("falling",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
 
     private void loadLand(){
@@ -156,8 +143,6 @@ public class PlayerAnimation extends AnimationManager{
             animation.addFrame(animImages.get("land"+num), 300);
         }
         animations.put("land",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
     
     private void loadUse(){
@@ -172,8 +157,6 @@ public class PlayerAnimation extends AnimationManager{
             animation.addFrame(animImages.get("use"+num), 200);
         }
         animations.put("use",animation);
-
-//        soundManager = SoundManager.getInstance();
     }
 
 }

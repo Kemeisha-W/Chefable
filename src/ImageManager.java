@@ -36,13 +36,13 @@ public class ImageManager {
 		return bi;
 	}
 
-	public static BufferedImage toBufferedImage(Image img) {
+	public static BufferedImage toBufferedImage(Image img, int size) {
 		if (img instanceof BufferedImage) {
 			return (BufferedImage) img;
 		}
 
 		// Create a buffered image with transparency
-		BufferedImage bimage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage bimage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
 
 		// Draw the image on to the buffered image
 		Graphics2D bGr = bimage.createGraphics();

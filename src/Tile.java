@@ -76,7 +76,7 @@ public class Tile {
         return tImage;
     }
     public void setImage(Image img){
-        buffImage = ImageManager.toBufferedImage(img);
+        buffImage = ImageManager.toBufferedImage(img,32);
         tImage = img;
     }
 
