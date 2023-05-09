@@ -1,6 +1,4 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 
@@ -15,8 +13,6 @@ public class DisintegrateEffect implements ImageEffect {
 	private final BufferedImage spriteImage;		// image for sprite effect
 	private BufferedImage copy;			// copy of image
 	private boolean active;		// to activate or deactivate effect
-
-	Graphics2D g2;
 
 	int time, timeChange;				// to control when the image is grayed
 	boolean originalImage, effectImage;

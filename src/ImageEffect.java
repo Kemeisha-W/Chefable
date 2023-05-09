@@ -1,9 +1,5 @@
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public interface ImageEffect {
     int toEffect(int pixel);

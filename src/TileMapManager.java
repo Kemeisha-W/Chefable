@@ -1,7 +1,6 @@
 import java.awt.*;
 import java.io.*;
 import java.util.*;
-import javax.swing.ImageIcon;
 
 /**
     The ResourceManager class loads and manages tile Images and
