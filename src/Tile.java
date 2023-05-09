@@ -1,8 +1,12 @@
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 public class Tile {
-
+    public GrayEffect grayEffect;
+    public DisintegrateEffect disEffect;
+    public SepiaEffect sepiaEffect;
+    private BufferedImage buffImage;
     Point position;
     public boolean isUsed = false;
     private enum State{
@@ -29,6 +33,7 @@ public class Tile {
     private final Display tDisplay;
     private Image tImage = null;
     protected boolean used = false;
+    public boolean alreadyExecuted = false;
 
     /** Set Image Tile position*/
     public Tile(Image i, int x, int y,String dKey, String state){
@@ -69,6 +74,7 @@ public class Tile {
         return tImage;
     }
     public void setImage(Image img){
+        buffImage = ImageManager.toBufferedImage(img);
         tImage = img;
     }
 
@@ -83,5 +89,33 @@ public class Tile {
     public String getUseType(){
         return useType.toString();
     }
+
+    protected int update(int size, boolean toggle){
+        if(toggle&&size<32)
+            size+=1;
+        else size-=1;
+
+        if(size >=32)
+            return 32;
+        else if(size<25)
+            return 25;
+        return size;
+    }
+
+    public void disintegrateTile(){
+        disEffect = new DisintegrateEffect(buffImage);
+        disEffect.activate();
+    }
+
+    public void sepaiTile(){
+        sepiaEffect = new SepiaEffect(buffImage);
+        sepiaEffect.activate();
+    }
+
+    public void grayTile(){
+        grayEffect = new GrayEffect(buffImage);
+        grayEffect.activate();
+    }
+
 
 }

@@ -36,9 +36,25 @@ public class ImageManager {
 		return bi;
 	}
 
+	public static BufferedImage toBufferedImage(Image img) {
+		if (img instanceof BufferedImage) {
+			return (BufferedImage) img;
+		}
 
-  	// make a copy of the BufferedImage src
+		// Create a buffered image with transparency
+		BufferedImage bimage = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
 
+		// Draw the image on to the buffered image
+		Graphics2D bGr = bimage.createGraphics();
+		bGr.drawImage(img, 0, 0, null);
+		bGr.dispose();
+
+		// Return the buffered image
+		return bimage;
+	}
+
+
+		// make a copy of the BufferedImage src
 	public static BufferedImage copyImage(BufferedImage src) {
 		if (src == null)
 			return null;
@@ -58,6 +74,7 @@ public class ImageManager {
 
     		return copy;
 	}
+
 	public static BufferedImage vFlipImage(BufferedImage src) {
 
 		int imWidth = src.getWidth();

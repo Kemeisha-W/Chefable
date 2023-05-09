@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 
@@ -9,36 +8,29 @@ public class SepiaEffect implements ImageEffect {
 	private static final int XSIZE = 32;		// width of the image
 	private static final int YSIZE = 32;		// height of the image
 
-
-	private JPanel window;				// JFrame on which image will be drawn
-	private Dimension dimension;
 	private int x;
 	private int y;
 
 	private final BufferedImage spriteImage;		// image for sprite effect
-	private BufferedImage copy;			// copy of image
-
-	Graphics2D g2;
+	private boolean active;		// to activate or deactivate effect
 
 	int time, timeChange;				// to control when the image is grayed
 	boolean originalImage, effectImage;
+	private BufferedImage copyImage;		// copy of image
 
 
-	public SepiaEffect(JPanel window, BufferedImage image) {
-		this.window = window;
-		Graphics g = window.getGraphics ();
-		g2 = (Graphics2D) g;
 
-		dimension = window.getSize();
+	public SepiaEffect( BufferedImage image) {
 
 		time = 0;				// range is 0 to 10
 		timeChange = 1;				// set to 1
 		spriteImage = image;
 		originalImage = true;
 		effectImage = false;
+		active = false;		// behaviour is inactive by default
 
-		copy = copyImage(spriteImage);		//  copy original image
-
+		copyImage = ImageManager.copyImage(spriteImage);
+		copyToSepia();
 	}
 
 
@@ -71,57 +63,38 @@ public class SepiaEffect implements ImageEffect {
 		return newPixel;
 	}
 
-	public void draw (Graphics2D g2) {
-
-		copy = copyImage(spriteImage);		//  copy original image
-
-		if (originalImage) {			// draw copy (already in colour) and return
-			g2.drawImage(copy, x, y, XSIZE, YSIZE, null);
-			return;
-		}
-							// change to gray and then draw
-		int imWidth = copy.getWidth();
-		int imHeight = copy.getHeight();
+	private void copyToSepia() {
+		int imWidth = copyImage.getWidth();
+		int imHeight = copyImage.getHeight();
 
 		int [] pixels = new int[imWidth * imHeight];
-		copy.getRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
-
-//		int alpha, red, green, blue, gray;
+		copyImage.getRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
 
 		for (int i=0; i<pixels.length; i++) {
-//			if (effectImage){
-				pixels[i] = toEffect(pixels[i]);
-//			}
+			pixels[i] = toEffect(pixels[i]);
 		}
 
-		copy.setRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
-
-		g2.drawImage(copy, x, y, XSIZE, YSIZE, null);
-
+		copyImage.setRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
 	}
 
-
-	public Rectangle2D.Double getBoundingRectangle() {
-		return new Rectangle2D.Double (x, y, XSIZE, YSIZE);
+	@Override
+	public boolean isActive() {
+		return active;
 	}
 
-
-	public void update() {				// modify time and change the effect if required
-
-		time = time + timeChange;
-
-		if (time < 20) {
-			originalImage = true;
-			effectImage = false;
-		}
-		else
-		if (time < 40) {
-			originalImage = false;
-			effectImage = true;
-		}
-		else {
-			time = 0;
-		}
+	@Override
+	public void activate() {
+		active = true;
 	}
+
+	@Override
+	public void deActivate() {
+		active = false;
+	}
+
+	public void draw (Graphics2D g2) {
+		g2.drawImage(copyImage, x, y, XSIZE, YSIZE, null);
+	}
+
 
 }

@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 
@@ -10,11 +9,14 @@ import java.util.*;
 */
 
 public class TileMap {
-
+    private int size = 32;
     private static final int TILE_SIZE = 32;
     private String currentTheme = "";
     private int origX;
     private int origY;
+    private boolean toogle=true;
+
+    private Random random = new Random();
     private Tile[][] tiles;
     private final int screenWidth, screenHeight;
     private int mapWidth, mapHeight;
@@ -35,7 +37,7 @@ public class TileMap {
     private final Chest chest;
     private final Theme theme;
     private int level;
-    private int correct, incorrect, never = 0;
+    protected int correct, incorrect, never = 0;
 
 
     /**
@@ -86,7 +88,6 @@ public class TileMap {
         chest.setAnimation("close");
         Animation chestAni = chest.getAnimation();
         chestAni.start();
-
 
         System.out.println("Chest added");
     }
@@ -281,6 +282,9 @@ public class TileMap {
         g2.drawString(currentTheme,(screenWidth/2)-50,tilesToPixels(2));
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+
+        if(random.nextInt()%2==0){toogle = !toogle;}
+
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
         int lastTileX = firstTileX + pixelsToTiles(screenWidth)+1;
@@ -309,10 +313,44 @@ public class TileMap {
                                             incorrect++;
                                         }
                                     }
-                                    g2.drawImage(tile.getImage(),
-                                            tilesToPixels(x) + offsetX,
-                                            tilesToPixels(y) + offsetY,32,32,
-                                            null);
+                                    if(!tile.used){
+                                        size =tile.update(size,toogle);
+                                        g2.drawImage(tile.getImage(),
+                                                tilesToPixels(x) + offsetX,
+                                                tilesToPixels(y) + offsetY, size, size,
+                                                null);
+
+                                    }else if(!tile.alreadyExecuted){
+                                        tile.disintegrateTile();
+                                        tile.disEffect.setX(tilesToPixels(x) + offsetX);
+                                        tile.disEffect.setY(tilesToPixels(y) + offsetY);
+                                        tile.disEffect.draw(g2);
+                                        tile.disEffect.update();
+                                        tile.alreadyExecuted = true;
+                                    }else {
+
+                                        if(tile.disEffect.count == 70){
+                                            tile.disEffect.deActivate();
+                                            if (tile.getUseType().equals("NEVER")) {
+                                                tile.sepaiTile();
+                                                tile.sepiaEffect.setX(tilesToPixels(x) + offsetX);
+                                                tile.sepiaEffect.setY(tilesToPixels(y) + offsetY);
+                                                tile.sepiaEffect.draw(g2);
+                                            } else {
+                                                tile.grayTile();
+                                                tile.grayEffect.setX(tilesToPixels(x) + offsetX);
+                                                tile.grayEffect.setY(tilesToPixels(y) + offsetY);
+                                                tile.grayEffect.draw(g2);
+                                            }
+                                        }else{
+                                            tile.disEffect.activate();
+                                            tile.disEffect.setX(tilesToPixels(x) + offsetX);
+                                            tile.disEffect.setY(tilesToPixels(y) + offsetY);
+                                            tile.disEffect.draw(g2);
+                                            tile.disEffect.update();
+                                        }
+
+                                    }
                                 }else{
                                     g2.drawImage(tile.getImage(),
                                             tilesToPixels(x) + offsetX,
@@ -320,6 +358,7 @@ public class TileMap {
                                             null);
                                 }
                             }
+
                             case "ANIMATION" -> {
                                 if (Objects.equals(tile.getState(), "FIRE")) {
                                     fire.setX(tilesToPixels(x) + offsetX);
@@ -409,8 +448,8 @@ public class TileMap {
                 key = "use";
                 this.pAni.draw(g2, key, playerX, y);
                 if(!this.pAni.isActive()) {
-                    JPanel panel = new JPanel();
-                    window.add(panel);
+                    player.setState("IDLE");
+
                 }
             }
         }

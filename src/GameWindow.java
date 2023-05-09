@@ -1,8 +1,6 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;            // need this for GUI objects
 import java.awt.*;            // need this for certain AWT classes
 import java.awt.event.*;
-import java.io.File;
 import java.io.IOException;
 
 public class GameWindow extends JFrame implements

@@ -14,8 +14,8 @@ public class Heart implements Sprite{
     public int offsetX;
     public int offsetY;
     private final ArrayList<Image> heartImages= new ArrayList<>();
-    private int width = 32;        // width of the image
-    private int height = 32;        // height of the image
+    private int width = 30;        // width of the image
+    private int height = 30;        // height of the image
     private static Heart single_instance = null;
 
     private Heart(JPanel panel, Player player){

@@ -46,6 +46,7 @@ public class Player {
    private boolean inAir;
    private int initialVelocity;
    protected boolean gameOver=false;
+   protected int points =0;
 
    public Player (JPanel window, TileMap t, BackgroundManager b) {
 	   this.window = window;
@@ -72,12 +73,12 @@ public class Player {
 	   Tile tile = tileMap.getTile(xTile, yTile);
 
 	   if (tile!= null) {
-//		   System.out.println("is collision TILE" );
 		   if(Objects.equals(tile.getState(), "FOUNDATION"))
 			   return tile;
 		   else if(Objects.equals(tile.getState(), "USE")){
-			   use();
-			   return null;
+			   return tile;
+		   }else if(Objects.equals(tile.getState(), "STAR")){
+			   return tile;
 		   }
 	   }
 	   return null;
@@ -97,10 +98,6 @@ public class Player {
 			   System.out.println("Collides with tile going down");
 			   if(Objects.equals(tile.getState(), "FOUNDATION"))
 				   return tile;
-			   else if(Objects.equals(tile.getState(), "USE")){
-				   use();
-				   return null;
-			   }
 		   } else {
 			   tile =tileMap.getTile(xTile+1, yTile);
 			   if ( tile!= null&& Objects.equals(tile.getState(), "FOUNDATION")) {
@@ -130,12 +127,9 @@ public class Player {
 //		   System.out.println("   Tile: " + tile);
 		   if ( tile!= null ){
 			   System.out.println("Collides with tile going down");
-			   if(Objects.equals(tile.getState(), "FOUNDATION")){
-				   System.out.println("Collides with Tile:"+yTile);
+			   if(Objects.equals(tile.getState(), "FOUNDATION")) {
+				   System.out.println("Collides with Tile:" + yTile);
 				   return tile;
-			   }else if(Objects.equals(tile.getState(), "USE")){
-				   use();
-				   return null;
 			   }
 		   } else {
 			   tile =tileMap.getTile(xTile+1, yTile);
@@ -175,8 +169,10 @@ public class Player {
 		   }
 		   System.out.println("X left: " + x);
 		   tile = isCollision(newX, y);
-		   if(tile != null && Objects.equals(tile.getState(), "USE"))
-			   tile = null;
+		   if(tile != null){
+			   if(Objects.equals(tile.getState(), "USE")||Objects.equals(tile.getState(), "STAR"))
+				   tile = null;
+		   }
 	   } else if (direction == 2 ) {        // move right
 		   if(!inAir) {
 			   this.pState = State.RIGHT;
@@ -192,8 +188,10 @@ public class Player {
 			   return;
 		   }
 		   tile = isCollision(newX, y);
-		   if(tile != null && Objects.equals(tile.getState(), "USE"))
-			   tile = null;
+		   if(tile != null){
+			   if(Objects.equals(tile.getState(), "USE")||Objects.equals(tile.getState(), "STAR"))
+				   tile = null;
+		   }
 	   }else if (direction == 3 && !jumping) {
 		   System.out.println("Jumping ");
 		   playerAnimation.loop = false;
@@ -230,23 +228,12 @@ public class Player {
 	  }
    }
 
-   public void use(){
-	   Tile tile = isCollision(x,y);
-	   System.out.println("Use test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
-	   if(tile !=null && Objects.equals(tile.getState(),"USE")){
-		   System.out.println("USE");
-		   playerAnimation.loop = true;
-		   playerAnimation.start("use","");
-		   pState = State.USE;
-	   }
-   }
 
    public boolean isInAir() {
       Tile tile;
       if (!jumping && !inAir) {
 		  tile = isTileBelow(x, y); // check below player to see if there is a tile
 		  if (tile == null) {                   // there is no tile below player, so player is in the air
-			  System.out.println("inAIR");
 			  return true;
 		  } else {                        // there is a tile below player, so the player is on a tile
 			  return false;
@@ -328,7 +315,6 @@ public class Player {
       return x;
    }
 
-
    public int getY() {
       return y;
    }
@@ -361,8 +347,33 @@ public class Player {
 	}
 
 	public Rectangle2D.Double getBoundingRectangle() {
-		offsetX= tileMap.getOffsetX();
-		return new Rectangle2D.Double (x+offsetX, y+offsetY, playerWidth, playerHeight);
+		Tile tile = isCollision(x,y);
+		if(tile !=null && Objects.equals(tile.getState(),"STAR")){
+			offsetX= tileMap.getOffsetX();
+			System.out.println("\n\nBounding rect player x: " + (x+offsetX) + " y: " + y);
+			return new Rectangle2D.Double (x+offsetX, y, 100, 100);
+		}
+		return null;
+	}
+
+	public void use(){
+		Tile tile = isCollision(x,y);
+		System.out.println("\n\nUse test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
+		if(tile !=null && Objects.equals(tile.getState(),"USE")){
+			if(!tile.used){
+				System.out.println("USE");
+				playerAnimation.loop = true;
+				playerAnimation.start("use","");
+				pState = State.USE;
+				switch (tile.getUseType()){
+					case "CORRECT"-> points +=5;
+					case "INCORRECT"-> points -=2;
+					case "NEVER"-> points -=5;
+				}
+				tile.used = true;
+				System.out.println("POINTS: " + points);
+			}
+		}
 	}
 
 	private void fall() {
@@ -410,5 +421,7 @@ public class Player {
 		startY = y;
 		initialVelocity = 50;
 	}
+
+
 
 }

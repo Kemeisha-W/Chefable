@@ -10,11 +10,21 @@
 #   ^       Player initial position
 
                         &
-                      DBBBH     #
+                      DBBBH
+
+
+                               #^
           +                   DBBBH
-        DBBBH                                      +
-                                      +          DBBBH       *
-                      +            DBBBH                  DBBBBH
-^         #         DBBBH                  +              IFFFFF
-BBBBBH   DBBH                            DBBBH            IFFFFF
-FFFFFM~~~IFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFF
+        DBBBH
+
+                                                   +
+                                                 DBBBH
+
+                                     +                      *
+                      +            DBBBBH                 DBBBBBH
+                    DBBBH                                 IFFFFFF
+                                                          IFFFFFF
+                                                          IFFFFFF
+          #                                +              IFFFFFF
+BBBBBH   DBBH                            DBBBH            IFFFFFF
+FFFFFM~~~IFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFF

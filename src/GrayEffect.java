@@ -1,7 +1,5 @@
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.geom.Rectangle2D;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 
@@ -11,35 +9,27 @@ public class GrayEffect implements ImageEffect {
 	private static final int XSIZE = 32;		// width of the image
 	private static final int YSIZE = 32;		// height of the image
 
-
-	private JPanel window;				// JFrame on which image will be drawn
-	private Dimension dimension;
 	private int x;
 	private int y;
 
 	private final BufferedImage spriteImage;		// image for sprite effect
-	private BufferedImage copy;			// copy of image
-
-	Graphics2D g2;
+	private BufferedImage copyImage;		// copy of image
+	private boolean active;		// to activate or deactivate effect
 
 	int time, timeChange;				// to control when the image is grayed
 	boolean originalImage, effectImage;
 
 
-	public GrayEffect(JPanel window, BufferedImage image) {
-		this.window = window;
-		Graphics g = window.getGraphics ();
-		g2 = (Graphics2D) g;
-
-		dimension = window.getSize();
+	public GrayEffect( BufferedImage image) {
 
 		time = 0;				// range is 0 to 10
 		timeChange = 1;				// set to 1
 		spriteImage = image;
 		originalImage = true;
 		effectImage = false;
-
-		copy = copyImage(spriteImage);		//  copy original image
+		active = false;		// behaviour is inactive by default
+		copyImage = ImageManager.copyImage(spriteImage);
+		copyToGray();
 
 	}
 
@@ -69,58 +59,40 @@ public class GrayEffect implements ImageEffect {
 		return newPixel;
 	}
 
-	public void draw (Graphics2D g2) {
+	private void copyToGray() {
+		if(copyImage != null){
+			int imWidth = copyImage.getWidth();
+			int imHeight = copyImage.getHeight();
 
-		copy = copyImage(spriteImage);		//  copy original image
+			int [] pixels = new int[imWidth * imHeight];
+			copyImage.getRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
 
-		if (originalImage) {			// draw copy (already in colour) and return
-			g2.drawImage(copy, x, y, XSIZE, YSIZE, null);
-			return;
-		}
-							// change to gray and then draw
-		int imWidth = copy.getWidth();
-		int imHeight = copy.getHeight();
-
-		int [] pixels = new int[imWidth * imHeight];
-		copy.getRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
-
-//		int alpha, red, green, blue, gray;
-
-		for (int i=0; i<pixels.length; i++) {
-//			if (effectImage){
+			for (int i=0; i<pixels.length; i++) {
 				pixels[i] = toEffect(pixels[i]);
-//			}
+			}
+
+			copyImage.setRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
 		}
-
-		copy.setRGB(0, 0, imWidth, imHeight, pixels, 0, imWidth);
-
-		g2.drawImage(copy, x, y, XSIZE, YSIZE, null);
 
 	}
 
-
-	public Rectangle2D.Double getBoundingRectangle() {
-		return new Rectangle2D.Double (x, y, XSIZE, YSIZE);
+	@Override
+	public boolean isActive() {
+		return active;
 	}
 
-
-	public void update() {				// modify time and change the effect if required
-
-		time = time + timeChange;
-
-		if (time < 20) {
-			originalImage = true;
-			effectImage = false;
-		}
-		else
-		if (time < 40) {
-			originalImage = false;
-			effectImage = true;
-		}
-		else {
-			time = 0;
-		}
+	@Override
+	public void activate() {
+		active = true;
 	}
 
+	@Override
+	public void deActivate() {
+		active = false;
+	}
+
+	public void draw (Graphics2D g2) {
+		g2.drawImage(copyImage, x, y, XSIZE, YSIZE, null);
+	}
 
 }
