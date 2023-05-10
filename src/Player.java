@@ -72,14 +72,10 @@ public class Player {
 	   Tile tile = tileMap.getTile(xTile, yTile);
 
 	   if (tile!= null) {
-		   if(Objects.equals(tile.getState(), "FOUNDATION"))
-			   return tile;
-		   else if(Objects.equals(tile.getState(), "USE")){
-			   return tile;
-		   }else if(Objects.equals(tile.getState(), "STAR")){
-			   return tile;
-		   }else if(Objects.equals(tile.getState(), "CHEST")){
-			   return tile;
+		   switch (tile.getState()){
+			   case "FOUNDATION", "USE", "STAR", "CHEST","HEART" -> {
+				   return tile;
+			   }
 		   }
 	   }
 	   return null;
@@ -171,7 +167,7 @@ public class Player {
 		   System.out.println("X left: " + x);
 		   tile = isCollision(newX, y);
 		   if(tile != null){
-			   if(Objects.equals(tile.getState(), "USE")||Objects.equals(tile.getState(), "STAR"))
+			   if(!Objects.equals(tile.getState(), "FOUNDATION"))
 				   tile = null;
 		   }
 	   } else if (direction == 2 ) {        // move right
@@ -191,7 +187,7 @@ public class Player {
 		   }
 		   tile = isCollision(newX, y);
 		   if(tile != null){
-			   if(Objects.equals(tile.getState(), "USE")||Objects.equals(tile.getState(), "STAR"))
+			   if(!Objects.equals(tile.getState(), "FOUNDATION"))
 				   tile = null;
 		   }
 	   }else if (direction == 3 && !jumping) {
@@ -252,7 +248,17 @@ public class Player {
       int newY = 0;
 
       timeElapsed++;
-
+	  Tile t = isCollision(x,y);
+	  if(t != null) {
+		  if(Objects.equals(t.getState(), "HEART")){
+			  if(!t.used){
+				  SoundManager sm = SoundManager.getInstance();
+				  sm.playSound("heart",false);
+				  heart++;
+				  t.used=true;
+			  }
+		  }
+	  }
       if (jumping || inAir) {
 		  distance = (int) (initialVelocity * timeElapsed - 4.9 * timeElapsed * timeElapsed);
 		  newY = startY - distance;

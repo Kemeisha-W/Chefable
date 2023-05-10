@@ -1,13 +1,11 @@
 import java.util.ArrayList;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import javax.swing.JPanel;
 import java.awt.Image;
 
 
 public class Star implements Sprite {
 
-    private JPanel panel;                // JPanel on which image will be drawn
 
     private int x;
     private int y;
@@ -27,11 +25,9 @@ public class Star implements Sprite {
     boolean originalImage, grayImage;
 
 
-    private Star (JPanel panel, Player player) {
-        this.panel = panel;
+    private Star ( Player player) {
 
         this.player = player;
-
         time = 0;                // range is 0 to 10
         timeChange = 1;                // set to 1
         originalImage = true;
@@ -39,9 +35,9 @@ public class Star implements Sprite {
         loadStar();
         soundManager = SoundManager.getInstance();
     }
-    public static Star getInstance(JPanel panel, Player player) {
+    public static Star getInstance( Player player) {
         if (Star.single_instance == null)
-            Star.single_instance = new Star(panel, player);
+            Star.single_instance = new Star( player);
 
         return Star.single_instance;
     }
@@ -78,7 +74,7 @@ public class Star implements Sprite {
         if(playerRect==null)
             return false;
         if (myRect.intersects(playerRect)) {
-            System.out.println ("Collision with player!");
+            System.out.println ("Star Collision with player!");
             soundManager.playSound("bubble", false);
             return true;
         }
@@ -89,8 +85,8 @@ public class Star implements Sprite {
 
     @Override
     public Rectangle2D.Double getBoundingRectangle() {
-        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
-        System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
+//        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
+//        System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
         return new Rectangle2D.Double (x+offsetX, y+offsetY, 32, 32);
     }
 

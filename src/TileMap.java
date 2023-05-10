@@ -33,7 +33,6 @@ public class TileMap {
     BackgroundManager bgManager;
     private GamePanel window;
     private final Star star;
-    private Heart[] hearts;
     private final Chest chest;
     private final Theme theme;
     private int level;
@@ -58,7 +57,6 @@ public class TileMap {
 
         bgManager = new BackgroundManager (window, 12);
         tiles = new Tile[mapWidth][mapHeight];
-        hearts = new Heart[10];
 
         level = window.getLevel();
 
@@ -77,7 +75,7 @@ public class TileMap {
         gameAni.start("heart","");
 
         //Add the star
-        star = Star.getInstance(window,player);
+        star = Star.getInstance(player);
         Animation starAni = star.getAnimation();
         starAni.start();
 
@@ -187,13 +185,6 @@ public class TileMap {
         Tile heart = new Tile(null,x, y,"Animation","HEART");
         heart.count = count;
         tiles[x][y] = heart;
-        System.out.println("heart");
-        Heart h = new Heart(player);
-
-        this.hearts[count] = h;
-        System.out.println("heart");
-        h.setX(tilesToPixels(x));
-        h.setY(tilesToPixels(y));
 
     }
 
@@ -337,7 +328,7 @@ public class TileMap {
                                         if(tile.disEffect.count == 70){
                                             tile.disEffect.deActivate();
                                             if (tile.getUseType().equals("NEVER")) {
-                                                tile.sepaiTile();
+                                                tile.sepiaTile();
                                                 tile.sepiaEffect.setX(tilesToPixels(x) + offsetX);
                                                 tile.sepiaEffect.setY(tilesToPixels(y) + offsetY);
                                                 tile.sepiaEffect.draw(g2);
@@ -378,8 +369,10 @@ public class TileMap {
                                     star.draw(g2);
                                     star.update();
                                 } else if (Objects.equals(tile.getState(), "HEART")) {
-                                    gameAni.draw(g2,"heart",tilesToPixels(x)+offsetX,tilesToPixels(y)+offsetY);
-                                    gameAni.update("","heart");
+                                    if(!tile.used){
+                                        gameAni.draw(g2,"heart",tilesToPixels(x)+offsetX,tilesToPixels(y)+offsetY);
+                                        gameAni.update("","heart");
+                                    }
                                 } else if (Objects.equals(tile.getState(), "CHEST")) {
                                     chest.offsetY = offsetY;
                                     chest.offsetX = offsetX;

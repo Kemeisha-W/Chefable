@@ -8,7 +8,6 @@ public class Tile {
     public SepiaEffect sepiaEffect;
     private BufferedImage buffImage;
     Point position;
-    public boolean isUsed = false;
     public int count;
     private enum State{
         FOUNDATION,
@@ -109,7 +108,7 @@ public class Tile {
         disEffect.activate();
     }
 
-    public void sepaiTile(){
+    public void sepiaTile(){
         sepiaEffect = new SepiaEffect(buffImage);
         sepiaEffect.activate();
     }

@@ -39,6 +39,12 @@ public class SoundManager {				// a Singleton class
 		clip = loadClip("sounds/crate close.wav");
 		clips.put("close", clip);
 
+//		clip = loadClip("sounds/crate close.wav");
+//		clips.put("die", clip);
+//
+//		clip = loadClip("sounds/crate close.wav");
+//		clips.put("close", clip);
+
 	}
 
 
