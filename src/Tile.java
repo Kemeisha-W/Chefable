@@ -56,10 +56,6 @@ public class Tile {
             case "HEART" -> tState = State.HEART;
             case "CHEST" -> tState = State.CHEST;
             case "FIRE" -> tState = State.FIRE;
-            default -> {
-                //TODO ADD ERROR message
-                return;
-            }
         }
     }
 

@@ -1,4 +1,3 @@
-import javax.swing.*;
 import java.io.IOException;
 
 public class GameApplication
@@ -10,7 +9,7 @@ public class GameApplication
 	 TODO: ADD SOUND FOR DIE
 	*/
 	public static void main (String[] args) throws IOException {
-		JFrame frame = new GameWindow();
+		new GameWindow();
 	}
 
 }

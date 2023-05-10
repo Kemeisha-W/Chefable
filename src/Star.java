@@ -15,9 +15,9 @@ public class Star implements Sprite {
     private final int height=ySize+32;
     private final SoundManager soundManager;		// reference to SoundManager to play clip
 
-    private Player player;
+    private final Player player;
     private Animation animation;
-    private ArrayList<Image> starImages= new ArrayList<>();
+    private final ArrayList<Image> starImages= new ArrayList<>();
 
     private static Star single_instance = null;
 

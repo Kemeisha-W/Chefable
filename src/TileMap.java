@@ -27,8 +27,8 @@ public class TileMap {
 
     //Add animations
     private final FireAnimation fire;
-    private PlayerAnimation pAni;
-    private GameAnimation gameAni;
+    private final PlayerAnimation pAni;
+    private final GameAnimation gameAni;
 
     BackgroundManager bgManager;
     private GamePanel window;
