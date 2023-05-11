@@ -30,9 +30,9 @@ public abstract class AnimationManager {
             stopSound(currentSound);
         }
 
+        playSound(sound);
         animation = animations.get(key);
         animation.start();
-        playSound(sound);
         currentSound = sound;
         currentAnimation =  animations.get(key);
     }

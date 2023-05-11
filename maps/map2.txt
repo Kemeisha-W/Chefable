@@ -20,11 +20,11 @@
                                                    +
                              #                   DBBBH
 
-                                     +                     ^ *
-                      +            DBBBBH                 DBBBBBH
-                    DBBBH                                 IFFFFFF
-                                                          IFFFFFF
-                                                          IFFFFFF
-          #                                +              IFFFFFF
-BBBBBH   DBBH                            DBBBH            IFFFFFF
-FFFFFM~~~IFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFF
+                                     +                     ^    *
+                      +            DBBBBH                  DBBBBBBH
+                    DBBBH                                  IFFFFFFF
+                                                           IFFFFFFF
+                                                           IFFFFFFF
+           #                                +              IFFFFFFF
+BBBBBH   DBBBH                            DBBBH            IFFFFFFF
+FFFFFM~~~IFFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFFF

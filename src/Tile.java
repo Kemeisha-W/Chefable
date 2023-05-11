@@ -17,6 +17,7 @@ public class Tile {
         HEART,
         FIRE
     }
+
     private enum Display {
         IMAGE,
         ANIMATION
@@ -35,6 +36,7 @@ public class Tile {
     protected boolean used = false;
     protected boolean open = false;
     public boolean alreadyExecuted = false;
+
 
     /** Set Image Tile position*/
     public Tile(Image i, int x, int y,String dKey, String state){

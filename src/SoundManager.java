@@ -27,7 +27,7 @@ public class SoundManager {				// a Singleton class
 		clip = loadClip("sounds/bubble 1.wav");
 		clips.put("bubble", clip);		// moving to another level
 
-		clip = loadClip("sounds/fruit collect 1.wav");
+		clip = loadClip("sounds/collect.wav");
 		clips.put("collect", clip);		// player is collecting food
 
 		clip = loadClip("sounds/heart.wav");
@@ -39,8 +39,8 @@ public class SoundManager {				// a Singleton class
 		clip = loadClip("sounds/crate close.wav");
 		clips.put("close", clip);
 
-//		clip = loadClip("sounds/crate close.wav");
-//		clips.put("die", clip);
+		clip = loadClip("sounds/die.wav"); //Player dies or losses a heart
+		clips.put("die", clip);
 //
 //		clip = loadClip("sounds/crate close.wav");
 //		clips.put("close", clip);

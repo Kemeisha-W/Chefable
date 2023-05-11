@@ -13,7 +13,6 @@ public class PlayerAnimation extends AnimationManager{
 
     public PlayerAnimation() {
         loadWalkingRight();
-//        loadWalkingLeft();
         loadDeath();
         loadIdle();
         loadJump();
@@ -30,14 +29,13 @@ public class PlayerAnimation extends AnimationManager{
 
     public void update(String sound,String key) {
 //        currentAnimation = animations.get(key);
-        if (!currentAnimation.isStillActive()) {
+        if (!currentAnimation.isStillActive()&& loop) {
             stopSound(sound);
             return;
         }
         currentAnimation.update();
 
     }
-
 
     public void draw(Graphics2D g2,String key,int x, int y) {
         animation = animations.get(key);
@@ -65,7 +63,7 @@ public class PlayerAnimation extends AnimationManager{
         animation = new Animation(true);	// play once continuously
 
         for(int num=0;num<8;num++){
-            animation.addFrame(animImages.get("walk"+num), 150);
+            animation.addFrame(animImages.get("walk"+num), 100);
         }
         animations.put("walk_right",animation);
     }

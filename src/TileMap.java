@@ -1,3 +1,4 @@
+import javax.sound.sampled.Clip;
 import java.awt.*;
 import java.util.*;
 
@@ -69,13 +70,13 @@ public class TileMap {
         fire.start();
 
         //Add Player
-        player = new Player (window, this, bgManager);
+        player=new Player(window, this, bgManager);
         this.pAni = player.getPlayerAnimation();
         gameAni = new GameAnimation();
         gameAni.start("heart","");
 
         //Add the star
-        star = Star.getInstance(player);
+        star = new Star(player);
         Animation starAni = star.getAnimation();
         starAni.start();
 
@@ -84,8 +85,6 @@ public class TileMap {
         chest.setAnimation("close");
         Animation chestAni = chest.getAnimation();
         chestAni.start();
-
-        System.out.println("Chest added");
     }
 
 
@@ -166,8 +165,8 @@ public class TileMap {
     public void setStar(int x, int y ) {
         Tile star = new Tile(null,x, y,"Animation","STAR");
         tiles[x][y] = star;
-        this.star.setX(tilesToPixels(x));
-        this.star.setY(tilesToPixels(y));
+//        this.star.setX(tilesToPixels(x));
+//        this.star.setY(tilesToPixels(y));
     }
 
     /**
@@ -185,7 +184,6 @@ public class TileMap {
         Tile heart = new Tile(null,x, y,"Animation","HEART");
         heart.count = count;
         tiles[x][y] = heart;
-
     }
 
     /**
@@ -201,10 +199,10 @@ public class TileMap {
         Random rand = new Random();
         ArrayList<String> themes = new ArrayList<>(Arrays.asList("Never","Vegetable","Fruit","Lunch","Bakery","Snacks","Meat"));
         int tValue;
-        if(level ==1 || level ==2){
+        if(level ==1){
             tValue = rand.nextInt(2) + 1;
         }else{
-            tValue = rand.nextInt(7 - 3) + 3;
+            tValue = rand.nextInt(7 -3) + 3;
         }
         currentTheme = themes.get(tValue);
         theme.loadTheme(currentTheme);
@@ -263,7 +261,7 @@ public class TileMap {
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
 
         System.out.println("\n Player x: "+playerX+"\n y="+player.getY());
-        System.out.println("\noffsetX:"+offsetX+"\n offsetY="+offsetY);
+
         //Draw Hearts
         Image heartImg = player.getHeartImage();
         int numHearts = player.getHeartNum();
@@ -413,6 +411,7 @@ public class TileMap {
             }
             case "DIE" -> {
                 key = "death";
+
                 if(!this.pAni.isActive()&&!player.alreadyExecuted){
                     offsetX = screenWidth/2-Math.round((float)playerX)-TILE_SIZE;
                     offsetX = Math.min(offsetX, 0);
@@ -463,8 +462,10 @@ public class TileMap {
     }
 
     public void update() {
+        System.out.println("player "+player.getX()+" "+player.getY());
         player.update();
 
+        System.out.println("player "+player.getX()+" "+player.getY());
         if (star.collidesWithPlayer()) {
             window.endLevel();
             setTheme();

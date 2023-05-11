@@ -14,19 +14,17 @@ public class Star implements Sprite {
     private final int width=xSize+32;
     private final int height=ySize+32;
     private final SoundManager soundManager;		// reference to SoundManager to play clip
-
-    private final Player player;
+    protected boolean collidedWith;
+    private Player player;
     private Animation animation;
     private final ArrayList<Image> starImages= new ArrayList<>();
-
-    private static Star single_instance = null;
 
     int time, timeChange;                // to control when the image is grayed
     boolean originalImage, grayImage;
 
 
-    private Star ( Player player) {
-
+    protected Star (Player player) {
+        collidedWith = false;
         this.player = player;
         time = 0;                // range is 0 to 10
         timeChange = 1;                // set to 1
@@ -35,12 +33,7 @@ public class Star implements Sprite {
         loadStar();
         soundManager = SoundManager.getInstance();
     }
-    public static Star getInstance( Player player) {
-        if (Star.single_instance == null)
-            Star.single_instance = new Star( player);
 
-        return Star.single_instance;
-    }
     private void loadStar() {
         for (int num = 0; num < 4; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/star/star" + num + ".png");
@@ -85,8 +78,10 @@ public class Star implements Sprite {
 
     @Override
     public Rectangle2D.Double getBoundingRectangle() {
-//        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
-//        System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
+        offsetX-=32;
+        System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
+        System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
+
         return new Rectangle2D.Double (x+offsetX, y+offsetY, 32, 32);
     }
 

@@ -46,8 +46,10 @@ public class Player {
    private int initialVelocity;
    protected boolean gameOver=false;
    protected int points =0;
+   protected SoundManager sm = SoundManager.getInstance();
 
-   public Player (JPanel window, TileMap t, BackgroundManager b) {
+	public Player (JPanel window, TileMap t, BackgroundManager b) {
+
 	   this.window = window;
 	   tileMap = t;            // tile map on which the player's sprite is displayed
 	   bgManager = b;            // instance of BackgroundManager
@@ -252,7 +254,6 @@ public class Player {
 	  if(t != null) {
 		  if(Objects.equals(t.getState(), "HEART")){
 			  if(!t.used){
-				  SoundManager sm = SoundManager.getInstance();
 				  sm.playSound("heart",false);
 				  heart++;
 				  t.used=true;
@@ -262,7 +263,6 @@ public class Player {
       if (jumping || inAir) {
 		  distance = (int) (initialVelocity * timeElapsed - 4.9 * timeElapsed * timeElapsed);
 		  newY = startY - distance;
-//		  System.out.println("Start y: "+startY+" Distance: "+distance);
 
 		  if (newY > y && goingUp) {
 			  goingUp = false;
@@ -355,10 +355,11 @@ public class Player {
 	}
 
 	public Rectangle2D.Double getBoundingRectangle() {
+		System.out.println("newX: "+x+"    newY: "+y);
 		Tile tile = isCollision(x,y);
 		if(tile !=null && Objects.equals(tile.getState(),"STAR")){
 			offsetX= tileMap.getOffsetX();
-			System.out.println("\n\n```Bounding rect player x: " + (x+offsetX) + " y: " + y+"```");
+			System.out.println("\n\n```Bounding rect player x: " + (x+offsetX) + " y: " + (y)+"```");
 			System.out.println("Offset X: "+offsetX+"  Offset Y: "+offsetY);
 			return new Rectangle2D.Double (x+offsetX, y, 100, 100);
 		}
@@ -367,7 +368,6 @@ public class Player {
 
 	public void use(){
 		Tile tile = isCollision(x,y);
-//		System.out.println("\n\nUse test no offset x: " + x + " y: " + y+"\nTILE: " + tile);
 		if(tile !=null && Objects.equals(tile.getState(),"USE")){
 			if(!tile.used){
 				System.out.println("USE");
@@ -420,7 +420,7 @@ public class Player {
 		goingDown =false;
 		pState = State.DIE;
 		alreadyExecuted = false;
-		playerAnimation.start("death","");
+		playerAnimation.start("death","die");
 		if(heart == 0){
 			gameOver = true;
 		}
