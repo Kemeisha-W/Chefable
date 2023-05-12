@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.util.*;
 */
 
 public class TileMap {
+    private int average;
     private Path gamePoints;
     private ArrayList<String> result;
     private File fs;
@@ -103,7 +105,7 @@ public class TileMap {
         starAni.start();
 
         //Add the chest
-        chest = Chest.getInstance(player);
+        chest = Chest.getInstance();
         Animation chestAni = chest.getAnimation();
         chestAni.start();
     }
@@ -293,7 +295,6 @@ public class TileMap {
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX,  screenWidth-mapWidthPixels);
 
-        System.out.println("\n Player x: "+playerX+"\n y="+player.getY());
 
         Font font = new Font("Serif", Font.PLAIN, 60);
         g2.setFont(font);
@@ -314,18 +315,35 @@ public class TileMap {
                 g2.drawImage(heartImg, tilesToPixels(i)+10, tilesToPixels(1),32,32, null);
             }
         }else{
+
             if(!chest.isOpen()){
                 g2.drawString("Did you get the Job? ...",20,tilesToPixels(2));
             }
             if(chest.isOpen()&&win){
-                g2.drawString("Did you get the Job? YES",20,tilesToPixels(2));
+                g2.drawString("Congratulations! You got the Job. Work starts next Monday.",20,tilesToPixels(2));
+                gameAni.size = 400;
                 gameAni.draw(g2,"fireworks",screenWidth/2,screenHeight/3);
                 gameAni.update("fireworks","fireworks");
+                if(!gameAni.isActive()){
+                    Shape shape = new RoundRectangle2D.Float( 5,80,400,80,20,20);
+                    g2.setColor(Color.WHITE);
+                    g2.fill(shape);
+                    g2.setColor(Color.BLACK);
+                    g2.setFont(font);
+                    g2.drawString("Points "+average,5,150);
+                    player.gameOver = true;
+                }
 
             }else if(chest.isOpen()&&!win){
-                g2.drawString("Did you get the Job? No",20,tilesToPixels(2));
-                gameAni.draw(g2,"game_over",screenWidth/2,screenHeight/3);
-                gameAni.update("die","game_over");
+                Shape shape = new RoundRectangle2D.Float( 5,80,400,80,20,20);
+                g2.drawString("You did NOT get the JOB",20,tilesToPixels(2));
+                font = new Font("Serif", Font.PLAIN, 60);
+                g2.setColor(Color.DARK_GRAY);
+                g2.fill(shape);
+                g2.setColor(Color.RED);
+                g2.setFont(font);
+                g2.drawString("Points "+average,5,150);
+                player.gameOver = true;
             }
         }
 
@@ -555,6 +573,8 @@ public class TileMap {
                 w.flush();
             }
             if(fs.length() ==0&&window.getLevel() == 1) {
+                if(correct ==0)
+                    correct =1;
                 int percentage = (player.points/(correct*5))*100;
                 String line ="Level1 "+percentage;
                 Files.write(gamePoints,line.getBytes(),StandardOpenOption.WRITE);
@@ -585,13 +605,11 @@ public class TileMap {
                 level[num]= Integer.parseInt(line.trim());
                 num++;
             }
-            int average = ((level[0]+level[1])/2)*100;
+             average = ((level[0]+level[1])/2);
             if (average>59){
                 gameAni.start("fireworks","fireworks");
                 win = true;
             }else{
-                gameAni.start("game_over","die");
-
                 win = false;
             }
             chest.alreadyExecuted = true;

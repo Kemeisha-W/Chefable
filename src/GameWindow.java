@@ -56,14 +56,44 @@ private JButton pauseB;
 
 
 		// create buttonPanel
-		pauseB = new JButton ("Pause Game");
-		pauseB.setBackground(Color.CYAN);
-		endB = new JButton ("End Game");
-		endB.setBackground(Color.CYAN);
-		startNewB = new JButton ("Start New Game");
-		startNewB.setBackground(Color.CYAN);
-		exitB = new JButton ("Exit");
-		exitB.setBackground(Color.RED);
+		ImageIcon icon =new ImageIcon("Assets/Menu Buttons/Square Buttons/Square Buttons/Pause Square Button.png");
+		Image i = icon.getImage();
+		int width = screenSize.width/4;
+		Image newimg = i.getScaledInstance(width-300, 50,  Image.SCALE_DEFAULT);
+		icon = new ImageIcon(newimg);
+
+		pauseB = new JButton (icon);
+		pauseB.setOpaque(false);
+		pauseB.setContentAreaFilled(false);
+		pauseB.setBorderPainted(false);
+
+		icon =new ImageIcon("Assets/Menu Buttons/Large Buttons/Large Buttons/Quit Button.png");
+		i = icon.getImage();
+		newimg = i.getScaledInstance(width-20, 50,  Image.SCALE_DEFAULT);
+		icon = new ImageIcon(newimg);
+		endB = new JButton (icon);
+		endB.setOpaque(false);
+		endB.setContentAreaFilled(false);
+		endB.setBorderPainted(false);
+
+		icon =new ImageIcon("Assets/Menu Buttons/Large Buttons/Large Buttons/New game Button.png");
+		i = icon.getImage();
+		newimg = i.getScaledInstance(width-20, 50,  Image.SCALE_DEFAULT);
+		icon = new ImageIcon(newimg);
+		startNewB = new JButton (icon);
+		startNewB.setOpaque(false);
+		startNewB.setContentAreaFilled(false);
+		startNewB.setBorderPainted(false);
+
+		icon =new ImageIcon("Assets/Menu Buttons/Large Buttons/Colored Large Buttons/Exit  col_Button.png");
+		i = icon.getImage();
+		newimg = i.getScaledInstance(width-20, 50,  Image.SCALE_DEFAULT);
+		icon = new ImageIcon(newimg);
+
+		exitB = new JButton (icon);
+		exitB.setOpaque(false);
+		exitB.setContentAreaFilled(false);
+		exitB.setBorderPainted(false);
 
 
 		// add listener to each button (same as the current object)
@@ -75,16 +105,16 @@ private JButton pauseB;
 		JPanel buttonPanel = new JPanel();
 		gridLayout = new GridLayout(1, 4);
 		buttonPanel.setLayout(gridLayout);
-		// add buttons to buttonPanel
+		buttonPanel.setOpaque(false);
 
+		// add buttons to buttonPanel
 		buttonPanel.add (startNewB);
 		buttonPanel.add (pauseB);
 		buttonPanel.add (endB);
 		buttonPanel.add (exitB);
 
-
 		// create the gamePanel for game entities
-		gamePanel = new GamePanel(70);
+		gamePanel = new GamePanel(100);
 
 		// add sub-panels with GUI objects to mainPanel and set its colour
 		mainPanel.add (buttonPanel,BorderLayout.SOUTH);
@@ -122,26 +152,31 @@ private JButton pauseB;
 
 		String command = e.getActionCommand();
 
-		if (command.equals(pauseB.getText())) {
+		if (e.getSource() ==pauseB) {
 			gamePanel.pauseGame();
-			if (command.equals("Pause Game"))
-				pauseB.setText ("Resume");
-			else
+			if (gamePanel.isPaused) {
+				ImageIcon icon =new ImageIcon("Assets/Menu Buttons/Square Buttons/Square Buttons/Play Square Button.png");
+				Image i = icon.getImage();
+				int width = getWidth()/4;
+				Image newimg = i.getScaledInstance(width-300, 50,  Image.SCALE_DEFAULT);
+				icon = new ImageIcon(newimg);
+				pauseB.setIcon(icon);
+			}else
 				pauseB.setText ("Pause Game");
 
 		}
 
-		if (command.equals(endB.getText())) {
+		if (e.getSource() == endB) {
 			gamePanel.endGame();
 		}
 
-		if (command.equals(startNewB.getText())){
+		if (e.getSource() == startNewB){
 			soundManager.stopSound("background2");
-			mainPanel.setBackground(Color.BLACK);
+			mainPanel.setBackground(new Color(110,186,197));
 			gamePanel.startNewGame();
 		}
 
-		if (command.equals(exitB.getText()))
+		if (e.getSource() == exitB)
 			System.exit(0);
 
 		mainPanel.requestFocus();

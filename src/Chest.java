@@ -3,10 +3,8 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Chest implements Sprite{
-    private final SoundManager soundManager;        // reference to SoundManager to play clip
     private final int width=xSize+32;
     private final int height=ySize+32;
-    private Player player;
     private Animation closedAni;
     private Animation openAni;
     private Animation currentAni;
@@ -23,19 +21,17 @@ public class Chest implements Sprite{
     protected boolean alreadyExecuted = false;
 
 
-    private Chest( Player player){
-        this.player = player;
+    private Chest(){
         loadClosedChest();
         loadOpenChest();
-        soundManager = SoundManager.getInstance();
         currentAni = closedAni;
         time = 0;
         timeChange = 5;
     }
 
-    static Chest getInstance(Player player) {
+    static Chest getInstance() {
         if (Chest.single_instance == null)
-            Chest.single_instance = new Chest( player);
+            Chest.single_instance = new Chest( );
 
         return Chest.single_instance;
     }
@@ -71,8 +67,8 @@ public class Chest implements Sprite{
     @Override
     public void draw(Graphics2D g2) {
         if(time>350&&!currentAni.isStillActive()){
-//            offsetY =offsetY-32;
-            g2.drawImage(openImages.get(3), x+offsetX, y+offsetY, width,height, null);
+            offsetY =offsetY-32;
+            g2.drawImage(openImages.get(4), x+offsetX, y+offsetY, width,height, null);
             return;
         }
         if (!currentAni.isStillActive()) {

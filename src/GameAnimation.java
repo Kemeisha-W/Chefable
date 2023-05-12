@@ -6,7 +6,7 @@ public class GameAnimation extends AnimationManager{
      The Game Animation class creates an animation of a game animations
      */
 
-    private int size=30;
+    protected int size=30;
 
     private int dx;		// increment to move along x-axis
     private int dy;		// increment to move along y-axis
@@ -15,8 +15,6 @@ public class GameAnimation extends AnimationManager{
     public GameAnimation() {
         loadChefWalking();
         loadFireworks();
-        loadGameOverAni();
-        loadStartGameAni();
         loadHeart();
         soundManager = SoundManager.getInstance();
     }
@@ -65,6 +63,7 @@ public class GameAnimation extends AnimationManager{
     private void loadFireworks(){
         for(int num=1;num<11;num++){
             Image i = ImageManager.loadBufferedImage("Assets/blue fireworks/Explosion_"+num+".png");
+            i = i.getScaledInstance(32,32,Image.SCALE_DEFAULT);
             animImages.put("fireworks"+num,i);
         }
 
@@ -79,6 +78,7 @@ public class GameAnimation extends AnimationManager{
     private void loadChefWalking(){
         for(int num=1;num<9;num++){
             Image i = ImageManager.loadBufferedImage("Assets/characters/chef/walk_left/walk_left("+num+").png");
+            i = i.getScaledInstance(32,32,Image.SCALE_DEFAULT);
             animImages.put("walk"+num,i);
         }
 
@@ -90,37 +90,10 @@ public class GameAnimation extends AnimationManager{
         animations.put("chef_walk",animation);
     }
 
-    private void loadGameOverAni(){
-        for(int num=0;num<60;num++){
-            Image i = ImageManager.loadBufferedImage("Assets/Free pack 6/5/1_"+num+".png");
-            animImages.put("game_over"+num,i);
-        }
-
-        animation = new Animation(true);	// play continuously
-
-        for(int num=0;num<60;num++){
-            animation.addFrame(animImages.get("game_over"+num), 150);
-        }
-        animations.put("game_over",animation);
-    }
-
-    private void loadStartGameAni(){
-        for(int num=0;num<60;num++){
-            Image i = ImageManager.loadBufferedImage("Assets/Free pack 6/1/1_"+num+".png");
-            animImages.put("start"+num,i);
-        }
-
-        animation = new Animation(true);	// play continuously
-
-        for(int num=0;num<60;num++){
-            animation.addFrame(animImages.get("start"+num), 150);
-        }
-        animations.put("start",animation);
-    }
-
     private void loadHeart() {
         for (int num = 11; num < 21; num++) {
             Image i = ImageManager.loadBufferedImage("Assets/Gold/Gold_" + num + ".png");
+            i = i.getScaledInstance(32,32,Image.SCALE_DEFAULT);
             animImages.put("heart"+num,i);
         }
         animation = new Animation(true);    // play continuously

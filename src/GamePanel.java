@@ -32,8 +32,6 @@ public class GamePanel extends JPanel
     private int width;
     private int height;
 
-//    private Dimension dimension;
-
     public GamePanel (int bPanelHeight) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         width = (int) screenSize.getWidth();
@@ -60,6 +58,7 @@ public class GamePanel extends JPanel
 
     public void run () {
         try {
+
             isRunning = true;
             while (isRunning) {
                 if (!isPaused && !gameOver){

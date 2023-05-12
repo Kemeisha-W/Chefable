@@ -31,13 +31,13 @@
 
                                      +
                                    DBBBBH
-                                                            ^   *
+                                                                *
                       +                                    DBBBBBBBH
                     DBBBH                                  IFFFFFFFF
                                                            IFFFFFFFF
                                                            IFFFFFFFF
                                                            IFFFFFFFF
                                                            IFFFFFFFF
-           #                                +              IFFFFFFFF
+ ^         #                                +              IFFFFFFFF
 BBBBBH   DBBBH                            DBBBH            IFFFFFFFF
 FFFFFM~~~IFFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFFFF
