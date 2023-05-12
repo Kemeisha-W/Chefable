@@ -23,7 +23,7 @@ public class PlayerAnimation extends AnimationManager{
     }
 
 
-    public int getWidth(){return pWidth;}
+    public int getSize(){return pWidth;}
     public int getHeight(){return pHeight;}
 
 
@@ -38,18 +38,18 @@ public class PlayerAnimation extends AnimationManager{
     }
 
     public void draw(Graphics2D g2,String key,int x, int y) {
-        animation = animations.get(key);
-        if (!animation.isStillActive()) {
+        currentAnimation = animations.get(key);
+        if (!currentAnimation.isStillActive()) {
             return;
         }
         if(left){
 
-            BufferedImage flipped = ImageManager.toBufferedImage(animation.getImage(),200);
+            BufferedImage flipped = ImageManager.toBufferedImage(currentAnimation.getImage(),200);
             flipped = ImageManager.hFlipImage(flipped);
             g2.drawImage(flipped, x, y, pWidth, pHeight, null);
             return;
         }
-        g2.drawImage(animation.getImage(), x, y, pWidth, pHeight, null);
+        g2.drawImage(currentAnimation.getImage(), x, y, pWidth, pHeight, null);
     }
 
 
@@ -60,7 +60,7 @@ public class PlayerAnimation extends AnimationManager{
              animImages.put("walk"+num,i);
          }
 
-        animation = new Animation(true);	// play once continuously
+        animation = new Animation(true);	// play continuously
 
         for(int num=0;num<8;num++){
             animation.addFrame(animImages.get("walk"+num), 100);

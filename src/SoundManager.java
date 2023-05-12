@@ -41,9 +41,9 @@ public class SoundManager {				// a Singleton class
 
 		clip = loadClip("sounds/die.wav"); //Player dies or losses a heart
 		clips.put("die", clip);
-//
-//		clip = loadClip("sounds/crate close.wav");
-//		clips.put("close", clip);
+
+		clip = loadClip("sounds/fireworks.wav");
+		clips.put("fireworks", clip);
 
 	}
 

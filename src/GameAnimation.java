@@ -6,8 +6,7 @@ public class GameAnimation extends AnimationManager{
      The Game Animation class creates an animation of a game animations
      */
 
-    private int width=30;
-    private int height=30;
+    private int size=30;
 
     private int dx;		// increment to move along x-axis
     private int dy;		// increment to move along y-axis
@@ -30,14 +29,10 @@ public class GameAnimation extends AnimationManager{
     }
 
     @Override
-    protected int getWidth() {
-        return width;
+    protected int getSize() {
+        return size;
     }
 
-    @Override
-    protected int getHeight() {
-        return height;
-    }
 
 
     public void update(String sound, String key ) {
@@ -63,7 +58,7 @@ public class GameAnimation extends AnimationManager{
         if (!currentAnimation.isStillActive()) {
             return;
         }
-        g2.drawImage(currentAnimation.getImage(), x, y, width, height, null);
+        g2.drawImage(currentAnimation.getImage(), x, y, size, size, null);
     }
 
 

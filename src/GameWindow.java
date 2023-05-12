@@ -92,7 +92,6 @@ private JButton pauseB;
 
 		//Add listeners
 		gamePanel.addMouseListener(this);
-		gamePanel.addMouseMotionListener( this);
 		mainPanel.addKeyListener(this);
 
 		ImageIcon imageIcon = new ImageIcon("Assets/Logo.png");
@@ -113,7 +112,7 @@ private JButton pauseB;
 		setVisible(true);
 
 		soundManager = SoundManager.getInstance();
-//		soundManager.playSound("background2",true);
+		soundManager.playSound("background2",true);
 
 	}
 

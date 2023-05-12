@@ -5,26 +5,39 @@
 #   A..Z    Tiles [ground or spikes]
 #   1-9     Environment
 #   +       Food
-#   *       Door
+#   #       Heart
+#   *       Star
 #   ~       Fire
 #   ^       Player initial position
+
+
 
                         +
                       DBBBH
 
 
-                                #
-          +                   DBBBH
+
+
+                                 #
+                               DBBBH
+
+          +
         DBBBH
 
                                                    +
                              #                   DBBBH
 
-                                     +                     ^    *
-                      +            DBBBBH                  DBBBBBBH
-                    DBBBH                                  IFFFFFFF
-                                                           IFFFFFFF
-                                                           IFFFFFFF
-           #                                +              IFFFFFFF
-BBBBBH   DBBBH                            DBBBH            IFFFFFFF
-FFFFFM~~~IFFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFFF
+
+
+                                     +
+                                   DBBBBH
+                                                            ^   *
+                      +                                    DBBBBBBBH
+                    DBBBH                                  IFFFFFFFF
+                                                           IFFFFFFFF
+                                                           IFFFFFFFF
+                                                           IFFFFFFFF
+                                                           IFFFFFFFF
+           #                                +              IFFFFFFFF
+BBBBBH   DBBBH                            DBBBH            IFFFFFFFF
+FFFFFM~~~IFFFM~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~IFFFFFFFF

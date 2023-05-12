@@ -5,10 +5,13 @@
 #   A..Z    Tiles [ground or spikes]
 #   1-9     Environment
 #   +       Food
-#   *       Door
+#   #       Heart
+#   *       Star
 #   ~       Fire
 #   ^       Player initial position
 #change / to herbs
+
+
                              +
                          DBBBBBBH
                                                             +
@@ -18,14 +21,18 @@
                                    +
                                  DBBBH
 
+
                                                    +
                                                  DBBBH
 
+
+
+
                       +
                     DBBBH
+                    IFFFM        #
                     IFFFM
-                    IFFFM         #
                     IFFFM                      ABBH
-             +      IFFFM                   DBBEFFM           #              ^      *
+             +      IFFFM                   DBBEFFM           #               ^     *
 BBBBBBH    DBBBH    IFFFM     DBBBBBBH      IFFFFFM      DBBBBBBBBH          DBBBBBBBBBB
 FFFFFFM~~~~IFFFM~~~~IFFFM~~~~~IFFFFFFM~~~~~~IFFFFFM~~~~~~IFFFFFFFFM~~~~~~~~~~IFFFFFFFFFF

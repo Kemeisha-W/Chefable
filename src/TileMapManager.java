@@ -75,6 +75,7 @@ public class TileMapManager {
                     }
                     case '&' -> newMap.setChest(x,y);
                     case '*' -> newMap.setStar(x,y);
+                    case '|'-> newMap.setChef(x,y);
                 }
             }
         }

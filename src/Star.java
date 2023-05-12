@@ -57,8 +57,6 @@ public class Star implements Sprite {
         g2.drawImage(animation.getImage(), x+offsetX, y+offsetY, width, height, null);
     }
 
-
-    @Override
     public boolean collidesWithPlayer() {
         if(x==0 || y==0)
             return false;
@@ -76,7 +74,6 @@ public class Star implements Sprite {
     }
 
 
-    @Override
     public Rectangle2D.Double getBoundingRectangle() {
         offsetX-=32;
         System.out.println("Star bounding X:"+(x+offsetX)+" y:"+(y+offsetY));

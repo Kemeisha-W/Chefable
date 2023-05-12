@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 
 /**
  A component that displays all the game entities
@@ -13,7 +14,7 @@ public class GamePanel extends JPanel
     private SoundManager soundManager;
 
     private boolean isRunning;
-    private boolean isPaused;
+    protected boolean isPaused;
 
     private Thread gameThread;
 
@@ -31,7 +32,7 @@ public class GamePanel extends JPanel
     private int width;
     private int height;
 
-    private Dimension dimension;
+//    private Dimension dimension;
 
     public GamePanel (int bPanelHeight) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -48,7 +49,6 @@ public class GamePanel extends JPanel
 
         level = 1;
         levelChange = false;
-//        gameStartMessage();
     }
 
     public int getWidth(){
@@ -62,18 +62,18 @@ public class GamePanel extends JPanel
         try {
             isRunning = true;
             while (isRunning) {
-
-                if (!isPaused && !gameOver)
+                if (!isPaused && !gameOver){
                     gameUpdate();
-                gameRender();
+                    gameRender();
+                }
                 Thread.sleep (50);
             }
         }
-        catch(InterruptedException e) {}
+        catch(InterruptedException | IOException ignored) {}
     }
 
 
-    public void gameUpdate() {
+    public void gameUpdate() throws IOException {
 
         tileMap.update();
 
@@ -121,7 +121,7 @@ public class GamePanel extends JPanel
            restartGame();
         }
         if (gameThread == null) {
-//            soundManager.playSound ("background1", true);
+            soundManager.playSound ("background1", true);
 
             gameOver = false;
             level = 1;
@@ -148,42 +148,18 @@ public class GamePanel extends JPanel
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-        levelChange = true;
-    }
-
     public void pauseGame() {                // pause the game (don't update game entities)
         if (isRunning) {
-            if (isPaused)
-                isPaused = false;
-            else
-                isPaused = true;
+            isPaused = !isPaused;
         }
     }
-
-//    public void gameStartMessage() {
-//        Graphics2D g = (Graphics2D) image.getGraphics();
-//
-//        Font font = new Font("SansSerif", Font.BOLD, 40);
-//        FontMetrics metrics = this.getFontMetrics(font);
-//
-//        String msg = "Chefable";
-//
-//        int x = (width - metrics.stringWidth(msg)) / 2;
-//        int y = (height - metrics.getHeight()) / 2;
-//
-//        g.setColor(Color.CYAN);
-//        g.setFont(font);
-//        g.drawString(msg, x, y);
-//    }
 
     public void endGame() {                    // end the game thread
         isRunning = false;
         soundManager.stopSound ("background1");
         gameThread=null;
 
-        Graphics g= getGraphics();
+        Graphics2D g2=(Graphics2D) getGraphics();
         Font font = new Font("SansSerif", Font.BOLD, 40);
         FontMetrics metrics = this.getFontMetrics(font);
 
@@ -192,10 +168,9 @@ public class GamePanel extends JPanel
         int x = (width - metrics.stringWidth(msg)) / 2;
         int y = (height - metrics.getHeight()) / 2;
 
-        g.setColor(Color.BLUE);
-        g.setFont(font);
-        g.drawString(msg, x, y);
-        //TODO ADD ANIMATION OR GAME PHYSICS OR SOMETHING
+        g2.setColor(Color.BLUE);
+        g2.setFont(font);
+        g2.drawString(msg, x, y);
     }
 
     public void restartGame(){

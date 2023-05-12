@@ -1,5 +1,8 @@
-import javax.sound.sampled.Clip;
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -10,13 +13,17 @@ import java.util.*;
 */
 
 public class TileMap {
+    private Path gamePoints;
+    private ArrayList<String> result;
+    private File fs;
+
     private int size = 32;
     private static final int TILE_SIZE = 32;
     private String currentTheme = "";
     private int origX;
     private int origY;
     private boolean toogle=true;
-
+    private boolean win;
     private Random random = new Random();
     private Tile[][] tiles;
     private final int screenWidth, screenHeight;
@@ -24,11 +31,13 @@ public class TileMap {
     private int offsetY;
     public int offsetX;
 
-    private final Player player;
+    private Player player;
+    private Chef chef;
 
     //Add animations
     private final FireAnimation fire;
     private final PlayerAnimation pAni;
+    private ChefAnimation cAni;
     private final GameAnimation gameAni;
 
     BackgroundManager bgManager;
@@ -45,6 +54,18 @@ public class TileMap {
         height (in number of tiles) of the map.
     */
     public TileMap(GamePanel window, int width, int height, Theme theme) {
+
+        gamePoints = Paths.get("gamePoints.txt");
+        fs = gamePoints.toFile();
+        try {
+            if(!Files.exists(gamePoints)) {
+                Files.createFile(gamePoints);
+            }
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
         this.window = window;
 
         screenWidth = window.getWidth();
@@ -60,7 +81,6 @@ public class TileMap {
         tiles = new Tile[mapWidth][mapHeight];
 
         level = window.getLevel();
-
         //Set Theme
         this.theme = theme;
         setTheme();
@@ -75,14 +95,15 @@ public class TileMap {
         gameAni = new GameAnimation();
         gameAni.start("heart","");
 
+
+
         //Add the star
         star = new Star(player);
         Animation starAni = star.getAnimation();
         starAni.start();
 
         //Add the chest
-        chest = Chest.getInstance(window,player);
-        chest.setAnimation("close");
+        chest = Chest.getInstance(player);
         Animation chestAni = chest.getAnimation();
         chestAni.start();
     }
@@ -149,6 +170,18 @@ public class TileMap {
         player.setY(tilesToPixels(y)+offsetY);
         origX = x;
         origY = y;
+    }
+
+    /**
+     * Sets the Chef at the specified location
+     */
+    public void setChef(int x, int y) {
+        //Add Chef
+        int offsetY = screenHeight - tilesToPixels(mapHeight)-TILE_SIZE-85;
+        chef = new Chef();
+        cAni = chef.getchefAnimation();
+        chef.setX(tilesToPixels(x));
+        chef.setY(tilesToPixels(y)+offsetY);
     }
 
     /**
@@ -262,19 +295,39 @@ public class TileMap {
 
         System.out.println("\n Player x: "+playerX+"\n y="+player.getY());
 
-        //Draw Hearts
-        Image heartImg = player.getHeartImage();
-        int numHearts = player.getHeartNum();
-        for (int i = 0;i<numHearts;i++){
-            g2.drawImage(heartImg, tilesToPixels(i), tilesToPixels(1),32,32, null);
-        }
-
-        //Draw Current Theme
-        Font font = new Font("Serif", Font.PLAIN, 50);
+        Font font = new Font("Serif", Font.PLAIN, 60);
         g2.setFont(font);
+        g2.setColor(Color.WHITE);
+        g2.fillRoundRect(5,5,screenWidth-25,70,20,20);
         g2.setColor(Color.DARK_GRAY);
-        g2.drawString(currentTheme,(screenWidth/2)-50,tilesToPixels(2));
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.drawRoundRect(5,5,screenWidth-25,70,20,20);
+        g2.setColor(Color.BLACK);
+        if(window.getLevel() != 3){
+            //Draw Current Theme
+            g2.drawString(currentTheme,(screenWidth/2)-50,tilesToPixels(2));
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            //Draw Hearts
+            Image heartImg = player.getHeartImage();
+            int numHearts = player.getHeartNum();
+            for (int i = 0;i<numHearts;i++){
+                g2.drawImage(heartImg, tilesToPixels(i)+10, tilesToPixels(1),32,32, null);
+            }
+        }else{
+            if(!chest.isOpen()){
+                g2.drawString("Did you get the Job? ...",20,tilesToPixels(2));
+            }
+            if(chest.isOpen()&&win){
+                g2.drawString("Did you get the Job? YES",20,tilesToPixels(2));
+                gameAni.draw(g2,"fireworks",screenWidth/2,screenHeight/3);
+                gameAni.update("fireworks","fireworks");
+
+            }else if(chest.isOpen()&&!win){
+                g2.drawString("Did you get the Job? No",20,tilesToPixels(2));
+                gameAni.draw(g2,"game_over",screenWidth/2,screenHeight/3);
+                gameAni.update("die","game_over");
+            }
+        }
 
 
         if(random.nextInt()%2==0){toogle = !toogle;}
@@ -386,6 +439,32 @@ public class TileMap {
             }
         }
 
+        //draw chef
+        if(chef!= null) {
+            int y = chef.getY();
+            int x = chef.getX();
+            String key ="";
+            switch (chef.getState()) {
+                case "WALK" -> {
+                    key = "walk";
+                    cAni.draw(g2, key, x, y);
+                }
+                case "IDLE" -> {
+                    key = "idle";
+                    cAni.draw(g2, key, x, y);
+                }
+                case "WAIT" -> {
+                    key = "wait";
+                    cAni.draw(g2, key, x, y);
+                }
+                case "TALK" -> {
+                    key = "talk";
+                    cAni.draw(g2, key, x, y);
+//                    cAni.draw(g2, key, x, y);
+                }
+            }
+            cAni.update();
+        }
         //draw player animation
         int y = player.getY();
         playerX = Math.round((float)playerX)+offsetX;
@@ -461,12 +540,31 @@ public class TileMap {
         player.setState("IDLE");
     }
 
-    public void update() {
-        System.out.println("player "+player.getX()+" "+player.getY());
+    public void update() throws IOException {
         player.update();
+        if(chef != null) {
+            chef.roaming();
+        }
 
-        System.out.println("player "+player.getX()+" "+player.getY());
         if (star.collidesWithPlayer()) {
+            BufferedWriter w = null;
+
+            if(fs.length() !=0&& window.getLevel() == 1){
+                w = Files.newBufferedWriter(gamePoints);
+                w.write("");
+                w.flush();
+            }
+            if(fs.length() ==0&&window.getLevel() == 1) {
+                int percentage = (player.points/(correct*5))*100;
+                String line ="Level1 "+percentage;
+                Files.write(gamePoints,line.getBytes(),StandardOpenOption.WRITE);
+                player.points =0;
+            }else if(window.getLevel()==2){
+                int percentage = (player.points/(correct*5))*100;
+                String line ="\nLevel2 "+percentage;
+                Files.write(gamePoints,line.getBytes(), StandardOpenOption.APPEND);
+            }
+
             window.endLevel();
             setTheme();
             return;
@@ -474,7 +572,29 @@ public class TileMap {
         star.update();
 
         if(player.gameOver){
+            Files.deleteIfExists(gamePoints);
             window.endGame();
+        }
+
+        if(chest.isOpen()&&!chest.alreadyExecuted){
+            result = (ArrayList<String>) Files.readAllLines(gamePoints);
+            int num =0;
+            int[] level = new int[2];
+            for(String line : result){
+                line = line.replace("Level"+(num+1),"");
+                level[num]= Integer.parseInt(line.trim());
+                num++;
+            }
+            int average = ((level[0]+level[1])/2)*100;
+            if (average>59){
+                gameAni.start("fireworks","fireworks");
+                win = true;
+            }else{
+                gameAni.start("game_over","die");
+
+                win = false;
+            }
+            chest.alreadyExecuted = true;
         }
     }
 

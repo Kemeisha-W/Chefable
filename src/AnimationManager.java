@@ -15,8 +15,7 @@ public abstract class AnimationManager {
         return currentAnimation.isStillActive();
     }
 
-    protected abstract int getWidth();
-    protected abstract int getHeight();
+    protected abstract int getSize();
     protected void playSound(String title) {
         soundManager.playSound(title, loop);
     }
@@ -26,6 +25,8 @@ public abstract class AnimationManager {
 
     protected void start(String key,String sound) {
         if(currentAnimation != null){
+            if(currentAnimation == animations.get(key) )
+                return;
             currentAnimation.stop();
             stopSound(currentSound);
         }

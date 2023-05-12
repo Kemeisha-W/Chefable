@@ -9,9 +9,9 @@ import java.util.Scanner;
 
 public class Theme {
     private final LinkedList<String> neverList = new LinkedList<>();
-    private LinkedList<String> themeList = new LinkedList<String>();
+    private LinkedList<String> themeList = new LinkedList<>();
 
-    private LinkedList<String> noneCurrentList = new LinkedList<>();
+//    private LinkedList<String> noneCurrentList = new LinkedList<>();
     public String currentTheme="";
     private HashMap<String, Image> foodImgs;
     private LinkedList<String> foodStr;
@@ -64,7 +64,5 @@ public class Theme {
         }
         return foodImgs.get(other);
     }
-
-
 
 }

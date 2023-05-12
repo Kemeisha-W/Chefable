@@ -1,12 +1,9 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+
 import java.util.ArrayList;
 
 public class Chest implements Sprite{
     private final SoundManager soundManager;        // reference to SoundManager to play clip
-    private JPanel panel;                // JPanel on which image will be drawn
-    private Dimension dimension;
     private final int width=xSize+32;
     private final int height=ySize+32;
     private Player player;
@@ -21,20 +18,24 @@ public class Chest implements Sprite{
     private final ArrayList<Image> closedImages= new ArrayList<>();
     private boolean open = false;
     private static Chest single_instance = null;
+    private int time;
+    protected int timeChange;
+    protected boolean alreadyExecuted = false;
 
-    private Chest(JPanel panel, Player player){
-        this.panel = panel;
-        dimension = panel.getSize();
-        currentAni = closedAni;
+
+    private Chest( Player player){
         this.player = player;
         loadClosedChest();
         loadOpenChest();
         soundManager = SoundManager.getInstance();
+        currentAni = closedAni;
+        time = 0;
+        timeChange = 5;
     }
 
-    static Chest getInstance(JPanel panel, Player player) {
+    static Chest getInstance(Player player) {
         if (Chest.single_instance == null)
-            Chest.single_instance = new Chest(panel, player);
+            Chest.single_instance = new Chest( player);
 
         return Chest.single_instance;
     }
@@ -60,7 +61,7 @@ public class Chest implements Sprite{
             openImages.add(i);
         }
 
-        openAni = new Animation(true);    // play continuously
+        openAni = new Animation(false);    // play once
 
         for (int num = 0; num < 5; num++) {
             openAni.addFrame(openImages.get(num), 150);
@@ -69,6 +70,11 @@ public class Chest implements Sprite{
 
     @Override
     public void draw(Graphics2D g2) {
+        if(time>350&&!currentAni.isStillActive()){
+//            offsetY =offsetY-32;
+            g2.drawImage(openImages.get(3), x+offsetX, y+offsetY, width,height, null);
+            return;
+        }
         if (!currentAni.isStillActive()) {
             return;
         }
@@ -76,34 +82,18 @@ public class Chest implements Sprite{
         g2.drawImage(currentAni.getImage(), x+offsetX, y+offsetY, width,height, null);
     }
 
-    @Override
-    public boolean collidesWithPlayer() {
-        if(x==0 || y==0)
-            return false;
-        Rectangle2D.Double myRect = getBoundingRectangle();
-        Rectangle2D.Double playerRect = player.getBoundingRectangle();
-
-        if (myRect.intersects(playerRect)) {
-            System.out.println ("Heart Collision with player!");
-            soundManager.playSound("open", false);
-            return true;
-        }
-        else
-            return false;
-    }
-
-    @Override
-    public Rectangle2D.Double getBoundingRectangle() {
-        //        System.out.println("Heart bounding X:"+(x+offsetX)+" y:"+(y+offsetY));
-        return new Rectangle2D.Double (x+offsetX, (y+offsetY), width, height);
-    }
 
     @Override
     public void update() {
-        if (!currentAni.isStillActive()) {
-            return;
+        if(time == 350){
+            currentAni.stop();
+            currentAni = openAni;
+            currentAni.start();
+            open = true;
         }
-        currentAni.update();
+        if(currentAni.isStillActive())
+            currentAni.update();
+        time = time + timeChange;
     }
 
     @Override
@@ -121,13 +111,6 @@ public class Chest implements Sprite{
     @Override
     public Animation getAnimation() {
         return currentAni;
-    }
-
-    public void setAnimation(String ani) {
-        switch (ani) {
-            case "open"-> currentAni = openAni;
-            case "close"-> currentAni = closedAni;
-        }
     }
 
     public boolean isOpen() {

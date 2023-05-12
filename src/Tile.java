@@ -28,7 +28,7 @@ public class Tile {
         CORRECT,
         INCORRECT
     }
-
+    int size = 32;
     private State tState;
     private Type useType;
     private final Display tDisplay;
@@ -73,7 +73,9 @@ public class Tile {
         return tImage;
     }
     public void setImage(Image img){
-        buffImage = ImageManager.toBufferedImage(img,32);
+        if(tState == State.USE)
+            size = 64;
+        buffImage = ImageManager.toBufferedImage(img,size);
         tImage = img;
     }
 
@@ -94,10 +96,10 @@ public class Tile {
             size+=1;
         else size-=1;
 
-        if(size >=32)
-            return 32;
-        else if(size<25)
-            return 25;
+        if(size >=64)
+            return 64;
+        else if(size<30)
+            return 30;
         return size;
     }
 
