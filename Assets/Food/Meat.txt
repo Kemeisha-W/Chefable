@@ -1,0 +1,27 @@
+bacon (2)
+Bacon
+bacon_dish
+boar
+Chicken
+CheckenLeg
+Fish
+FishFillet
+FishSteak
+Jerky
+meatball
+meatball_dish
+Ribs
+roastedchicken
+roastedchicken_dish
+salmon
+salmon_dish
+sardines
+Sashimi
+Sausages
+Shrimp
+steak (2)
+Steak
+steak_dish
+sushi (2)
+Sushi
+sushi_dish
