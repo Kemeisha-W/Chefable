@@ -228,8 +228,8 @@ public class Player {
 
 
    public void update () {
-      int distance = 0;
-      int newY = 0;
+      int distance;
+      int newY;
 
       timeElapsed++;
 	  Tile t = isCollision(x,y);

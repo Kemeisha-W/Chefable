@@ -264,10 +264,4 @@ private JButton pauseB;
 	}
 
 
-    /** This method checks to see if the mouse is currently moving over one of
-	 the buttons (Pause, Stop, Show Anim, Pause Anim, and Quit). It sets a
-	 boolean value which will cause the button to be displayed accordingly.
-	 */
-
-
 }

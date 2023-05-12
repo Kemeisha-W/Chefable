@@ -34,7 +34,6 @@ public class Tile {
     private final Display tDisplay;
     private Image tImage = null;
     protected boolean used = false;
-    protected boolean open = false;
     public boolean alreadyExecuted = false;
 
 

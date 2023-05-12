@@ -243,13 +243,6 @@ public class TileMap {
         theme.loadTheme(currentTheme);
     }
 
-    /**
-        Class method to convert a pixel position to a tile position.
-    */
-
-    public static int pixelsToTiles(float pixels) {
-        return pixelsToTiles(Math.round(pixels));
-    }
 
 
     /**
