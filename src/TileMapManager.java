@@ -53,10 +53,9 @@ public class TileMapManager {
 
         TileMap newMap = new TileMap(window, mapWidth, mapHeight,theme);
 
-         System.out.println("New Tile map");
+
         for (int y=0; y<mapHeight; y++) {
             String line = lines.get(y);
-            System.out.println("");
             for (int x=0; x<line.length(); x++) {
                 char ch = line.charAt(x);
                 // check if the char represents tile A, B, C etc.

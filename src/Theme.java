@@ -1,5 +1,4 @@
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ public class Theme {
     private final LinkedList<String> neverList = new LinkedList<>();
     private LinkedList<String> themeList = new LinkedList<>();
 
-//    private LinkedList<String> noneCurrentList = new LinkedList<>();
     public String currentTheme="";
     private HashMap<String, Image> foodImgs;
     private LinkedList<String> foodStr;

@@ -8,9 +8,6 @@ public class ChefAnimation extends AnimationManager{
 
     private final int size =200;
 
-    private int dx;		// increment to move along x-axis
-    private int dy;		// increment to move along y-axis
-
 
     public ChefAnimation() {
         loadChefWalking();
@@ -20,12 +17,6 @@ public class ChefAnimation extends AnimationManager{
         soundManager = SoundManager.getInstance();
     }
 
-    public void setDx(int dx) {
-        this.dx = dx;
-    }
-    public void setDy(int dy) {
-        this.dy = dy;
-    }
 
     @Override
     protected int getSize() {

@@ -18,8 +18,6 @@ public class Chef {
    private final ChefAnimation chefAnimation;
    int timeChange;
 
-   protected SoundManager sm = SoundManager.getInstance();
-
 	public Chef() {
 		chefAnimation = new ChefAnimation();
 		this.cState = State.IDLE;

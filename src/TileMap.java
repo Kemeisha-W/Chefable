@@ -461,7 +461,7 @@ public class TileMap {
         if(chef!= null) {
             int y = chef.getY();
             int x = chef.getX();
-            String key ="";
+            String key;
             switch (chef.getState()) {
                 case "WALK" -> {
                     key = "walk";
@@ -565,7 +565,7 @@ public class TileMap {
         }
 
         if (star.collidesWithPlayer()) {
-            BufferedWriter w = null;
+            BufferedWriter w;
 
             if(fs.length() !=0&& window.getLevel() == 1){
                 w = Files.newBufferedWriter(gamePoints);

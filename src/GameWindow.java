@@ -15,14 +15,11 @@ public class GameWindow extends JFrame implements
 
 
 	private volatile boolean isOverQuitButton = false;
-	private Rectangle quitButtonArea;        // used by the quit button
 
 	private volatile boolean isOverPauseButton = false;
-	private Rectangle pauseButtonArea;        // used by the pause 'button'
 	private volatile boolean isPaused = false;
 
 	private volatile boolean isOverStopButton = false;
-	private Rectangle stopButtonArea;        // used by the stop 'button'
 
 	private volatile boolean isStopped = false;
 
@@ -244,7 +241,6 @@ private JButton pauseB;
 
 
 	public void mouseMoved(MouseEvent e) {
-		testMouseMove(e.getX(), e.getY());
 	}
 
 
@@ -273,12 +269,5 @@ private JButton pauseB;
 	 boolean value which will cause the button to be displayed accordingly.
 	 */
 
-	private void testMouseMove(int x, int y) {
-		if (isRunning) {
-			isOverPauseButton = pauseButtonArea.contains(x, y);
-			isOverStopButton = stopButtonArea.contains(x, y);
-			isOverQuitButton = quitButtonArea.contains(x, y);
-		}
-	}
 
 }

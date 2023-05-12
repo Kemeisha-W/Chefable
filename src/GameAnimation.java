@@ -8,22 +8,12 @@ public class GameAnimation extends AnimationManager{
 
     protected int size=30;
 
-    private int dx;		// increment to move along x-axis
-    private int dy;		// increment to move along y-axis
-
 
     public GameAnimation() {
         loadChefWalking();
         loadFireworks();
         loadHeart();
         soundManager = SoundManager.getInstance();
-    }
-
-    public void setDx(int dx) {
-        this.dx = dx;
-    }
-    public void setDy(int dy) {
-        this.dy = dy;
     }
 
     @Override
@@ -42,12 +32,7 @@ public class GameAnimation extends AnimationManager{
         }
 
         currentAnimation.update();
-//
-//        x = x + dx;
-//        y = y + dy;
-//
-//        if (x > 800)
-//            x = 100;
+
     }
 
 
