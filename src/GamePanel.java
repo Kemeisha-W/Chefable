@@ -28,7 +28,7 @@ public class GamePanel extends JPanel
     private boolean levelChange;
     private int level;
 
-    private boolean gameOver;
+    protected boolean gameOver;
     private int width;
     private int height;
 
@@ -64,6 +64,9 @@ public class GamePanel extends JPanel
                 if (!isPaused && !gameOver){
                     gameUpdate();
                     gameRender();
+                }
+                if(gameOver){
+                    endGame();
                 }
                 Thread.sleep (50);
             }
@@ -159,15 +162,17 @@ public class GamePanel extends JPanel
         gameThread=null;
 
         Graphics2D g2=(Graphics2D) getGraphics();
-        Font font = new Font("SansSerif", Font.BOLD, 40);
+        Font font = new Font("Serif", Font.BOLD, 60);
         FontMetrics metrics = this.getFontMetrics(font);
-
+        g2.setColor(Color.WHITE);
         String msg = "Game Over. Thanks for playing!";
 
         int x = (width - metrics.stringWidth(msg)) / 2;
         int y = (height - metrics.getHeight()) / 2;
-
-        g2.setColor(Color.BLUE);
+        g2.fillRoundRect(x-10,y-50,width - metrics.stringWidth(msg),70,20,20);
+        g2.setColor(Color.DARK_GRAY);
+        g2.drawRoundRect(x-10,y-50,width - metrics.stringWidth(msg),70,20,20);
+        g2.setColor(Color.BLACK);
         g2.setFont(font);
         g2.drawString(msg, x, y);
     }

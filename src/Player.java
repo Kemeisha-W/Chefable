@@ -353,7 +353,7 @@ public class Player {
 				playerAnimation.start("use","collect");
 				pState = State.USE;
 				switch (tile.getUseType()){
-					case "CORRECT"-> points +=5;
+					case "CORRECT"-> points +=7;
 					case "INCORRECT"-> points -=2;
 					case "NEVER"-> points -=5;
 				}

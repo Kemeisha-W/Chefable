@@ -48,7 +48,7 @@ public class TileMap {
     private final Chest chest;
     private final Theme theme;
     private int level;
-    protected int correct, incorrect, never = 0;
+    protected int correct, incorrect, never;
 
 
     /**
@@ -56,6 +56,9 @@ public class TileMap {
         height (in number of tiles) of the map.
     */
     public TileMap(GamePanel window, int width, int height, Theme theme) {
+        correct=0;
+        incorrect=0;
+        never = 0;
 
         gamePoints = Paths.get("gamePoints.txt");
         fs = gamePoints.toFile();
@@ -559,21 +562,21 @@ public class TileMap {
 
         if (star.collidesWithPlayer()) {
             BufferedWriter w;
-
+            int percentage=0;
+            if(correct !=0){
+                percentage = (player.points/(correct*7))*100;
+            }
+            else if( player.points == 0)
+                percentage = 100;
             if(fs.length() !=0&& window.getLevel() == 1){
                 w = Files.newBufferedWriter(gamePoints);
                 w.write("");
                 w.flush();
             }
             if(fs.length() ==0&&window.getLevel() == 1) {
-                if(correct ==0)
-                    correct =1;
-                int percentage = (player.points/(correct*5))*100;
                 String line ="Level1 "+percentage;
                 Files.write(gamePoints,line.getBytes(),StandardOpenOption.WRITE);
-                player.points =0;
             }else if(window.getLevel()==2){
-                int percentage = (player.points/(correct*5))*100;
                 String line ="\nLevel2 "+percentage;
                 Files.write(gamePoints,line.getBytes(), StandardOpenOption.APPEND);
             }
@@ -585,8 +588,8 @@ public class TileMap {
         star.update();
 
         if(player.gameOver){
-            Files.deleteIfExists(gamePoints);
-            window.endGame();
+//            Files.deleteIfExists(gamePoints);
+            window.gameOver = true;
         }
 
         if(chest.isOpen()&&!chest.alreadyExecuted){
@@ -599,7 +602,7 @@ public class TileMap {
                 num++;
             }
              average = ((level[0]+level[1])/2);
-            if (average>59){
+            if (average>49){
                 gameAni.start("fireworks","fireworks");
                 win = true;
             }else{

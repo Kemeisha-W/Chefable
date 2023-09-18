@@ -3,7 +3,7 @@ Bacon
 bacon_dish
 boar
 Chicken
-CheckenLeg
+ChickenLeg
 Fish
 FishFillet
 FishSteak
